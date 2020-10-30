@@ -107,8 +107,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesSortedByNameASC() {
-        return giftCertificateRepository.findGiftCertificatesSortedByNameASC();
+    public List<GiftCertificate> findGiftCertificatesSortedByName(String order) {
+        return giftCertificateRepository.findGiftCertificatesSortedByName(order);
     }
 
     @Override

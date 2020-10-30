@@ -77,12 +77,12 @@ public class GiftCertificatesController {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
 
-    @GetMapping("/sortnameASC")
-    public ResponseEntity<List<GiftCertificate>> findGiftCertificatesSortedByNameASC() {
-        if (giftCertificateService.findGiftCertificatesSortedByNameASC() == null) {
+    @GetMapping("/sort/{order}")
+    public ResponseEntity<List<GiftCertificate>> findGiftCertificatesSortedByNameASC(@PathVariable String order) {
+        if (giftCertificateService.findGiftCertificatesSortedByName(order) == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByNameASC());
+        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByName(order));
     }
 
     @GetMapping("/sortnameDESC")

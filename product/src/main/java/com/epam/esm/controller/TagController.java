@@ -4,6 +4,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.tag.TagDTO;
 import com.epam.esm.service.impl.TagServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class TagController {
     private TagServiceImpl tagService;
 
     @GetMapping
-    public ResponseEntity<List<TagDTO>> getTags() {
+    public ResponseEntity<List<TagDTO>> getTags() throws ServiceException {
        if(tagService.findAll().isEmpty()){
            return ResponseEntity.noContent().build();
        }
@@ -27,7 +28,7 @@ public class TagController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TagDTO> getTag(@PathVariable("id") Long id)  {
+    public ResponseEntity<TagDTO> getTag(@PathVariable("id") Long id) throws ServiceException {
         TagDTO tagDTO = tagService.find(id);
         if(tagDTO==null){
             return ResponseEntity.notFound().build();
@@ -36,7 +37,7 @@ public class TagController {
     }
 
     @PostMapping()
-    public ResponseEntity<String> createTag(@RequestBody Tag tag) throws JsonProcessingException {
+    public ResponseEntity<String> createTag(@RequestBody Tag tag) throws ServiceException {
        if(tagService.create(tag)==null){
            return ResponseEntity.notFound().build();
        }
@@ -44,7 +45,7 @@ public class TagController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable("id") Long id ){
+    public ResponseEntity<Object> deleteTag(@PathVariable("id") Long id ) throws ServiceException {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
 

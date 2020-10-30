@@ -13,7 +13,7 @@ public interface GiftCertificateRepository {
     long update (GiftCertificate giftCertificate) throws RepositoryException;
     List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException;
     List<GiftCertificate> findGiftCertificateByPartName(String partName);
-    List<GiftCertificate> findGiftCertificatesSortedByNameASC();
+    List<GiftCertificate> findGiftCertificatesSortedByName(String order);
     List<GiftCertificate> findGiftCertificatesSortedByNameDESC();
 
 

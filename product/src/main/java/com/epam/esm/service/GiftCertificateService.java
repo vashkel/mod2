@@ -17,6 +17,6 @@ public interface GiftCertificateService {
      long update (GiftCertificate giftCertificate) throws JsonProcessingException, ServiceException;
      List<GiftCertificate> findCertificatesByTagName(String tagName) throws ServiceException;
      List<GiftCertificate> findGiftCertificateByPartName(String partName);
-     List<GiftCertificate> findGiftCertificatesSortedByNameASC();
+     List<GiftCertificate> findGiftCertificatesSortedByName(String order);
      List<GiftCertificate> findGiftCertificatesSortedByNameDESC();
 }

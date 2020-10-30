@@ -34,6 +34,9 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME_ASC = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
             "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name ASC";
+    private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
+            "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
+            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name ";
     private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME_DESC = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
             "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name DESC";
@@ -147,8 +150,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesSortedByNameASC() {
-        return jdbcTemplate.query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME_ASC, new GiftCertificateWIthTagsMapper());
+    public List<GiftCertificate> findGiftCertificatesSortedByName(String order) {
+        return jdbcTemplate.query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME+order, new GiftCertificateWIthTagsMapper());
     }
 
     @Override

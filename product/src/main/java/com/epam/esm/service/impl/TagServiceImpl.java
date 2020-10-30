@@ -4,7 +4,6 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.tag.TagDTO;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.service.TagService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.RepositoryException;
 import exception.ServiceException;
@@ -17,12 +16,10 @@ import java.util.List;
 public class TagServiceImpl implements TagService {
 
     private final TagRepositoryImpl tagRepository;
-    private final ObjectMapper objectMapper;
 
     @Autowired
-    public TagServiceImpl(TagRepositoryImpl tagRepository, ObjectMapper objectMapper) {
+    public TagServiceImpl(TagRepositoryImpl tagRepository) {
         this.tagRepository = tagRepository;
-        this.objectMapper = objectMapper;
     }
 
 
@@ -59,9 +56,7 @@ public class TagServiceImpl implements TagService {
     public List<TagDTO> findAll() throws ServiceException {
          List<TagDTO> tagDTOList = new ArrayList<>();
         try {
-            for (Tag tag: tagRepository.findAll()){
-                tagDTOList.add(TagDTO.converterToTagDTO(tag));
-            }
+            tagRepository.findAll().forEach(tag -> tagDTOList.add(TagDTO.converterToTagDTO(tag)));
         }catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown while create tag : ", e);
         }

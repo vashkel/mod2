@@ -86,9 +86,7 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         try {
             long giftCertificateId = saveGiftCertificateInfo(giftCertificate);
             giftCertificate.setId(giftCertificateId);
-            for (Tag tag : giftCertificate.getTags()) {
-                saveTagIdAndGiftCertificateId(tag.getId(), giftCertificateId);
-            }
+            giftCertificate.getTags().forEach(tag -> saveTagIdAndGiftCertificateId(tag.getId(), giftCertificateId));
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while create Gift Certificate");
         }
@@ -107,12 +105,8 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         return giftCertificateInserter.executeAndReturnKey(values).longValue();
     }
 
-    private void saveTagIdAndGiftCertificateId(long tagId, long giftCertificateId) throws RepositoryException {
-        try {
+    private void saveTagIdAndGiftCertificateId(long tagId, long giftCertificateId) {
             jdbcTemplate.update(SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID, giftCertificateId, tagId);
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while save TagId And GiftCertificateId");
-        }
     }
 
     @Override

@@ -36,9 +36,7 @@ public class GIftCertificateWithTagsDTO implements Serializable {
         gIftCertificateWithTagsDTO.setCreateDate(giftCertificate.getCreateDate());
         gIftCertificateWithTagsDTO.setLastUpdateTime(giftCertificate.getLastUpdateTime());
         gIftCertificateWithTagsDTO.setDuration(giftCertificate.getDuration());
-        for (Tag tag : giftCertificate.getTags()){
-            gIftCertificateWithTagsDTO.addTag(TagDTO.converterToTagDTO(tag));
-        }
+        giftCertificate.getTags().forEach(tag -> gIftCertificateWithTagsDTO.addTag(TagDTO.converterToTagDTO(tag)));
         return gIftCertificateWithTagsDTO;
     }
 }

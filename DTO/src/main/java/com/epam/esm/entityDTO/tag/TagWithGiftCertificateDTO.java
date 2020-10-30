@@ -25,9 +25,8 @@ public class TagWithGiftCertificateDTO implements Serializable {
         TagWithGiftCertificateDTO tagWithGiftCertificateDTO = new TagWithGiftCertificateDTO();
         tagWithGiftCertificateDTO.setId(tag.getId());
         tagWithGiftCertificateDTO.setName(tag.getName());
-        for(GiftCertificate giftCertificate: tag.getGiftCertificates()){
-            tagWithGiftCertificateDTO.addGiftCertificates(GiftCertificateDTO.convertToGiftCertificateDTO(giftCertificate));
-        }
+        tag.getGiftCertificates().forEach(giftCertificate ->
+                tagWithGiftCertificateDTO.addGiftCertificates(GiftCertificateDTO.convertToGiftCertificateDTO(giftCertificate)));
         return tagWithGiftCertificateDTO;
     }
 }

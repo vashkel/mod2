@@ -6,3 +6,4 @@ giftCertificate.setting
 .idea
 application.properties
 lombok.config
+gradle

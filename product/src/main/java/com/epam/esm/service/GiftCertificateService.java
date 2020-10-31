@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entityDTO.giftcertificate.GIftCertificateWithTagsDTO;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import exception.RepositoryException;
@@ -15,8 +16,7 @@ public interface GiftCertificateService {
      GiftCertificateDTO create( GiftCertificate giftCertificate) throws JsonProcessingException, ServiceException;
      void deleteById(Long id) throws ServiceException;
      long update (GiftCertificate giftCertificate) throws JsonProcessingException, ServiceException;
-     List<GiftCertificate> findCertificatesByTagName(String tagName) throws ServiceException;
-     List<GiftCertificate> findGiftCertificateByPartName(String partName);
-     List<GiftCertificate> findGiftCertificatesSortedByName(String order);
-     List<GiftCertificate> findGiftCertificatesSortedByNameDESC();
+     List<GIftCertificateWithTagsDTO> findCertificatesByTagName(String tagName) throws ServiceException;
+     List<GIftCertificateWithTagsDTO> findGiftCertificateByPartName(String partName) throws ServiceException;
+     List<GIftCertificateWithTagsDTO> findGiftCertificatesSortedByName(String order) throws ServiceException;
 }

@@ -21,7 +21,7 @@ public class GIftCertificateWithTagsDTO implements Serializable {
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateTime;
     private Duration duration;
-    private List<TagDTO> tagsDTO;
+    private List<TagDTO> tagsDTO = new ArrayList<>();
 
 
     public void addTag(TagDTO tag){

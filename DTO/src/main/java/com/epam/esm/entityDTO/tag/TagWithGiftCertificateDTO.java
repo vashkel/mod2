@@ -15,7 +15,7 @@ public class TagWithGiftCertificateDTO implements Serializable {
 
     private long id;
     private String name;
-    private List<GiftCertificateDTO> giftCertificatesDTO;
+    private List<GiftCertificateDTO> giftCertificatesDTO = new ArrayList<>();
 
     private void addGiftCertificates(GiftCertificateDTO giftCertificateDTO){
        giftCertificatesDTO.add(giftCertificateDTO);

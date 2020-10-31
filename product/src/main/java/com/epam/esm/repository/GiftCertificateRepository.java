@@ -12,9 +12,9 @@ public interface GiftCertificateRepository {
     void delete(Long id) throws RepositoryException;
     long update (GiftCertificate giftCertificate) throws RepositoryException;
     List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException;
-    List<GiftCertificate> findGiftCertificateByPartName(String partName);
-    List<GiftCertificate> findGiftCertificatesSortedByName(String order);
-    List<GiftCertificate> findGiftCertificatesSortedByNameDESC();
+    List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException;
+    List<GiftCertificate> findGiftCertificatesSortedByName(String order) throws RepositoryException;
+
 
 
 }

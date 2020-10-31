@@ -139,18 +139,21 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificateByPartName(String partName) {
-        return jdbcTemplate.query(SQL_FIND_CERTIFICATES_BY_PART_NAME, new GiftCertificateWIthTagsMapper(), partName+"%");
+    public List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException {
+        try {
+            return jdbcTemplate.query(SQL_FIND_CERTIFICATES_BY_PART_NAME, new GiftCertificateWIthTagsMapper(), partName+"%");
+        }catch (DataAccessException e) {
+            throw new RepositoryException("Exception while find gift certificate by part of name ");
+        }
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesSortedByName(String order) {
-        return jdbcTemplate.query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME+order, new GiftCertificateWIthTagsMapper());
-    }
-
-    @Override
-    public List<GiftCertificate> findGiftCertificatesSortedByNameDESC() {
-        return jdbcTemplate.query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME_DESC, new GiftCertificateWIthTagsMapper());
+    public List<GiftCertificate> findGiftCertificatesSortedByName(String order) throws RepositoryException {
+       try {
+           return jdbcTemplate.query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME+order, new GiftCertificateWIthTagsMapper());
+       }catch (DataAccessException e) {
+           throw new RepositoryException("Exception while find gift certificate sorted by name");
+       }
     }
 
 

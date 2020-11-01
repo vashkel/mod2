@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 
@@ -11,14 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Setter
 public class GiftCertificate implements Serializable{
     private static final long serialVersionUID = -1734150257366390793L;
 
-    private long id;
+    private Long id;
     private String name;
     private String Description;
-    private double price;
+    private Double price;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateTime;
     private Duration duration;

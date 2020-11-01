@@ -21,18 +21,11 @@ public class TagController {
 
     @GetMapping
     public ResponseEntity<List<TagDTO>> getTags() throws ServiceException {
-       if(tagService.findAll().isEmpty()){
-           return ResponseEntity.noContent().build();
-       }
         return  ResponseEntity.ok().body(tagService.findAll());
     }
 
     @GetMapping("{id}")
     public ResponseEntity<TagDTO> getTag(@PathVariable("id") Long id) throws ServiceException {
-        TagDTO tagDTO = tagService.find(id);
-        if(tagDTO==null){
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(tagService.find(id));
     }
 

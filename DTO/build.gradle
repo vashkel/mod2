@@ -12,7 +12,7 @@ sourceCompatibility = 1.8
 configurations {
     providedCompile
 }
-apply plugin: 'war'
+
 repositories {
     mavenCentral()
 }

@@ -1,21 +1,18 @@
 package com.epam.esm.entityDTO.giftcertificate;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 @Data
 public class GiftCertificateDTO implements Serializable {
     private static final long serialVersionUID = -7284150257366390793L;
-    private long id;
+    private Long id;
     private String name;
     private String Description;
-    private double price;
+    private Double price;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateTime;
     private Duration duration;

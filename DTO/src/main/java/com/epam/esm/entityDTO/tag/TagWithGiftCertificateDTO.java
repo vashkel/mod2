@@ -1,6 +1,5 @@
 package com.epam.esm.entityDTO.tag;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
 import lombok.Data;
@@ -13,7 +12,7 @@ import java.util.List;
 public class TagWithGiftCertificateDTO implements Serializable {
     private static final long serialVersionUID = -1784150257366720793L;
 
-    private long id;
+    private Long id;
     private String name;
     private List<GiftCertificateDTO> giftCertificatesDTO = new ArrayList<>();
 

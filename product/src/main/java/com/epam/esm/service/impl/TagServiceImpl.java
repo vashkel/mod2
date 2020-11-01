@@ -2,11 +2,11 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.tag.TagDTO;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.RepositoryException;
 import exception.ServiceException;
+import exception.TagNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,10 @@ import java.util.List;
 @Service
 public class TagServiceImpl implements TagService {
 
-    private final TagRepositoryImpl tagRepository;
+    private TagRepository tagRepository;
 
     @Autowired
-    public TagServiceImpl(TagRepositoryImpl tagRepository) {
+    public TagServiceImpl(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 
@@ -45,7 +45,11 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDTO find(Long id) throws ServiceException {
         try {
-            return TagDTO.converterToTagDTO(tagRepository.find(id));
+            Tag tag = tagRepository.find(id);
+            if (tag == null){
+                throw new TagNotFoundException(id, "Tag not found");
+            }
+            return TagDTO.converterToTagDTO(tag);
         }catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown while find tag : ", e);
         }
@@ -56,7 +60,11 @@ public class TagServiceImpl implements TagService {
     public List<TagDTO> findAll() throws ServiceException {
          List<TagDTO> tagDTOList = new ArrayList<>();
         try {
-            tagRepository.findAll().forEach(tag -> tagDTOList.add(TagDTO.converterToTagDTO(tag)));
+            List<Tag> tags = tagRepository.findAll();
+            if (tags == null){
+                throw new TagNotFoundException("Tag not found");
+            }
+            tags.forEach(tag -> tagDTOList.add(TagDTO.converterToTagDTO(tag)));
         }catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown while create tag : ", e);
         }

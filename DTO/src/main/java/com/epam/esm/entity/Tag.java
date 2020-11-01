@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,7 +11,7 @@ import java.util.List;
 public class Tag implements Serializable {
     private static final long serialVersionUID = -1784132457366390793L;
 
-    private long id;
+    private Long id;
     private String name;
     private List<GiftCertificate> giftCertificates = new ArrayList<>();
 

@@ -4,6 +4,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.repository.TagRepository;
 import exception.RepositoryException;
+import exception.TagNotFoundException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,6 +23,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     private final String SQL_DELETE_TAG = "DELETE FROM tag WHERE id=?";
     private final String SQL_FIND_TAG = "SELECT id, name FROM tag WHERE id=?";
+    private final String SQL_FIND_TAG_BY_NAME = "SELECT id, name FROM tag WHERE name=?";
     private final String SQL_FIND_ALL_TAGS = "SELECT id, name FROM tag";
 
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
@@ -32,11 +34,15 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public long create(Tag tag) throws RepositoryException {
-        Map<String,Object> values = new HashMap<>();
-        values.put("name", tag.getName());
         try {
+            Tag isCreated = findByName(tag.getName());
+            if (isCreated != null) {
+                return isCreated.getId();
+            }
+            Map<String, Object> values = new HashMap<>();
+            values.put("name", tag.getName());
             return tagInserter.executeAndReturnKey(values).longValue();
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             throw new RepositoryException("Exception while create tag");
         }
     }
@@ -45,7 +51,7 @@ public class TagRepositoryImpl implements TagRepository {
     public void delete(Long tagId) throws RepositoryException {
         try {
             jdbcTemplate.update(SQL_DELETE_TAG, tagId);
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             throw new RepositoryException("Exception while delete tag");
         }
     }
@@ -54,23 +60,34 @@ public class TagRepositoryImpl implements TagRepository {
     public Tag find(Long id) throws RepositoryException {
         try {
             return jdbcTemplate.queryForObject(SQL_FIND_TAG, new TagMapper(), id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             return null;
-        }catch (DataAccessException e){
+        } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find tag by id");
         }
 
     }
 
     @Override
+    public Tag findByName(String tagName) throws RepositoryException {
+        try {
+            return jdbcTemplate.queryForObject(SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName);
+        }catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw new RepositoryException("Exception while find tag by name");
+        }
+    }
+
+    @Override
     public List<Tag> findAll() throws RepositoryException {
-       try {
-           return jdbcTemplate.query(SQL_FIND_ALL_TAGS, new TagMapper());
-       }catch (EmptyResultDataAccessException e){
-           return null;
-       }catch (DataAccessException e){
-           throw new RepositoryException("Exception while find all tags");
-       }
+        try {
+            return jdbcTemplate.query(SQL_FIND_ALL_TAGS, new TagMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw new RepositoryException("Exception while find all tags");
+        }
     }
 
 

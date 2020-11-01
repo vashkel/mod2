@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entityDTO.giftcertificate.GIftCertificateWithTagsDTO;
+import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import exception.ServiceException;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/certificates")
@@ -64,7 +63,7 @@ public class GiftCertificatesController {
     }
 
     @GetMapping("/tagname/{tagName}")
-    public ResponseEntity<List<GIftCertificateWithTagsDTO>> findGiftCertificatesByTag(@PathVariable String tagName) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag(@PathVariable String tagName) throws ServiceException {
         if (giftCertificateService.findCertificatesByTagName(tagName) == null) {
             return ResponseEntity.notFound().build();
         }
@@ -72,7 +71,7 @@ public class GiftCertificatesController {
     }
 
     @GetMapping("/partname/{partName}")
-    public ResponseEntity<List<GIftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable String partName) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable String partName) throws ServiceException {
         if (giftCertificateService.findCertificatesByTagName(partName) == null) {
             return ResponseEntity.notFound().build();
         }
@@ -80,11 +79,18 @@ public class GiftCertificatesController {
     }
 
     @GetMapping("/sortByName/{order}")
-    public ResponseEntity<List<GIftCertificateWithTagsDTO>> findGiftCertificatesSortedByName(@PathVariable String order) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesSortedByName(@PathVariable String order) throws ServiceException {
         if (giftCertificateService.findGiftCertificatesSortedByName(order) == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByName(order));
+    }
+    @GetMapping("/sortByDate/{order}")
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesSortedByDate(@PathVariable String order) throws ServiceException{
+        if(giftCertificateService.findGiftCertificatesSortedByName(order) == null){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByDate(order));
     }
 
 }

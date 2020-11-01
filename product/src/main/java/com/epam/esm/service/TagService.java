@@ -8,8 +8,8 @@ import exception.ServiceException;
 import java.util.List;
 
 public interface TagService {
-    Long create (Tag tag) throws JsonProcessingException, ServiceException;
+    Long create (Tag tag) throws ServiceException;
     void delete(Long id) throws ServiceException;
-    TagDTO find(Long id) throws JsonProcessingException, ServiceException;
-    List<TagDTO> findAll() throws JsonProcessingException, ServiceException;
+    TagDTO find(Long id) throws  ServiceException;
+    List<TagDTO> findAll() throws  ServiceException;
 }

@@ -31,15 +31,12 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
             "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id WHERE c.name LIKE ?";
     private final String SQL_FIND_GIFT_CERTIFICATE_BY_ID = "SELECT id, name, description, price, create_date, last_update_date, duration  FROM gift_certificate WHERE id=?";
-    private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME_ASC = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
-            "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
-            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name ASC";
     private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
             "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name ";
-    private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME_DESC = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
+    private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_DATE = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
-            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name DESC";
+            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.create_date";
     private final String SQL_FIND_ALL_GIFT_CERTIFICATES = "SELECT id, name, description, price, create_date, last_update_date, duration  FROM gift_certificate";
     private final String SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID = "INSERT INTO gift_certificate_tags(gift_certificate_id,tag_id) VALUES (?,?)";
     private final String SQL_DELETE_GIFT_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
@@ -154,6 +151,15 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
        }catch (DataAccessException e) {
            throw new RepositoryException("Exception while find gift certificate sorted by name");
        }
+    }
+
+    @Override
+    public List<GiftCertificate> findGiftCertificatesSortedByDate(String order) throws RepositoryException {
+        try {
+            return jdbcTemplate.query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_DATE+order, new GiftCertificateWIthTagsMapper());
+        }catch (DataAccessException e) {
+            throw new RepositoryException("Exception while find gift certificate sorted by date");
+        }
     }
 
 

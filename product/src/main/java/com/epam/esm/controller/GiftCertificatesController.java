@@ -21,18 +21,11 @@ public class GiftCertificatesController {
 
     @GetMapping()
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates() throws ServiceException {
-        if (giftCertificateService.findAll() == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findAll());
-
     }
 
     @GetMapping("{id}")
     public ResponseEntity<GiftCertificateDTO> giftCertificate(@PathVariable("id") long id) throws ServiceException {
-        if (giftCertificateService.find(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok().body(giftCertificateService.find(id));
     }
 
@@ -46,9 +39,6 @@ public class GiftCertificatesController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<GiftCertificateDTO> deleteCertificate(@PathVariable("id") Long id) throws ServiceException {
-        if (giftCertificateService.find(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
         giftCertificateService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
@@ -64,32 +54,20 @@ public class GiftCertificatesController {
 
     @GetMapping("/tagname/{tagName}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag(@PathVariable String tagName) throws ServiceException {
-        if (giftCertificateService.findCertificatesByTagName(tagName) == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
     }
 
-    @GetMapping("/partname/{partName}")
+    @GetMapping("{b}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable String partName) throws ServiceException {
-        if (giftCertificateService.findCertificatesByTagName(partName) == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
 
     @GetMapping("/sortByName/{order}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesSortedByName(@PathVariable String order) throws ServiceException {
-        if (giftCertificateService.findGiftCertificatesSortedByName(order) == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByName(order));
     }
     @GetMapping("/sortByDate/{order}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesSortedByDate(@PathVariable String order) throws ServiceException{
-        if(giftCertificateService.findGiftCertificatesSortedByName(order) == null){
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByDate(order));
     }
 

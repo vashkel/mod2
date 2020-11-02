@@ -11,13 +11,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.function.Executable;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
@@ -55,7 +53,7 @@ class TagServiceImplTest {
     void findTag_whenTagNotFound_thenThrowTagNotFoundException() throws RepositoryException, ServiceException {
         long tagId = 0;
         Mockito.when(tagRepository.find(tagId)).thenReturn(null);
-        Assertions.assertThrows(TagNotFoundException.class, (Executable) tagService.find(tagId));
+        Assertions.assertThrows(TagNotFoundException.class, () -> tagService.find(tagId));
     }
     @Test
     void createTag_whenCreated_thenReturnTrue() throws RepositoryException, ServiceException {

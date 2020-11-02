@@ -4,6 +4,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.tag.TagDTO;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
+import exception.GiftCertificateNotFoundException;
 import exception.RepositoryException;
 import exception.ServiceException;
 import exception.TagNotFoundException;
@@ -33,9 +34,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void delete(Long id) throws ServiceException {
+    public boolean delete(Long id) throws ServiceException {
         try {
-            tagRepository.delete(id);
+            Tag createdTag = tagRepository.find(id);
+            if (createdTag == null){
+                throw new TagNotFoundException("tog not found");
+            }
+            return tagRepository.delete(id);
         }catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown while delete tag : ", e);
         }
@@ -61,7 +66,7 @@ public class TagServiceImpl implements TagService {
          List<TagDTO> tagDTOList = new ArrayList<>();
         try {
             List<Tag> tags = tagRepository.findAll();
-            if (tags == null){
+            if (tags.isEmpty()){
                 throw new TagNotFoundException("Tag not found");
             }
             tags.forEach(tag -> tagDTOList.add(TagDTO.converterToTagDTO(tag)));

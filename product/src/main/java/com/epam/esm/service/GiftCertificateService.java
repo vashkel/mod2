@@ -14,7 +14,7 @@ public interface GiftCertificateService {
      GiftCertificateDTO find(Long id) throws JsonProcessingException, RepositoryException, ServiceException;
      List<GiftCertificateDTO> findAll() throws RepositoryException, JsonProcessingException, ServiceException;
      GiftCertificateDTO create( GiftCertificate giftCertificate) throws JsonProcessingException, ServiceException;
-     void deleteById(Long id) throws ServiceException;
+     boolean deleteById(Long id) throws ServiceException;
      long update (GiftCertificate giftCertificate) throws JsonProcessingException, ServiceException;
      List<GiftCertificateWithTagsDTO> findCertificatesByTagName(String tagName) throws ServiceException;
      List<GiftCertificateWithTagsDTO> findGiftCertificateByPartName(String partName) throws ServiceException;

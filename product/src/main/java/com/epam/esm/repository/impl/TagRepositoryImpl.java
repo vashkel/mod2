@@ -2,6 +2,7 @@ package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.mapper.TagMapper;
+import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.TagRepository;
 import exception.RepositoryException;
 import exception.TagNotFoundException;
@@ -16,9 +17,8 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class TagRepositoryImpl implements TagRepository {
+public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
-    private JdbcTemplate jdbcTemplate;
     private SimpleJdbcInsert tagInserter;
 
     private final String SQL_DELETE_TAG = "DELETE FROM tag WHERE id=?";
@@ -27,7 +27,7 @@ public class TagRepositoryImpl implements TagRepository {
     private final String SQL_FIND_ALL_TAGS = "SELECT id, name FROM tag";
 
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+        super(jdbcTemplate);
         this.tagInserter = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("tag").usingColumns("name").usingGeneratedKeyColumns("id");
     }
@@ -48,9 +48,9 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
-    public void delete(Long tagId) throws RepositoryException {
+    public boolean delete(Long tagId) throws RepositoryException {
         try {
-            jdbcTemplate.update(SQL_DELETE_TAG, tagId);
+            return getJdbcTemplate().update(SQL_DELETE_TAG, tagId) == 1;
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while delete tag");
         }
@@ -59,7 +59,7 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public Tag find(Long id) throws RepositoryException {
         try {
-            return jdbcTemplate.queryForObject(SQL_FIND_TAG, new TagMapper(), id);
+            return getJdbcTemplate().queryForObject(SQL_FIND_TAG, new TagMapper(), id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -71,7 +71,7 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public Tag findByName(String tagName) throws RepositoryException {
         try {
-            return jdbcTemplate.queryForObject(SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName);
+            return getJdbcTemplate().queryForObject(SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName);
         }catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -82,7 +82,7 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public List<Tag> findAll() throws RepositoryException {
         try {
-            return jdbcTemplate.query(SQL_FIND_ALL_TAGS, new TagMapper());
+            return getJdbcTemplate().query(SQL_FIND_ALL_TAGS, new TagMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {

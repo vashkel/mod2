@@ -1,8 +1,6 @@
 package exception;
 
-import lombok.Data;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "There is no such tag")
@@ -16,10 +14,7 @@ public class TagNotFoundException extends RuntimeException {
         this.id = id;
         this.message = message;
     }
-    public TagNotFoundException(String name, String message){
-        this.name = name;
-        this.message = message;
-    }
+
     public TagNotFoundException(String message){
         this.message = message;
     }

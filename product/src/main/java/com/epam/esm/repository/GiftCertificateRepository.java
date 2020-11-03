@@ -13,8 +13,6 @@ public interface GiftCertificateRepository {
     long update (GiftCertificate giftCertificate) throws RepositoryException;
     List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException;
     List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException;
-    List<GiftCertificate> findGiftCertificatesSortedByName(String order) throws RepositoryException;
-    List<GiftCertificate> findGiftCertificatesSortedByDate(String order) throws RepositoryException;
-
+    List<GiftCertificate> getFilteredGiftCertificates(String sortBy, String orderBy) throws RepositoryException;
 
 }

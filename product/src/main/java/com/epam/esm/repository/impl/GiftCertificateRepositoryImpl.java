@@ -7,12 +7,12 @@ import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.GiftCertificateWIthTagsMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.util.DurationConverter;
-import exception.GiftCertificateNotFoundException;
 import exception.RepositoryException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -24,7 +24,16 @@ import java.util.Map;
 public class GiftCertificateRepositoryImpl extends BaseRepository implements GiftCertificateRepository {
 
     private SimpleJdbcInsert giftCertificateInserter;
-    private TagRepositoryImpl tagRepository;
+    private TagRepository tagRepository;
+
+    @Autowired
+    public GiftCertificateRepositoryImpl(TagRepository tagRepository) {
+        this.tagRepository = tagRepository;
+        this.giftCertificateInserter = new SimpleJdbcInsert(jdbcTemplate)
+                .withTableName("gift_certificate")
+                .usingColumns("name", "description", "price", "create_date", "last_update_date", "duration")
+                .usingGeneratedKeyColumns("id");
+    }
 
     private final String SQL_FIND_CERTIFICATES_BY_TAG = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
@@ -33,32 +42,19 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
             "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
             "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id WHERE c.name LIKE ?";
     private final String SQL_FIND_GIFT_CERTIFICATE_BY_ID = "SELECT id, name, description, price, create_date, last_update_date, duration  FROM gift_certificate WHERE id=?";
-    private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
-            "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
-            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.name ";
-    private final String SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_DATE = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name \n" +
-            "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct\n" +
-            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ORDER BY c.create_date";
     private final String SQL_FIND_ALL_GIFT_CERTIFICATES = "SELECT id, name, description, price, create_date, last_update_date, duration  FROM gift_certificate";
     private final String SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID = "INSERT INTO gift_certificate_tags(gift_certificate_id,tag_id) VALUES (?,?)";
     private final String SQL_DELETE_GIFT_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
     private final String SQL_DELETE_DEPENDED_TAG = "DELETE FROM gift_certificate_tags WHERE gift_certificate_id =?";
     private final String SQL_UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificate SET name =?, description=?, price=?, last_update_date=?, duration=? WHERE id=?";
-
-    public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate, TagRepositoryImpl tagRepository) {
-        super(jdbcTemplate);
-        this.tagRepository = tagRepository;
-        this.giftCertificateInserter = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("gift_certificate")
-                .usingColumns("name", "description", "price", "create_date", "last_update_date", "duration")
-                .usingGeneratedKeyColumns("id");
-    }
+    private final String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "select c.id, c.name, c.description, c.price, c.create_date, c.last_update_date, c.duration, tag.id, tag.name " +
+            "FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags AS gct " +
+            "ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
 
     @Override
     public GiftCertificate findGiftCertificateById(Long id) throws RepositoryException {
-
         try {
-            return getJdbcTemplate().queryForObject(SQL_FIND_GIFT_CERTIFICATE_BY_ID, new GiftCertificateMapper(), id);
+            return jdbcTemplate.queryForObject(SQL_FIND_GIFT_CERTIFICATE_BY_ID, new GiftCertificateMapper(), id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -69,7 +65,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public List<GiftCertificate> findAllGiftCertificates() throws RepositoryException {
         try {
-            return getJdbcTemplate().query(SQL_FIND_ALL_GIFT_CERTIFICATES, new GiftCertificateMapper());
+            return jdbcTemplate.query(SQL_FIND_ALL_GIFT_CERTIFICATES, new GiftCertificateMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -106,14 +102,14 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     }
 
     private boolean saveTagIdAndGiftCertificateId(long tagId, long giftCertificateId) {
-        return getJdbcTemplate().update(SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID, giftCertificateId, tagId) == 1;
+        return jdbcTemplate.update(SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID, giftCertificateId, tagId) == 1;
     }
 
     @Override
     public boolean delete(Long id) throws RepositoryException {
         try {
-            getJdbcTemplate().update(SQL_DELETE_DEPENDED_TAG, id);
-            return getJdbcTemplate().update(SQL_DELETE_GIFT_CERTIFICATE, id)==1;
+            jdbcTemplate.update(SQL_DELETE_DEPENDED_TAG, id);
+            return jdbcTemplate.update(SQL_DELETE_GIFT_CERTIFICATE, id)==1;
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while delete GiftCertificateId");
         }
@@ -122,7 +118,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public long update(GiftCertificate giftCertificate) throws RepositoryException {
         try {
-            return getJdbcTemplate().update(SQL_UPDATE_GIFT_CERTIFICATE, giftCertificate.getName(), giftCertificate.getDescription(),
+            return jdbcTemplate.update(SQL_UPDATE_GIFT_CERTIFICATE, giftCertificate.getName(), giftCertificate.getDescription(),
                     giftCertificate.getPrice(), giftCertificate.getLastUpdateTime(), giftCertificate.getDuration().getSeconds(), giftCertificate.getId());
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while update GiftCertificateId");
@@ -132,7 +128,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException {
         try {
-            return getJdbcTemplate().query(SQL_FIND_CERTIFICATES_BY_TAG, new GiftCertificateWIthTagsMapper(), tag);
+            return jdbcTemplate.query(SQL_FIND_CERTIFICATES_BY_TAG, new GiftCertificateWIthTagsMapper(), tag);
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find gift certificate by name of tag");
         }
@@ -141,28 +137,26 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException {
         try {
-            return getJdbcTemplate().query(SQL_FIND_CERTIFICATES_BY_PART_NAME, new GiftCertificateWIthTagsMapper(), partName + "%");
+            return jdbcTemplate.query(SQL_FIND_CERTIFICATES_BY_PART_NAME, new GiftCertificateWIthTagsMapper(), partName + "%");
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find gift certificate by part of name ");
         }
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesSortedByName(String order) throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_NAME + order, new GiftCertificateWIthTagsMapper());
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find gift certificate sorted by name");
+    public List<GiftCertificate> getFilteredGiftCertificates(String sortBy, String order) throws RepositoryException {
+        String query = SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS;
+        if(sortBy != null) {
+            query += "ORDER BY " + sortBy;
         }
-    }
-
-    @Override
-    public List<GiftCertificate> findGiftCertificatesSortedByDate(String order) throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(SQL_FIND_GIFT_CERTIFICATES_SORTED_BY_DATE + order, new GiftCertificateWIthTagsMapper());
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find gift certificate sorted by date");
-        }
+            if(order != null){
+                query += " " + order;
+            }
+         try {
+             return jdbcTemplate.query(query, new GiftCertificateWIthTagsMapper());
+         }catch (DataAccessException e) {
+             throw new RepositoryException("Exception while getiing are filtered gift certificates ");
+         }
     }
 
 

@@ -3,6 +3,7 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.impl.GiftCertificateServiceImpl;
 import exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,12 @@ import java.util.List;
 @RequestMapping("/certificates")
 public class GiftCertificatesController {
 
+    private GiftCertificateService giftCertificateService;
+
     @Autowired
-    private GiftCertificateServiceImpl giftCertificateService;
+    public GiftCertificatesController(GiftCertificateService giftCertificateService) {
+        this.giftCertificateService = giftCertificateService;
+    }
 
     @GetMapping()
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates() throws ServiceException {
@@ -52,23 +57,21 @@ public class GiftCertificatesController {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.update(giftCertificate));
     }
 
-    @GetMapping("/tagname/{tagName}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag(@PathVariable String tagName) throws ServiceException {
+    @GetMapping("/filter")
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>>  sortedGiftCertificatesWithTags(@RequestParam(value = "sort", required = false ) String sort,
+                                                                                            @RequestParam(value = "order") String order) throws ServiceException {
+        return ResponseEntity.ok().body(giftCertificateService.getFilteredGiftCertificates(sort, order));
+    }
+
+    @GetMapping("/tag-name/{tag-name}")
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag(@PathVariable(name = "tag-name") String tagName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
     }
 
-    @GetMapping("{b}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable String partName) throws ServiceException {
+    @GetMapping("/part-name/{part-name}")
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable(name = "part-name") String partName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
 
-    @GetMapping("/sortByName/{order}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesSortedByName(@PathVariable String order) throws ServiceException {
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByName(order));
-    }
-    @GetMapping("/sortByDate/{order}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesSortedByDate(@PathVariable String order) throws ServiceException{
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificatesSortedByDate(order));
-    }
 
 }

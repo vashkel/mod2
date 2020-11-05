@@ -4,9 +4,9 @@ import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.tag.TagDTO;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
-import exception.RepositoryException;
-import exception.ServiceException;
-import exception.TagNotFoundException;
+import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
+import com.epam.esm.exception.TagNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class TagServiceImplTest {
     void findTag_whenTagNotFound_thenThrowTagNotFoundException() throws RepositoryException, ServiceException {
         long tagId = 0;
         Mockito.when(tagRepository.find(tagId)).thenReturn(null);
-        Assertions.assertThrows(TagNotFoundException.class, () -> tagService.find(tagId));
+        Assertions.assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
     }
     @Test
     void createTag_whenCreated_thenReturnTrue() throws RepositoryException, ServiceException {
@@ -67,7 +67,7 @@ class TagServiceImplTest {
     void find_whenTagExisted_thenReturnTag() throws RepositoryException, ServiceException {
         Mockito.when(tagRepository.find(1L)).thenReturn(tag1);
         TagDTO expected = TagDTO.converterToTagDTO(tag1);
-        TagDTO actual = tagService.find(1L);
+        TagDTO actual = tagService.findById(1L);
 
         Assertions.assertNotNull(actual, "Tag should not be found");
         Assertions.assertEquals(actual, expected, "The tag is not same like returnedTag");

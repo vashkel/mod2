@@ -4,8 +4,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.service.impl.GiftCertificateServiceImpl;
-import exception.ServiceException;
+import com.epam.esm.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,21 +44,17 @@ public class GiftCertificatesController {
     @DeleteMapping("{id}")
     public ResponseEntity<GiftCertificateDTO> deleteCertificate(@PathVariable("id") Long id) throws ServiceException {
         giftCertificateService.deleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Object> updateCertificate(@RequestBody GiftCertificate giftCertificate, @PathVariable Long id) throws ServiceException {
-        if (giftCertificateService.find(id) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        giftCertificate.setId(id);
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.update(giftCertificate));
+    @PatchMapping("{id}")
+    public ResponseEntity<Object> updateCertificate(@PathVariable Long id, @RequestBody GiftCertificate giftCertificate) throws ServiceException {
+        return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>>  sortedGiftCertificatesWithTags(@RequestParam(value = "sort", required = false ) String sort,
-                                                                                            @RequestParam(value = "order") String order) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> sortedGiftCertificatesWithTags(@RequestParam(value = "sort", required = false) String sort,
+                                                                                           @RequestParam(value = "order") String order) throws ServiceException {
         return ResponseEntity.ok().body(giftCertificateService.getFilteredGiftCertificates(sort, order));
     }
 

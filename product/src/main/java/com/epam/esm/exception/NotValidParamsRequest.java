@@ -1,4 +1,4 @@
-package exception;
+package com.epam.esm.exception;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

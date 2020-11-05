@@ -5,15 +5,14 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
-import com.epam.esm.repository.impl.GiftCertificateRepositoryImpl;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
-import exception.GiftCertificateNotFoundException;
-import exception.NotValidParamsRequest;
-import exception.RepositoryException;
-import exception.ServiceException;
+import com.epam.esm.exception.GiftCertificateNotFoundException;
+import com.epam.esm.exception.NotValidParamsRequest;
+import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.exception.ServiceException;
+import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.service.GiftCertificateService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,6 +23,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -34,18 +34,22 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ContextConfiguration(classes = {ProductSpringConfiguration.class})
+@WebAppConfiguration
 class GiftCertificateServiceImplTest {
     private List<GiftCertificate> certificateList;
     private GiftCertificate certificate1;
     private GiftCertificate certificate2;
     private GiftCertificateDTO giftCertificateDTO;
 
-    @Autowired
-    @InjectMocks
-    private GiftCertificateServiceImpl giftCertificateService;
+
 
     @Mock
-    private GiftCertificateRepositoryImpl giftCertificateRepository;
+    private GiftCertificateRepository giftCertificateRepository;
+
+    @Autowired
+    @InjectMocks
+    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateRepository);
+
 
 
     @BeforeEach
@@ -80,7 +84,7 @@ class GiftCertificateServiceImplTest {
     }
     @Test
     void find_whenGiftCertificatesExisted_thenReturnCertificate() throws RepositoryException, ServiceException {
-        Mockito.when(giftCertificateRepository.findGiftCertificateById(1L)).thenReturn(certificate1);
+        Mockito.when(giftCertificateRepository.findById(1L)).thenReturn(certificate1);
         GiftCertificateDTO expected = GiftCertificateDTO.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.find(1L);
         Assertions.assertNotNull(actual, "GiftCertificate should not found");
@@ -89,13 +93,13 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void find_whenGiftCertificateNotFound_thenCertificateNotFoundException() throws RepositoryException {
-        Mockito.when(giftCertificateRepository.findGiftCertificateById(0L)).thenThrow(GiftCertificateNotFoundException.class);
+        Mockito.when(giftCertificateRepository.findById(0L)).thenThrow(GiftCertificateNotFoundException.class);
         Assertions.assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.find(0L));
     }
     @Test
     void findAll() throws RepositoryException, ServiceException {
         List<GiftCertificateDTO> expected = new ArrayList<>();
-        Mockito.when(giftCertificateRepository.findAllGiftCertificates()).thenReturn(certificateList);
+        Mockito.when(giftCertificateRepository.findAll()).thenReturn(certificateList);
         certificateList.forEach(giftCertificate -> expected.add(GiftCertificateDTO.convertToGiftCertificateDTO(giftCertificate)));
         List<GiftCertificateDTO> actual = giftCertificateService.findAll();
         Assertions.assertIterableEquals(expected, actual);
@@ -109,7 +113,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void createGiftCertificate_whenCeftificateIsCreated_returnGiftCertificate() throws ServiceException, RepositoryException {
-        Mockito.when(giftCertificateRepository.createGiftCertificate(certificate1)).thenReturn(certificate1);
+        Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(certificate1);
         GiftCertificateDTO expected = GiftCertificateDTO.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.create(certificate1);
         Assertions.assertEquals(expected.getId(), actual.getId());

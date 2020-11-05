@@ -12,13 +12,18 @@ sourceCompatibility = 1.8
 configurations {
     providedCompile
 }
-
+apply plugin: 'war'
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    def jacksonVersion = '2.11.2'
     compileOnly 'org.projectlombok:lombok:1.18.16'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "${jacksonVersion}"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }

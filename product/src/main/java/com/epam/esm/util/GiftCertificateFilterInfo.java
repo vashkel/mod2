@@ -14,6 +14,7 @@ public enum GiftCertificateFilterInfo {
                 return null;
         }
     }
+
     public static GiftCertificateFilterInfo checkOrderParams(String input) {
 
         switch (input.toUpperCase()) {

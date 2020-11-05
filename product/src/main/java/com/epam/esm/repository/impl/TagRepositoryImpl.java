@@ -4,10 +4,13 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.TagRepository;
-import exception.RepositoryException;
+import com.epam.esm.exception.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -16,18 +19,18 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
+@PropertySource("classpath:sql_query_tag.properties")
 public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     private SimpleJdbcInsert tagInserter;
+    private Environment environment;
 
-    private final String SQL_DELETE_TAG = "DELETE FROM tag WHERE id=?";
-    private final String SQL_FIND_TAG = "SELECT id, name FROM tag WHERE id=?";
-    private final String SQL_FIND_TAG_BY_NAME = "SELECT id, name FROM tag WHERE name=?";
-    private final String SQL_FIND_ALL_TAGS = "SELECT id, name FROM tag";
     @Autowired
-    public TagRepositoryImpl() {
-        tagInserter = new SimpleJdbcInsert(jdbcTemplate)
+    public TagRepositoryImpl(JdbcTemplate jdbcTemplate, Environment environment) {
+        super(jdbcTemplate);
+        this.tagInserter = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("tag").usingColumns("name").usingGeneratedKeyColumns("id");
+        this.environment = environment;
     }
 
     @Override
@@ -48,7 +51,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public boolean delete(Long tagId) throws RepositoryException {
         try {
-            return jdbcTemplate.update(SQL_DELETE_TAG, tagId) == 1;
+            return getJdbcTemplate().update(environment.getProperty("SQL_DELETE_TAG"), tagId) == 1;
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while delete tag");
         }
@@ -57,7 +60,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public Tag find(Long id) throws RepositoryException {
         try {
-            return jdbcTemplate.queryForObject(SQL_FIND_TAG, new TagMapper(), id);
+            return getJdbcTemplate().queryForObject(environment.getProperty("SQL_FIND_TAG"), new TagMapper(), id);
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -68,7 +71,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public Tag findByName(String tagName) throws RepositoryException {
         try {
-            return jdbcTemplate.queryForObject(SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName);
+            return getJdbcTemplate().queryForObject(environment.getProperty("SQL_FIND_TAG_BY_NAME"), new TagMapper(), tagName);
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {
@@ -79,7 +82,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public List<Tag> findAll() throws RepositoryException {
         try {
-            return jdbcTemplate.query(SQL_FIND_ALL_TAGS, new TagMapper());
+            return getJdbcTemplate().query(environment.getProperty("SQL_FIND_ALL_TAGS"), new TagMapper());
         } catch (EmptyResultDataAccessException e) {
             return null;
         } catch (DataAccessException e) {

@@ -2,6 +2,7 @@ package com.epam.esm.entityDTO.giftcertificate;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entityDTO.tag.TagDTO;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class GiftCertificateWithTagsDTO implements Serializable {
     private String name;
     private String Description;
     private Double price;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateTime;
     private Duration duration;

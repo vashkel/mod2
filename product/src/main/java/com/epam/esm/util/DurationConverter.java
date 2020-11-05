@@ -10,13 +10,13 @@ import java.time.temporal.ChronoUnit;
 @Configuration
 @Converter(autoApply = true)
 public class DurationConverter implements AttributeConverter<Duration, Long> {
-        @Override
-        public Long convertToDatabaseColumn(Duration attribute) {
-                return attribute.toMillis();
-        }
+    @Override
+    public Long convertToDatabaseColumn(Duration attribute) {
+        return attribute.toMillis();
+    }
 
-        @Override
-        public Duration convertToEntityAttribute(Long duration) {
-                return Duration.of(duration, ChronoUnit.MILLIS);
-        }
+    @Override
+    public Duration convertToEntityAttribute(Long duration) {
+        return Duration.of(duration, ChronoUnit.MILLIS);
+    }
 }

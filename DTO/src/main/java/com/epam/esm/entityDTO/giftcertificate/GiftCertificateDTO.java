@@ -1,6 +1,10 @@
 package com.epam.esm.entityDTO.giftcertificate;
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.util.LocalDateTimeDeserializer;
+import com.epam.esm.util.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -13,6 +17,8 @@ public class GiftCertificateDTO implements Serializable {
     private String name;
     private String Description;
     private Double price;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateTime;
     private Duration duration;

@@ -3,13 +3,12 @@ package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.mapper.GiftCertificateMapper;
-import com.epam.esm.mapper.GiftCertificateWIthTagsMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.util.DurationConverter;
-import com.epam.esm.exception.RepositoryException;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +16,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     private Long saveGiftCertificateInfo(GiftCertificate giftCertificate) {
         DurationConverter converter = new DurationConverter();
         Map<String, Object> values = new HashMap<>();
-        values.put("name", giftCertificate.getName());
+        values.put("name", giftCertificate.getLastUpdateTime());
         values.put("description", giftCertificate.getDescription());
         values.put("price", giftCertificate.getPrice());
         values.put("create_date", giftCertificate.getCreateDate());

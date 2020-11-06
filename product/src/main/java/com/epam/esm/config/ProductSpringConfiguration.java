@@ -1,6 +1,8 @@
 package com.epam.esm.config;
 
 
+import com.epam.esm.util.DurationDeserializer;
+import com.epam.esm.util.DurationSerializer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -19,12 +21,14 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -57,6 +61,11 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    public DataSourceTransactionManager transactionManager (DataSource dataSource){
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
         jdbcTemplate.setDataSource(dataSource);
@@ -69,10 +78,9 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         LocalDateTimeDeserializer localDateTimeDeserializer = new
                 LocalDateTimeDeserializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         module.addDeserializer(LocalDateTime.class, localDateTimeDeserializer);
-        ObjectMapper objectMapperObj = Jackson2ObjectMapperBuilder.json()
+        return Jackson2ObjectMapperBuilder.json()
                 .modules(module)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .build();
-        return objectMapperObj;
     }
 }

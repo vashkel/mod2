@@ -2,7 +2,13 @@ package com.epam.esm.entityDTO.giftcertificate;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entityDTO.tag.TagDTO;
+import com.epam.esm.util.DurationDeserializer;
+import com.epam.esm.util.DurationSerializer;
+import com.epam.esm.util.LocalDateTimeDeserializer;
+import com.epam.esm.util.LocalDateTimeSerializer;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -19,9 +25,14 @@ public class GiftCertificateWithTagsDTO implements Serializable {
     private String name;
     private String Description;
     private Double price;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDate;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime lastUpdateTime;
+    @JsonDeserialize(using = DurationDeserializer.class)
+    @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
     private List<TagDTO> tagsDTO = new ArrayList<>();
 

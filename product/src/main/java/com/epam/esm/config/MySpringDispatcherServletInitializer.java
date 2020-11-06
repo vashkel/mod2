@@ -12,7 +12,6 @@ import javax.servlet.ServletException;
 public class MySpringDispatcherServletInitializer extends
         AbstractAnnotationConfigDispatcherServletInitializer {
 
-
     @Override
     protected Class<?>[] getRootConfigClasses() {
         return null;

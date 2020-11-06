@@ -14,12 +14,15 @@ import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 @Service
+@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
@@ -61,6 +64,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDTOList;
     }
 
+    @Transactional(propagation= Propagation.REQUIRED)
     @Override
     public GiftCertificateDTO create(GiftCertificate giftCertificate) throws ServiceException {
         giftCertificate.setCreateDate(LocalDateTime.now());

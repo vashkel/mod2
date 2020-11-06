@@ -11,12 +11,14 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeSerializer extends StdSerializer<LocalDateTime> {
     private static final long serialVersionUID = 1L;
 
+    private final String LOCALDATETIMEPATTERT = "yyyy-MM-dd HH:mm:ss";
+
     public LocalDateTimeSerializer(){
         super(LocalDateTime.class);
     }
 
     @Override
     public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider sp) throws IOException, JsonProcessingException {
-        gen.writeString(value.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        gen.writeString(value.format(DateTimeFormatter.ofPattern(LOCALDATETIMEPATTERT)));
     }
 }

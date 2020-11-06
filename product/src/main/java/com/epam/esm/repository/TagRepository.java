@@ -46,4 +46,11 @@ public interface TagRepository {
      */
     List<Tag> findAll() throws RepositoryException;
 
+     /**
+      * This method is used to return the list of tags by certificate id
+      *
+      * @return List of all tags or empty List if
+      * no certificates were found
+      */
+     List<Tag> findAllTagsByCertificateId(Long id) throws RepositoryException;
 }

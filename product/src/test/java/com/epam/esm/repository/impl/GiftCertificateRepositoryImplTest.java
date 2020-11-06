@@ -47,6 +47,7 @@ class GiftCertificateRepositoryImplTest {
         certificate1.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
         certificate1.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
         certificate1.setDuration(durationConverter.convertToEntityAttribute(2160000000L));
+
         certificate2 = new GiftCertificate();
         certificate2.setId(2L);
         certificate2.setName("cinema");
@@ -66,27 +67,6 @@ class GiftCertificateRepositoryImplTest {
         certificate1WithTags.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
         certificate1WithTags.setDuration(durationConverter.convertToEntityAttribute(2160000000L));
         certificate1WithTags.setTags(Arrays.asList(new Tag(1L, "vip")));
-
-        certificate2WithTag1 = new GiftCertificate();
-        certificate2WithTag1.setId(2L);
-        certificate2WithTag1.setName("cinema");
-        certificate2WithTag1.setDescription("comedy");
-        certificate2WithTag1.setPrice(15.5);
-        certificate2WithTag1.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate2WithTag1.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate2WithTag1.setDuration(durationConverter.convertToEntityAttribute(1900800000L));
-        certificate2WithTag1.setTags(Arrays.asList(new Tag(1L, "vip")));
-
-        certificate2WithTag2 = new GiftCertificate();
-        certificate2WithTag2.setId(2L);
-        certificate2WithTag2.setName("cinema");
-        certificate2WithTag2.setDescription("comedy");
-        certificate2WithTag2.setPrice(15.5);
-        certificate2WithTag2.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate2WithTag2.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate2WithTag2.setDuration(durationConverter.convertToEntityAttribute(1900800000L));
-        certificate2WithTag2.setTags(Arrays.asList(new Tag(1L, "vip"), new Tag(2L, "family")));
-        certificateWithTagsList = Arrays.asList(certificate1WithTags, certificate2WithTag1, certificate2WithTag2);
     }
 
     @Test
@@ -115,13 +95,18 @@ class GiftCertificateRepositoryImplTest {
     }
 
     @Test
-    void findGiftCertificatesByTagName() throws RepositoryException {
+    void findGiftCertificatesByTagName_whenCertificatesIsFounded_thenReturnListOfCertificates() throws RepositoryException {
         Assertions.assertEquals(2, giftCertificateRepository.findGiftCertificatesByTagName("family").size());
     }
 
     @Test
-    void findGiftCertificateByPartName() throws RepositoryException {
-        Assertions.assertEquals(2, giftCertificateRepository.findGiftCertificateByPartName("ci").size());
+    void findGiftCertificateByPartName_whenCertificatesIsFounded_thenReturnListOfCertificates() throws RepositoryException {
+        Assertions.assertEquals(1, giftCertificateRepository.findGiftCertificateByPartName("ci").size());
+    }
+
+    @Test
+    void getSortedGiftCertificates_whenCertificatesSortedByNameOrderASC_thenReturnSortedList() throws RepositoryException {
+        Assertions.assertIterableEquals(Arrays.asList(certificate2, certificate1), giftCertificateRepository.getSortedGiftCertificates("name", "asc"));
     }
 
 }

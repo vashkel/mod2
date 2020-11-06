@@ -89,4 +89,15 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
             throw new RepositoryException("Exception while find all tags");
         }
     }
+
+    @Override
+    public List<Tag> findAllTagsByCertificateId(Long id) throws RepositoryException {
+        try {
+            return getJdbcTemplate().query(environment.getProperty("SQL_FIND_ALL_TAGS_BY_CERTIFICATE_ID"), new TagMapper(), id);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        } catch (DataAccessException e) {
+            throw new RepositoryException("Exception while find all tags");
+        }
+    }
 }

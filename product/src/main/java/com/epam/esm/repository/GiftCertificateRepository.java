@@ -74,6 +74,6 @@ public interface GiftCertificateRepository {
      * @return List of sorted certificates, or unsorted List if received orderBy
      * does not exist(or null) or received certificates is null
      */
-    List<GiftCertificate> getFilteredGiftCertificates(String sortBy, String orderBy) throws RepositoryException;
+    List<GiftCertificate> getSortedGiftCertificates(String sortBy, String orderBy) throws RepositoryException;
 
 }

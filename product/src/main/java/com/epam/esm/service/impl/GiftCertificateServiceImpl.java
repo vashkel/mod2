@@ -1,9 +1,11 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Tag;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.util.GiftCertificateFilterInfo;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
@@ -22,12 +24,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
     private GiftCertificateRepository giftCertificateRepository;
-
+    private TagRepository tagRepository;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository) {
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository) {
         this.giftCertificateRepository = giftCertificateRepository;
 
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -75,7 +78,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         try {
             GiftCertificate createdCertificate = giftCertificateRepository.findById(id);
             if (createdCertificate == null) {
-                throw new GiftCertificateNotFoundException("certificate not found");
+                throw new GiftCertificateNotFoundException("gift certificate not found");
             }
             return giftCertificateRepository.delete(id);
         } catch (RepositoryException e) {
@@ -100,15 +103,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateWithTagsDTO> findCertificatesByTagName(String tagName) throws ServiceException {
-        List<GiftCertificateWithTagsDTO> giftCertificateWithTagsDTOList = new ArrayList<>();
         try {
             List<GiftCertificate> giftCertificates = giftCertificateRepository.findGiftCertificatesByTagName(tagName);
-            if (giftCertificates.isEmpty()) {
-                throw new GiftCertificateNotFoundException("gift Certificate not found");
-            }
-            giftCertificateRepository.findGiftCertificatesByTagName(tagName).forEach(giftCertificate ->
-                    giftCertificateWithTagsDTOList.add(GiftCertificateWithTagsDTO.convertToGiftCertificateWithTagsDTO(giftCertificate)));
-            return giftCertificateWithTagsDTOList;
+            return checkCertificateListAndFillWithTags(giftCertificates);
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown find gift certificate by name of tag : ", e);
         }
@@ -116,35 +113,41 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateWithTagsDTO> findGiftCertificateByPartName(String partName) throws ServiceException {
-        List<GiftCertificateWithTagsDTO> giftCertificateWithTagsDTOS = new ArrayList<>();
         try {
             List<GiftCertificate> giftCertificates = giftCertificateRepository.findGiftCertificateByPartName(partName);
-            if (giftCertificates.isEmpty()) {
-                throw new GiftCertificateNotFoundException("gift Certificate not found");
-            }
-            giftCertificateRepository.findGiftCertificateByPartName(partName).forEach(giftCertificate ->
-                    giftCertificateWithTagsDTOS.add(GiftCertificateWithTagsDTO.convertToGiftCertificateWithTagsDTO(giftCertificate)));
+            return checkCertificateListAndFillWithTags(giftCertificates);
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown find gift certificate by part of name of tag : ", e);
         }
-        return giftCertificateWithTagsDTOS;
     }
 
+    private List<GiftCertificateWithTagsDTO> checkCertificateListAndFillWithTags(List<GiftCertificate> giftCertificates) throws RepositoryException {
+        List<GiftCertificateWithTagsDTO> giftCertificateWithTagsDTOS = new ArrayList<>();
+        if (giftCertificates.isEmpty()) {
+            throw new GiftCertificateNotFoundException("gift Certificate not found");
+        }
+        for (GiftCertificate giftCertificate : giftCertificates) {
+            List<Tag> tags = tagRepository.findAllTagsByCertificateId(giftCertificate.getId());
+            for (Tag tag : tags) {
+                giftCertificate.addTag(tag);
+            }
+            giftCertificateWithTagsDTOS.add(GiftCertificateWithTagsDTO.convertToGiftCertificateWithTagsDTO(giftCertificate));
+        }
+        return giftCertificateWithTagsDTOS;
+    }
     @Override
     public List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException {
-        List<GiftCertificateWithTagsDTO> giftCertificateWithTagsDTOS = new ArrayList<>();
         GiftCertificateFilterInfo correctSortParam = GiftCertificateFilterInfo.checkSortParams(sortBy);
         GiftCertificateFilterInfo correctOrderParam = GiftCertificateFilterInfo.checkOrderParams(orderBy);
         if (correctSortParam == null && correctOrderParam == null) {
             throw new NotValidParamsRequest();
         }
         try {
-            giftCertificateRepository.getFilteredGiftCertificates(sortBy, orderBy)
-                    .forEach(giftCertificate -> giftCertificateWithTagsDTOS.add(GiftCertificateWithTagsDTO.convertToGiftCertificateWithTagsDTO(giftCertificate)));
+            List<GiftCertificate> giftCertificates = giftCertificateRepository.getSortedGiftCertificates(sortBy, orderBy);
+            return checkCertificateListAndFillWithTags(giftCertificates);
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown get filtered gift certificates : ", e);
         }
-        return giftCertificateWithTagsDTOS;
     }
 
 }

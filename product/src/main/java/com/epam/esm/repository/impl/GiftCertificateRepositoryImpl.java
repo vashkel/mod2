@@ -118,7 +118,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException {
         try {
-            return getJdbcTemplate().query(environment.getProperty("SQL_FIND_CERTIFICATES_BY_TAG"), new GiftCertificateWIthTagsMapper(), tag);
+            return getJdbcTemplate().query(environment.getProperty("SQL_FIND_CERTIFICATES_BY_TAG"), new GiftCertificateMapper(), tag);
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find gift certificate by name of tag");
         }
@@ -127,14 +127,14 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException {
         try {
-            return getJdbcTemplate().query(environment.getProperty("SQL_FIND_CERTIFICATES_BY_PART_NAME"), new GiftCertificateWIthTagsMapper(), partName + "%");
+         return getJdbcTemplate().query(environment.getProperty("SQL_FIND_CERTIFICATES_BY_PART_NAME"), new GiftCertificateMapper(), partName + "%");
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find gift certificate by part of name ");
         }
     }
 
     @Override
-    public List<GiftCertificate> getFilteredGiftCertificates(String sortBy, String order) throws RepositoryException {
+    public List<GiftCertificate> getSortedGiftCertificates(String sortBy, String order) throws RepositoryException {
         String query = environment.getProperty("SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS");
         if (sortBy != null) {
             query += "ORDER BY c." + sortBy;
@@ -143,7 +143,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
             query += " " + order;
         }
         try {
-            return getJdbcTemplate().query(query, new GiftCertificateWIthTagsMapper());
+            return getJdbcTemplate().query(query, new GiftCertificateMapper());
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while getting are filtered gift certificates ");
         }

@@ -10,6 +10,7 @@ import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,10 +46,12 @@ class GiftCertificateServiceImplTest {
 
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
+    @Mock
+    TagRepository tagRepository;
 
     @Autowired
     @InjectMocks
-    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateRepository);
+    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateRepository, tagRepository);
 
 
 
@@ -112,7 +115,7 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void createGiftCertificate_whenCeftificateIsCreated_returnGiftCertificate() throws ServiceException, RepositoryException {
+    void createGiftCertificate_whenCertificateIsCreated_returnGiftCertificate() throws ServiceException, RepositoryException {
         Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(certificate1);
         GiftCertificateDTO expected = GiftCertificateDTO.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.create(certificate1);
@@ -122,7 +125,7 @@ class GiftCertificateServiceImplTest {
     @Test
     void getFilteredGiftCertificates_whenGiftCertificatesNotNullAndSortByNameDesc_thenReturnList() throws RepositoryException, ServiceException {
         List<GiftCertificate> returnedCertificates = Arrays.asList(certificate2, certificate1);
-        Mockito.when(giftCertificateRepository.getFilteredGiftCertificates("name", "desc")).thenReturn(returnedCertificates);
+        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("name", "desc")).thenReturn(returnedCertificates);
         List<GiftCertificateWithTagsDTO> expectedCertificates = new ArrayList<>();
         for (GiftCertificate giftCertificate : returnedCertificates){
             expectedCertificates.add(GiftCertificateWithTagsDTO.
@@ -134,7 +137,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void getFilteredGiftCertificates_whenNotHaveParameters_thenReturnNotFoundException() throws RepositoryException {
-        Mockito.when(giftCertificateRepository.getFilteredGiftCertificates("", "")).thenThrow(NotValidParamsRequest.class);
+        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("", "")).thenThrow(NotValidParamsRequest.class);
         Assertions.assertThrows(NotValidParamsRequest.class, () -> giftCertificateService.getFilteredGiftCertificates("", ""));
     }
 

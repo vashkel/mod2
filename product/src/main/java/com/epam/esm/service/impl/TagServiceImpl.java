@@ -1,12 +1,13 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entityDTO.tag.TagDTO;
+import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.exception.TagNotFoundException;
+import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,7 +55,7 @@ public class TagServiceImpl implements TagService {
             if (tag == null) {
                 throw new TagNotFoundException(id, "Tag not found");
             }
-            return TagDTO.converterToTagDTO(tag);
+            return TagDTOConverter.converterToTagDTO(tag);
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown while find tag : ", e);
         }
@@ -69,7 +70,7 @@ public class TagServiceImpl implements TagService {
             if (tags.isEmpty()) {
                 throw new TagNotFoundException("Tag not found");
             }
-            tags.forEach(tag -> tagDTOList.add(TagDTO.converterToTagDTO(tag)));
+            tags.forEach(tag -> tagDTOList.add(TagDTOConverter.converterToTagDTO(tag)));
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown while create tag : ", e);
         }

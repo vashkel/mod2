@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class DurationSerializer extends StdSerializer<Duration> {
 

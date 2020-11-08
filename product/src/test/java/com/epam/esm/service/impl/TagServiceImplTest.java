@@ -2,11 +2,12 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entityDTO.tag.TagDTO;
+import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.exception.TagNotFoundException;
+import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,7 +67,7 @@ class TagServiceImplTest {
     @Test
     void find_whenTagExisted_thenReturnTag() throws RepositoryException, ServiceException {
         Mockito.when(tagRepository.find(1L)).thenReturn(tag1);
-        TagDTO expected = TagDTO.converterToTagDTO(tag1);
+        TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
         TagDTO actual = tagService.findById(1L);
 
         Assertions.assertNotNull(actual, "Tag should not be found");
@@ -77,7 +78,7 @@ class TagServiceImplTest {
     void findAll() throws RepositoryException, ServiceException {
         List<TagDTO> expected = new ArrayList<>();
         Mockito.when(tagRepository.findAll()).thenReturn(tagList);
-        tagList.forEach(tag -> expected.add(TagDTO.converterToTagDTO(tag)));
+        tagList.forEach(tag -> expected.add(TagDTOConverter.converterToTagDTO(tag)));
         List<TagDTO> actual = tagService.findAll();
         Assertions.assertIterableEquals(actual, expected);
 

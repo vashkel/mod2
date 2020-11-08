@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entityDTO.tag.TagDTO;
+import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.service.impl.TagServiceImpl;
 import com.epam.esm.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;

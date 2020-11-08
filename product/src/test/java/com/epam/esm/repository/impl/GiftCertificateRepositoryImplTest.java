@@ -27,10 +27,6 @@ class GiftCertificateRepositoryImplTest {
     private GiftCertificate certificate1;
     private GiftCertificate certificate2;
     private GiftCertificate certificate1WithTags;
-    private GiftCertificate certificate2WithTag1;
-    private GiftCertificate certificate2WithTag2;
-    private List<GiftCertificate> certificateWithTagsList;
-
 
     @Autowired
     GiftCertificateRepository giftCertificateRepository;

@@ -3,7 +3,7 @@ package com.epam.esm.util;
 public enum GiftCertificateFilterInfo {
     NAME, DATE, ASC, DESC;
 
-    public static GiftCertificateFilterInfo checkSortParams(String input) {
+    public static GiftCertificateFilterInfo getSortParams(String input) {
 
         switch (input.toUpperCase()) {
             case "NAME":
@@ -15,7 +15,7 @@ public enum GiftCertificateFilterInfo {
         }
     }
 
-    public static GiftCertificateFilterInfo checkOrderParams(String input) {
+    public static GiftCertificateFilterInfo getOrderParams(String input) {
 
         switch (input.toUpperCase()) {
             case "ASC":

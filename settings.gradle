@@ -1,14 +1,4 @@
 rootProject.name = 'giftCertificateModule2'
 include 'product'
 include 'DTO'
-//def subprojects = [
-//        ':interface' : [name: "DTO", path: "interface/DTO"],
-//        ':product'   : [name: "product", path:  "product"]]
-//
-//subprojects.each() { key, value ->
-//    include key
-//    def prj = project(key)
-//    prj.name = value.name
-//    prj.buildFileName = rootProject.buildFileName
-//    prj.projectDir = file("$settingsDir/$value.path")
-//}
+

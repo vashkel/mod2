@@ -2,19 +2,20 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
-import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.repository.TagRepository;
-import com.epam.esm.util.GiftCertificateFilterInfo;
-import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
 import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.repository.GiftCertificateRepository;
+import com.epam.esm.repository.TagRepository;
+import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
+import com.epam.esm.util.DTOConverter.certificate.GiftCertificateWithTagsDTOConverter;
+import com.epam.esm.util.GiftCertificateFilterInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
@@ -22,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 @Service
-@Transactional(propagation=Propagation.SUPPORTS,readOnly=true)
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
@@ -32,7 +32,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository) {
         this.giftCertificateRepository = giftCertificateRepository;
-
         this.tagRepository = tagRepository;
     }
 
@@ -43,7 +42,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             if (giftCertificate == null) {
                 throw new GiftCertificateNotFoundException("certificate not found");
             }
-            return GiftCertificateDTO.convertToGiftCertificateDTO(giftCertificateRepository.findById(id));
+            return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.findById(id));
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown during find gift certificate : ", e);
         }
@@ -57,21 +56,26 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             if (giftCertificates.isEmpty()) {
                 throw new GiftCertificateNotFoundException("gift Certificate not found");
             }
-            giftCertificates.forEach(giftCertificate -> giftCertificateDTOList.add(GiftCertificateDTO.convertToGiftCertificateDTO(giftCertificate)));
+            giftCertificates.forEach(giftCertificate -> giftCertificateDTOList.add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate)));
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown during find all gift certificates : ", e);
         }
         return giftCertificateDTOList;
     }
 
-    @Transactional(propagation= Propagation.REQUIRED)
+
     @Override
+    @Transactional
     public GiftCertificateDTO create(GiftCertificate giftCertificate) throws ServiceException {
         giftCertificate.setCreateDate(LocalDateTime.now());
         giftCertificate.setLastUpdateTime(LocalDateTime.now());
         giftCertificate.setDuration(Duration.ofDays(30));
         try {
-            return GiftCertificateDTO.convertToGiftCertificateDTO(giftCertificateRepository.create(giftCertificate));
+            for (Tag insertedTag : giftCertificate.getTags()) {
+                long tagID = tagRepository.create(insertedTag);
+                insertedTag.setId(tagID);
+            }
+            return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.create(giftCertificate));
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown create gift certificate : ", e);
         }
@@ -94,7 +98,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public boolean update(GiftCertificate giftCertificate, Long id) throws ServiceException {
         try {
             GiftCertificate certificate = giftCertificateRepository.findById(id);
-            if (certificate != null) {
+            if (certificate == null) {
                 throw new GiftCertificateNotFoundException("gift certification not found");
             }
             giftCertificate.setId(id);
@@ -135,14 +139,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             for (Tag tag : tags) {
                 giftCertificate.addTag(tag);
             }
-            giftCertificateWithTagsDTOS.add(GiftCertificateWithTagsDTO.convertToGiftCertificateWithTagsDTO(giftCertificate));
+            giftCertificateWithTagsDTOS.add(GiftCertificateWithTagsDTOConverter.convertToGiftCertificateWithTagsDTO(giftCertificate));
         }
         return giftCertificateWithTagsDTOS;
     }
     @Override
     public List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException {
-        GiftCertificateFilterInfo correctSortParam = GiftCertificateFilterInfo.checkSortParams(sortBy);
-        GiftCertificateFilterInfo correctOrderParam = GiftCertificateFilterInfo.checkOrderParams(orderBy);
+        GiftCertificateFilterInfo correctSortParam = GiftCertificateFilterInfo.getSortParams(sortBy);
+        GiftCertificateFilterInfo correctOrderParam = GiftCertificateFilterInfo.getOrderParams(orderBy);
         if (correctSortParam == null && correctOrderParam == null) {
             throw new NotValidParamsRequest();
         }

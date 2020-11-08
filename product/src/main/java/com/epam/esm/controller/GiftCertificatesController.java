@@ -1,8 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
-import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class GiftCertificatesController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Object> updateCertificate(@PathVariable Long id, @RequestBody GiftCertificate giftCertificate) throws ServiceException {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
     }
@@ -67,6 +67,5 @@ public class GiftCertificatesController {
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable(name = "part-name") String partName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
-
 
 }

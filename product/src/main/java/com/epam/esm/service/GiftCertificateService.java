@@ -2,8 +2,8 @@ package com.epam.esm.service;
 
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entityDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.entityDTO.giftcertificate.GiftCertificateWithTagsDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.exception.ServiceException;
 
 import java.util.List;

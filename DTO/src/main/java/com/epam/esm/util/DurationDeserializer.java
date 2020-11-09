@@ -15,7 +15,7 @@ public class DurationDeserializer extends StdDeserializer<Duration> {
     }
 
     @Override
-    public Duration deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Duration deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return Duration.ofDays(p.getLongValue());
     }
 }

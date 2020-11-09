@@ -1,27 +1,25 @@
 package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.Tag;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.TagRepository;
-import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.util.query.TagConstantQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
-@PropertySource("classpath:sql_query_tag.properties")
 public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     private SimpleJdbcInsert tagInserter;
@@ -36,9 +34,9 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public long create(Tag tag) throws RepositoryException {
         try {
-            Tag isCreated = findByName(tag.getName());
-            if (isCreated != null) {
-                return isCreated.getId();
+            Optional<Tag> isCreated = findByName(tag.getName());
+            if (isCreated.isPresent()) {
+                return isCreated.get().getId();
             }
             Map<String, Object> values = new HashMap<>();
             values.put("name", tag.getName());
@@ -58,22 +56,22 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     }
 
     @Override
-    public Tag find(Long id) throws RepositoryException {
+    public Optional<Tag> find(Long id) throws RepositoryException {
         try {
-            return getJdbcTemplate().queryForObject(TagConstantQuery.SQL_FIND_TAG, new TagMapper(), id);
+            return Optional.ofNullable(getJdbcTemplate().queryForObject(TagConstantQuery.SQL_FIND_TAG, new TagMapper(), id));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find tag by id");
         }
     }
 
     @Override
-    public Tag findByName(String tagName) throws RepositoryException {
+    public Optional<Tag> findByName(String tagName) throws RepositoryException {
         try {
-            return getJdbcTemplate().queryForObject(TagConstantQuery.SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName);
+            return Optional.ofNullable(getJdbcTemplate().queryForObject(TagConstantQuery.SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while find tag by name");
         }

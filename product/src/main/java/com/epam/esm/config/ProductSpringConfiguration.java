@@ -33,7 +33,6 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
     private Environment environment;
     private ApplicationContext applicationContext;
 
-
     @Autowired
     public ProductSpringConfiguration(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -63,14 +62,19 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public PlatformTransactionManager txManager() {
+    @Profile("dev")
+    public JdbcTemplate testJdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+
+    @Bean
+    public PlatformTransactionManager transactionManager() {
         return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-        jdbcTemplate.setDataSource(dataSource);
         return new JdbcTemplate(dataSource);
     }
 

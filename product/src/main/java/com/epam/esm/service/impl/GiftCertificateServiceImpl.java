@@ -2,12 +2,12 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
 import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
@@ -16,33 +16,39 @@ import com.epam.esm.util.DTOConverter.certificate.GiftCertificateWithTagsDTOConv
 import com.epam.esm.util.GiftCertificateFilterInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
-
     private GiftCertificateRepository giftCertificateRepository;
     private TagRepository tagRepository;
+    private PlatformTransactionManager txManager;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository) {
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository, PlatformTransactionManager txManager) {
         this.giftCertificateRepository = giftCertificateRepository;
         this.tagRepository = tagRepository;
+        this.txManager = txManager;
     }
 
     @Override
     public GiftCertificateDTO find(Long id) throws ServiceException {
         try {
-            GiftCertificate giftCertificate = giftCertificateRepository.findById(id);
-            if (giftCertificate == null) {
+            Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
+            if (!giftCertificate.isPresent()) {
                 throw new GiftCertificateNotFoundException("certificate not found");
             }
-            return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.findById(id));
+            return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.findById(id).get());
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown during find gift certificate : ", e);
         }
@@ -63,10 +69,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDTOList;
     }
 
-
     @Override
-    @Transactional
     public GiftCertificateDTO create(GiftCertificate giftCertificate) throws ServiceException {
+        DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+        def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+        TransactionStatus status = txManager.getTransaction(def);
         giftCertificate.setCreateDate(LocalDateTime.now());
         giftCertificate.setLastUpdateTime(LocalDateTime.now());
         giftCertificate.setDuration(Duration.ofDays(30));
@@ -75,8 +82,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 long tagID = tagRepository.create(insertedTag);
                 insertedTag.setId(tagID);
             }
-            return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.create(giftCertificate));
+            GiftCertificateDTO giftCertificateDTO = GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.create(giftCertificate).get());
+            txManager.commit(status);
+            return giftCertificateDTO;
         } catch (RepositoryException e) {
+            txManager.rollback(status);
             throw new ServiceException("An exception was thrown create gift certificate : ", e);
         }
     }
@@ -84,8 +94,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public boolean deleteById(Long id) throws ServiceException {
         try {
-            GiftCertificate createdCertificate = giftCertificateRepository.findById(id);
-            if (createdCertificate == null) {
+            Optional<GiftCertificate> createdCertificate = giftCertificateRepository.findById(id);
+            if (!createdCertificate.isPresent()) {
                 throw new GiftCertificateNotFoundException("gift certificate not found");
             }
             return giftCertificateRepository.delete(id);
@@ -97,8 +107,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public boolean update(GiftCertificate giftCertificate, Long id) throws ServiceException {
         try {
-            GiftCertificate certificate = giftCertificateRepository.findById(id);
-            if (certificate == null) {
+            Optional<GiftCertificate> certificate = giftCertificateRepository.findById(id);
+            if (!certificate.isPresent()) {
                 throw new GiftCertificateNotFoundException("gift certification not found");
             }
             giftCertificate.setId(id);

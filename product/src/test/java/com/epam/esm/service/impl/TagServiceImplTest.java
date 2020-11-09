@@ -22,6 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -40,7 +41,7 @@ class TagServiceImplTest {
     private TagRepositoryImpl tagRepository;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         tag1 = new Tag();
         tag1.setId(1L);
         tag1.setName("tagName1");
@@ -53,7 +54,7 @@ class TagServiceImplTest {
     @Test
     void findTag_whenTagNotFound_thenThrowTagNotFoundException() throws RepositoryException, ServiceException {
         long tagId = 0;
-        Mockito.when(tagRepository.find(tagId)).thenReturn(null);
+        Mockito.when(tagRepository.find(tagId)).thenReturn(Optional.empty());
         Assertions.assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
     }
     @Test
@@ -66,7 +67,7 @@ class TagServiceImplTest {
 
     @Test
     void find_whenTagExisted_thenReturnTag() throws RepositoryException, ServiceException {
-        Mockito.when(tagRepository.find(1L)).thenReturn(tag1);
+        Mockito.when(tagRepository.find(1L)).thenReturn(Optional.ofNullable(tag1));
         TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
         TagDTO actual = tagService.findById(1L);
 

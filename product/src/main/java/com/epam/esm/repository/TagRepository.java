@@ -4,6 +4,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.RepositoryException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TagRepository {
     /**
@@ -26,17 +27,17 @@ public interface TagRepository {
      * This method is used to return tag by id
      *
      * @param id the id of tag to be returned
-     * @return Tag or null if tag doesnt exist
+     * @return Optional Tag or Optional null if tag doesnt exist
      */
-    Tag find(Long id) throws RepositoryException;
+    Optional<Tag> find(Long id) throws RepositoryException;
 
     /**
      * This method is used to return tag by name
      *
      * @param tagName name of tag to be returned
-     * @return tag or null if tag doesnt exist
+     * @return Optional tag or Optional null if tag doesnt exist
      */
-    Tag findByName(String tagName) throws RepositoryException;
+    Optional<Tag> findByName(String tagName) throws RepositoryException;
 
     /**
      * This method is used to return the list of tags

@@ -27,12 +27,14 @@ import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -47,15 +49,17 @@ class GiftCertificateServiceImplTest {
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
     @Mock
-    TagRepository tagRepository;
+    private TagRepository tagRepository;
+    @Mock
+    private PlatformTransactionManager txManager;
 
     @Autowired
     @InjectMocks
-    private GiftCertificateService giftCertificateService = new GiftCertificateServiceImpl(giftCertificateRepository, tagRepository);
-
+    private GiftCertificateService giftCertificateService =
+            new GiftCertificateServiceImpl(giftCertificateRepository, tagRepository, txManager);
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         giftCertificateDTO = new GiftCertificateDTO();
         giftCertificateDTO.setId(1L);
         giftCertificateDTO.setName("massages");
@@ -87,7 +91,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void find_whenGiftCertificatesExisted_thenReturnCertificate() throws RepositoryException, ServiceException {
-        Mockito.when(giftCertificateRepository.findById(1L)).thenReturn(certificate1);
+        Mockito.when(giftCertificateRepository.findById(1L)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.find(1L);
         Assertions.assertNotNull(actual, "GiftCertificate should not found");
@@ -117,7 +121,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void createGiftCertificate_whenCertificateIsCreated_returnGiftCertificate() throws ServiceException, RepositoryException {
-        Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(certificate1);
+        Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.create(certificate1);
         Assertions.assertEquals(expected.getId(), actual.getId());

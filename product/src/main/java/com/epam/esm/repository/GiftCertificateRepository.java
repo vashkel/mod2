@@ -4,15 +4,16 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.RepositoryException;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface GiftCertificateRepository {
     /**
      * This method is used to return certificate by id
      *
      * @param id the id of certificate to be returned
-     * @return value of find Certificate
+     * @return Optional value of find Certificate
      */
-    GiftCertificate findById(Long id) throws RepositoryException;
+    Optional<GiftCertificate> findById(Long id) throws RepositoryException;
 
     /**
      * This method is used to return the list of certificates
@@ -28,7 +29,7 @@ public interface GiftCertificateRepository {
      * @param giftCertificate the certificate to be created
      * @return the value of created certificate
      */
-    GiftCertificate create(GiftCertificate giftCertificate) throws RepositoryException;
+    Optional<GiftCertificate> create(GiftCertificate giftCertificate) throws RepositoryException;
 
     /**
      * This method is used to delete the certificate by id

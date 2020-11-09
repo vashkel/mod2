@@ -9,7 +9,9 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
 }
-
+dependencies {
+    implementation project(':product')
+}
 test {
     useJUnitPlatform()
 }

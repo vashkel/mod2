@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Sql({"classpath:drop_schema.sql", "classpath:create_schema.sql"})
 @SpringJUnitConfig(H2Config.class)
@@ -29,9 +31,9 @@ class GiftCertificateRepositoryImplTest {
     private GiftCertificate certificate1WithTags;
 
     @Autowired
-    GiftCertificateRepository giftCertificateRepository;
+    private GiftCertificateRepository giftCertificateRepository;
     @Autowired
-    DurationConverter durationConverter;
+    private DurationConverter durationConverter;
 
     @BeforeEach
     void setUp() {
@@ -66,8 +68,14 @@ class GiftCertificateRepositoryImplTest {
     }
 
     @Test
-    void findGiftCertificateById_whenCertificateExist_thenReturnCertificate() throws RepositoryException {
-        Assertions.assertEquals(certificate1, giftCertificateRepository.findById(certificate1.getId()));
+    void findById_whenCertificateExist_thenReturnCertificate() throws RepositoryException {
+        Assertions.assertEquals(Optional.of(certificate1), giftCertificateRepository.findById(certificate1.getId()));
+    }
+    
+    @Test
+    void updateCertificate_whenCertificateUpdated_thenReturnTrue() throws RepositoryException {
+        certificate2.setPrice(40.0);
+        Assertions.assertTrue(giftCertificateRepository.update(certificate2));
     }
 
     @Test
@@ -77,12 +85,12 @@ class GiftCertificateRepositoryImplTest {
 
     @Test
     void createGiftCertificate_whenCertificateCreated_returnCertificate() throws RepositoryException {
-        Assertions.assertEquals(certificate1, giftCertificateRepository.create(certificate1));
+        Assertions.assertEquals(Optional.of(certificate1), giftCertificateRepository.create(certificate1));
     }
 
     @Test
     void createGiftCertificate_whenCertificateWithTagsCreated_returnCertificateWithTag() throws RepositoryException {
-        Assertions.assertEquals(certificate1WithTags, giftCertificateRepository.create(certificate1WithTags));
+        Assertions.assertEquals(Optional.of(certificate1WithTags), giftCertificateRepository.create(certificate1WithTags));
     }
 
     @Test

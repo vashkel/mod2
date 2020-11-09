@@ -5,7 +5,7 @@ import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 
 public class GiftCertificateDTOConverter {
 
-    public static GiftCertificateDTO convertToGiftCertificateDTO(GiftCertificate giftCertificate){
+    public static GiftCertificateDTO convertToGiftCertificateDTO(GiftCertificate giftCertificate) {
         GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();
         giftCertificateDTO.setId(giftCertificate.getId());
         giftCertificateDTO.setName(giftCertificate.getName());

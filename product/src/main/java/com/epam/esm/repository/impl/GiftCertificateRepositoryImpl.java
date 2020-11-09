@@ -8,6 +8,7 @@ import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.util.DurationConverter;
 import com.epam.esm.util.query.CertificateConstantQuery;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,17 +16,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-@PropertySource("classpath:sql_query_gift_certificate.properties")
 @Repository
 public class GiftCertificateRepositoryImpl extends BaseRepository implements GiftCertificateRepository {
 
     private SimpleJdbcInsert giftCertificateInserter;
 
+    @Autowired
     public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
         this.giftCertificateInserter = new SimpleJdbcInsert(jdbcTemplate)
@@ -35,11 +36,11 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     }
 
     @Override
-    public GiftCertificate findById(Long id) throws RepositoryException {
+    public Optional<GiftCertificate> findById(Long id) throws RepositoryException {
         try {
-            return getJdbcTemplate().queryForObject(CertificateConstantQuery.SQL_FIND_GIFT_CERTIFICATE_BY_ID, new GiftCertificateMapper(), id);
+            return Optional.ofNullable(getJdbcTemplate().queryForObject(CertificateConstantQuery.SQL_FIND_GIFT_CERTIFICATE_BY_ID, new GiftCertificateMapper(), id));
         } catch (EmptyResultDataAccessException e) {
-            return null;
+            return Optional.empty();
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while getting Girt Certificate by id");
         }
@@ -57,7 +58,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     }
 
     @Override
-    public GiftCertificate create(GiftCertificate giftCertificate) throws RepositoryException {
+    public Optional<GiftCertificate> create(GiftCertificate giftCertificate) throws RepositoryException {
         try {
             Long giftCertificateId = saveGiftCertificateInfo(giftCertificate);
             giftCertificate.setId(giftCertificateId);
@@ -65,7 +66,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while create Gift Certificate");
         }
-        return giftCertificate;
+        return Optional.ofNullable(giftCertificate);
     }
 
     private Long saveGiftCertificateInfo(GiftCertificate giftCertificate) {
@@ -76,7 +77,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
         values.put("price", giftCertificate.getPrice());
         values.put("create_date", giftCertificate.getCreateDate());
         values.put("last_update_date", giftCertificate.getLastUpdateTime());
-        values.put("duration", giftCertificate.getDuration());
+        values.put("duration", converter.convertToDatabaseColumn(giftCertificate.getDuration()));
         return giftCertificateInserter.executeAndReturnKey(values).longValue();
     }
 
@@ -137,6 +138,5 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
             throw new RepositoryException("Exception while getting are filtered gift certificates ");
         }
     }
-
 
 }

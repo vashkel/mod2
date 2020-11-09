@@ -16,6 +16,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,59 +39,45 @@ class GiftCertificateRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        certificate1 = new GiftCertificate();
-        certificate1.setId(1L);
-        certificate1.setName("swimming pool");
-        certificate1.setDescription("the best");
-        certificate1.setPrice(30.0);
-        certificate1.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate1.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate1.setDuration(durationConverter.convertToEntityAttribute(2160000000L));
-
-        certificate2 = new GiftCertificate();
-        certificate2.setId(2L);
-        certificate2.setName("cinema");
-        certificate2.setDescription("comedy");
-        certificate2.setPrice(15.5);
-        certificate2.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate2.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate2.setDuration(durationConverter.convertToEntityAttribute(1900800000L));
+        certificate1 = giftCertificateCreator(1L, "swimming pool", 30.0, "the best",
+                durationConverter.convertToEntityAttribute(2160000000L));
+        certificate2 = giftCertificateCreator(2L, "cinema", 15.5, "comedy",
+                durationConverter.convertToEntityAttribute(1900800000L));
         certificateList = Arrays.asList(certificate1, certificate2);
 
-        certificate1WithTags = new GiftCertificate();
-        certificate1WithTags.setId(1L);
-        certificate1WithTags.setName("swimming pool");
-        certificate1WithTags.setDescription("the best");
-        certificate1WithTags.setPrice(30.0);
-        certificate1WithTags.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate1WithTags.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
-        certificate1WithTags.setDuration(durationConverter.convertToEntityAttribute(2160000000L));
+        certificate1WithTags = giftCertificateCreator(1L, "swimming pool", 30.0, "the best",
+                durationConverter.convertToEntityAttribute(2160000000L));
         certificate1WithTags.setTags(Arrays.asList(new Tag(1L, "vip")));
     }
 
     @Test
     void findById_whenCertificateExist_thenReturnCertificate() throws RepositoryException {
+
         Assertions.assertEquals(Optional.of(certificate1), giftCertificateRepository.findById(certificate1.getId()));
     }
-    
+
     @Test
     void updateCertificate_whenCertificateUpdated_thenReturnTrue() throws RepositoryException {
         certificate2.setPrice(40.0);
+
         Assertions.assertTrue(giftCertificateRepository.update(certificate2));
     }
 
     @Test
     void findAllGiftCertificates_whenCertificatesExist_thenReturnListOfCertificates() throws RepositoryException {
+
         Assertions.assertIterableEquals(certificateList, giftCertificateRepository.findAll());
     }
 
     @Test
     void createGiftCertificate_whenCertificateCreated_returnCertificate() throws RepositoryException {
+
         Assertions.assertEquals(Optional.of(certificate1), giftCertificateRepository.create(certificate1));
     }
 
     @Test
     void createGiftCertificate_whenCertificateWithTagsCreated_returnCertificateWithTag() throws RepositoryException {
+
         Assertions.assertEquals(Optional.of(certificate1WithTags), giftCertificateRepository.create(certificate1WithTags));
     }
 
@@ -99,18 +87,38 @@ class GiftCertificateRepositoryImplTest {
     }
 
     @Test
-    void findGiftCertificatesByTagName_whenCertificatesIsFounded_thenReturnListOfCertificates() throws RepositoryException {
+    void findGiftCertificatesByTagName_whenCertificatesIsFounded_thenReturnListOfCertificates()
+            throws RepositoryException {
+
         Assertions.assertEquals(2, giftCertificateRepository.findGiftCertificatesByTagName("family").size());
     }
 
     @Test
-    void findGiftCertificateByPartName_whenCertificatesIsFounded_thenReturnListOfCertificates() throws RepositoryException {
+    void findGiftCertificateByPartName_whenCertificatesIsFounded_thenReturnListOfCertificates()
+            throws RepositoryException {
+
         Assertions.assertEquals(1, giftCertificateRepository.findGiftCertificateByPartName("ci").size());
     }
 
     @Test
-    void getSortedGiftCertificates_whenCertificatesSortedByNameOrderASC_thenReturnSortedList() throws RepositoryException {
-        Assertions.assertIterableEquals(Arrays.asList(certificate2, certificate1), giftCertificateRepository.getSortedGiftCertificates("name", "asc"));
+    void getSortedGiftCertificates_whenCertificatesSortedByNameOrderASC_thenReturnSortedList()
+            throws RepositoryException {
+
+        Assertions.assertIterableEquals(Arrays.asList(certificate2, certificate1),
+                giftCertificateRepository.getSortedGiftCertificates("name", "asc"));
     }
 
+    private GiftCertificate giftCertificateCreator(Long id, String name, Double price, String description, Duration duration){
+       GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setId(id);
+        giftCertificate.setName(name);
+        giftCertificate.setDescription(description);
+        giftCertificate.setPrice(price);
+        giftCertificate.setCreateDate(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
+        giftCertificate.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
+        giftCertificate.setDuration(duration);
+        return giftCertificate;
+
+
+    }
 }

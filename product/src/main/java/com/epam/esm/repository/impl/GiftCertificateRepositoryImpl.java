@@ -9,7 +9,6 @@ import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.util.DurationConverter;
 import com.epam.esm.util.query.CertificateConstantQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

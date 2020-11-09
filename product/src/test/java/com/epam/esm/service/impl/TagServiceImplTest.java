@@ -42,12 +42,8 @@ class TagServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        tag1 = new Tag();
-        tag1.setId(1L);
-        tag1.setName("tagName1");
-        tag2 = new Tag();
-        tag2.setId(2L);
-        tag2.setName("tagName2");
+        tag1 = tagCreator(1L, "tagName1");
+        tag2 = tagCreator(2L, "tagName2");
         tagList = Arrays.asList(tag1, tag2);
     }
 
@@ -55,6 +51,7 @@ class TagServiceImplTest {
     void findTag_whenTagNotFound_thenThrowTagNotFoundException() throws RepositoryException, ServiceException {
         long tagId = 0;
         Mockito.when(tagRepository.find(tagId)).thenReturn(Optional.empty());
+
         Assertions.assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
     }
     @Test
@@ -62,6 +59,7 @@ class TagServiceImplTest {
         Mockito.when(tagRepository.create(tag1)).thenReturn(tag1.getId());
         Long expected = tag1.getId();
         Long actual = tagService.create(tag1);
+
         Assertions.assertEquals(expected, actual);
     }
 
@@ -72,6 +70,7 @@ class TagServiceImplTest {
         TagDTO actual = tagService.findById(1L);
 
         Assertions.assertNotNull(actual, "Tag should not be found");
+
         Assertions.assertEquals(actual, expected, "The tag is not same like returnedTag");
     }
 
@@ -81,8 +80,11 @@ class TagServiceImplTest {
         Mockito.when(tagRepository.findAll()).thenReturn(tagList);
         tagList.forEach(tag -> expected.add(TagDTOConverter.converterToTagDTO(tag)));
         List<TagDTO> actual = tagService.findAll();
-        Assertions.assertIterableEquals(actual, expected);
 
+        Assertions.assertIterableEquals(actual, expected);
     }
 
+    private Tag tagCreator(Long id, String name){
+        return new Tag(id, name);
+    }
 }

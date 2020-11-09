@@ -34,7 +34,8 @@ public class GiftCertificatesController {
     }
 
     @PostMapping()
-    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@RequestBody GiftCertificate giftCertificate) throws ServiceException {
+    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@RequestBody GiftCertificate giftCertificate)
+            throws ServiceException {
         if (giftCertificateService.create(giftCertificate) == null) {
             ResponseEntity.notFound();
         }
@@ -48,23 +49,27 @@ public class GiftCertificatesController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> updateCertificate(@PathVariable Long id, @RequestBody GiftCertificate giftCertificate) throws ServiceException {
+    public ResponseEntity<Object> updateCertificate(@PathVariable Long id,
+                                                    @RequestBody GiftCertificate giftCertificate) throws ServiceException {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> sortedGiftCertificatesWithTags(@RequestParam(value = "sort", required = false) String sort,
-                                                                                           @RequestParam(value = "order") String order) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> sortedGiftCertificatesWithTags
+            (@RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order") String order)
+            throws ServiceException {
         return ResponseEntity.ok().body(giftCertificateService.getFilteredGiftCertificates(sort, order));
     }
 
     @GetMapping("/tag-name/{tag-name}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag(@PathVariable(name = "tag-name") String tagName) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag
+            (@PathVariable(name = "tag-name") String tagName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
     }
 
     @GetMapping("/part-name/{part-name}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName(@PathVariable(name = "part-name") String partName) throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName
+            (@PathVariable(name = "part-name") String partName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
 

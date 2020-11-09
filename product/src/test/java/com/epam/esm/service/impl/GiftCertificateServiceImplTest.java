@@ -44,7 +44,6 @@ class GiftCertificateServiceImplTest {
     private List<GiftCertificate> certificateList;
     private GiftCertificate certificate1;
     private GiftCertificate certificate2;
-    private GiftCertificateDTO giftCertificateDTO;
 
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
@@ -60,32 +59,8 @@ class GiftCertificateServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        giftCertificateDTO = new GiftCertificateDTO();
-        giftCertificateDTO.setId(1L);
-        giftCertificateDTO.setName("massages");
-        giftCertificateDTO.setPrice(50.0);
-        giftCertificateDTO.setDescription("massage of head");
-        giftCertificateDTO.setCreateDate(LocalDateTime.now().minusDays(2));
-        giftCertificateDTO.setLastUpdateTime(LocalDateTime.now());
-        giftCertificateDTO.setDuration(Duration.ofDays(30));
-        certificate1 = new GiftCertificate();
-        certificate1.setId(1L);
-        certificate1.setName("carting");
-        certificate1.setPrice(40.0);
-        certificate1.setDescription("speed");
-        certificate1.setCreateDate(LocalDateTime.now().minusDays(2));
-        certificate1.setLastUpdateTime(LocalDateTime.now());
-        certificate1.setDuration(Duration.ofDays(30));
-        certificate1.setTags(Arrays.asList(new Tag(1L, "spa"), new Tag(2L, "travel")));
-        certificate2 = new GiftCertificate();
-        certificate2.setId(2L);
-        certificate2.setName("dance training");
-        certificate2.setPrice(30.0);
-        certificate2.setDescription("speed");
-        certificate2.setCreateDate(LocalDateTime.now().minusDays(2));
-        certificate2.setLastUpdateTime(LocalDateTime.now());
-        certificate2.setDuration(Duration.ofDays(30));
-        certificate2.setTags(Arrays.asList(new Tag(1L, "bike"), new Tag(2L, "travel")));
+        certificate1 = giftCertificateCreator(1L, "carting", 40.0, "speed");
+        certificate2 =  giftCertificateCreator(2L, "dance training", 30.0, "speed");
         certificateList = Arrays.asList(certificate1, certificate2);
     }
 
@@ -94,13 +69,16 @@ class GiftCertificateServiceImplTest {
         Mockito.when(giftCertificateRepository.findById(1L)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.find(1L);
+
         Assertions.assertNotNull(actual, "GiftCertificate should not found");
+
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void find_whenGiftCertificateNotFound_thenCertificateNotFoundException() throws RepositoryException {
         Mockito.when(giftCertificateRepository.findById(0L)).thenThrow(GiftCertificateNotFoundException.class);
+
         Assertions.assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.find(0L));
     }
 
@@ -108,14 +86,17 @@ class GiftCertificateServiceImplTest {
     void findAll() throws RepositoryException, ServiceException {
         List<GiftCertificateDTO> expected = new ArrayList<>();
         Mockito.when(giftCertificateRepository.findAll()).thenReturn(certificateList);
-        certificateList.forEach(giftCertificate -> expected.add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate)));
+        certificateList.forEach(giftCertificate -> expected
+                .add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate)));
         List<GiftCertificateDTO> actual = giftCertificateService.findAll();
+
         Assertions.assertIterableEquals(expected, actual);
     }
 
     @Test
     void deleteById_whenGiftCertificateIsNotExist_thenNotFoundException() throws RepositoryException {
         Mockito.when(giftCertificateRepository.delete(-1L)).thenThrow(GiftCertificateNotFoundException.class);
+
         Assertions.assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.deleteById(-1L));
     }
 
@@ -124,35 +105,52 @@ class GiftCertificateServiceImplTest {
         Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.create(certificate1);
+
         Assertions.assertEquals(expected.getId(), actual.getId());
     }
 
     @Test
-    void getFilteredGiftCertificates_whenGiftCertificatesNotNullAndSortByNameDesc_thenReturnList() throws RepositoryException, ServiceException {
+    void getFilteredGiftCertificates_whenGiftCertificatesNotNullAndSortByNameDesc_thenReturnList()
+            throws RepositoryException, ServiceException {
         List<GiftCertificate> returnedCertificates = Arrays.asList(certificate2, certificate1);
-        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("name", "desc")).thenReturn(returnedCertificates);
+        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("name", "desc"))
+                .thenReturn(returnedCertificates);
         List<GiftCertificateWithTagsDTO> expectedCertificates = new ArrayList<>();
         for (GiftCertificate giftCertificate : returnedCertificates) {
             expectedCertificates.add(GiftCertificateWithTagsDTOConverter.
                     convertToGiftCertificateWithTagsDTO(giftCertificate));
         }
-        List<GiftCertificateWithTagsDTO> actualCertificates = giftCertificateService.getFilteredGiftCertificates("name", "desc");
+        List<GiftCertificateWithTagsDTO> actualCertificates = giftCertificateService.
+                getFilteredGiftCertificates("name", "desc");
+
         Assertions.assertIterableEquals(expectedCertificates, actualCertificates);
     }
 
     @Test
     void getFilteredGiftCertificates_whenNotHaveParameters_thenReturnNotFoundException() throws RepositoryException {
-        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("", "")).thenThrow(NotValidParamsRequest.class);
-        Assertions.assertThrows(NotValidParamsRequest.class, () -> giftCertificateService.getFilteredGiftCertificates("", ""));
+        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("", ""))
+                .thenThrow(NotValidParamsRequest.class);
+
+        Assertions.assertThrows(NotValidParamsRequest.class, () -> giftCertificateService
+                .getFilteredGiftCertificates("", ""));
     }
 
     @Test
-    void findGiftCertificateByPartName_whenThereAreCertificatesWithPartName_thenReturnList() throws RepositoryException, ServiceException {
+    void findGiftCertificateByPartName_whenThereAreCertificatesWithPartName_thenReturnList()
+            throws RepositoryException, ServiceException {
         List<GiftCertificate> certificates = Arrays.asList(certificate1);
         Mockito.when(giftCertificateRepository.findGiftCertificateByPartName("ca")).thenReturn(certificates);
         List<GiftCertificateWithTagsDTO> expectedCertificates = new ArrayList<>();
-        certificates.forEach(giftCertificate -> expectedCertificates.add(GiftCertificateWithTagsDTOConverter.convertToGiftCertificateWithTagsDTO(giftCertificate)));
+        certificates.forEach(giftCertificate -> expectedCertificates
+                .add(GiftCertificateWithTagsDTOConverter.convertToGiftCertificateWithTagsDTO(giftCertificate)));
         List<GiftCertificateWithTagsDTO> actualCertificates = giftCertificateService.findGiftCertificateByPartName("ca");
+
         Assertions.assertIterableEquals(expectedCertificates, actualCertificates);
+    }
+
+    private GiftCertificate giftCertificateCreator(Long id, String name, Double price, String description){
+        return new GiftCertificate(id, name, description, price, LocalDateTime.now().minusDays(2),
+                LocalDateTime.now(), Duration.ofDays(30),
+                Arrays.asList(new Tag(1L, "spa"), new Tag(2L, "travel")));
     }
 }

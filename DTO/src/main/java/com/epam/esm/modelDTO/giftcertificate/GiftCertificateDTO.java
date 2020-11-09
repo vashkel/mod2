@@ -6,13 +6,17 @@ import com.epam.esm.util.LocalDateTimeDeserializer;
 import com.epam.esm.util.LocalDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GiftCertificateDTO implements Serializable {
     private static final long serialVersionUID = -7284150257366390793L;
     private Long id;

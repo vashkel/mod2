@@ -7,7 +7,6 @@ import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.util.query.TagConstantQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -69,7 +68,8 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public Optional<Tag> findByName(String tagName) throws RepositoryException {
         try {
-            return Optional.ofNullable(getJdbcTemplate().queryForObject(TagConstantQuery.SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName));
+            return Optional.ofNullable(getJdbcTemplate().
+                    queryForObject(TagConstantQuery.SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName));
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         } catch (DataAccessException e) {

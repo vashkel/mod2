@@ -36,6 +36,7 @@ public class H2Config implements WebMvcConfigurer {
         dataSource.setInitialSize(Integer.parseInt(environment.getProperty("db.pool")));
         return dataSource;
     }
+
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate();

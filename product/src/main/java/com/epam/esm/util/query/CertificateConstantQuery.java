@@ -12,7 +12,8 @@ public class CertificateConstantQuery {
             "last_update_date, duration  FROM gift_certificate WHERE id=?";
     public static String SQL_FIND_ALL_GIFT_CERTIFICATES = "SELECT id, name, description, price, create_date," +
             " last_update_date, duration  FROM gift_certificate";
-    public static String SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID = "INSERT INTO gift_certificate_tags(gift_certificate_id,tag_id) VALUES (?,?)";
+    public static String SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID =
+            "INSERT INTO gift_certificate_tags(gift_certificate_id,tag_id) VALUES (?,?)";
     public static String SQL_DELETE_GIFT_CERTIFICATE = "DELETE FROM gift_certificate WHERE id=?";
     public static String SQL_DELETE_DEPENDED_TAG = "DELETE FROM gift_certificate_tags WHERE gift_certificate_id =?";
     public static String SQL_UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificate SET name =?, description=?, price=?, " +

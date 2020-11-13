@@ -15,7 +15,7 @@ public class GiftCertificateWithTagsDTOConverter {
         gIftCertificateWithTagsDTO.setCreateDate(giftCertificate.getCreateDate());
         gIftCertificateWithTagsDTO.setLastUpdateTime(giftCertificate.getLastUpdateTime());
         gIftCertificateWithTagsDTO.setDuration(giftCertificate.getDuration());
-        giftCertificate.getTags().forEach(tag -> gIftCertificateWithTagsDTO.addTag(TagDTOConverter.converterToTagDTO(tag)));
+        giftCertificate.getTags().forEach(tag -> gIftCertificateWithTagsDTO.getTagsDTO().add(TagDTOConverter.converterToTagDTO(tag)));
         return gIftCertificateWithTagsDTO;
     }
 }

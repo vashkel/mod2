@@ -1,15 +1,17 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.exception.ServiceException;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
+import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -34,7 +36,7 @@ public class GiftCertificatesController {
     }
 
     @PostMapping()
-    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@RequestBody GiftCertificate giftCertificate)
+    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@Valid @RequestBody GiftCertificate giftCertificate)
             throws ServiceException {
         if (giftCertificateService.create(giftCertificate) == null) {
             ResponseEntity.notFound();
@@ -49,15 +51,15 @@ public class GiftCertificatesController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> updateCertificate(@PathVariable Long id,
-                                                    @RequestBody GiftCertificate giftCertificate) throws ServiceException {
+    public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id, @Valid
+    @RequestBody GiftCertificate giftCertificate) throws ServiceException {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
     }
 
     @GetMapping("/filter")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> sortedGiftCertificatesWithTags
             (@RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order") String order)
-            throws ServiceException {
+            throws ServiceException{
         return ResponseEntity.ok().body(giftCertificateService.getFilteredGiftCertificates(sort, order));
     }
 

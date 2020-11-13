@@ -29,9 +29,11 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
         this.giftCertificateInserter = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("gift_certificate")
-                .usingColumns("name", "description", "price", "create_date", "last_update_date", "duration")
-                .usingGeneratedKeyColumns("id");
+                .withTableName(CertificateConstantQuery.TABLE_NAME)
+                .usingColumns(CertificateConstantQuery.NAME_COLUMN, CertificateConstantQuery.DESCRIPTION_COLUMN,
+                        CertificateConstantQuery.PRICE_COLUMN, CertificateConstantQuery.CREATE_DATE_COLUMN,
+                        CertificateConstantQuery.LAST_UPDATE_COLUMN, CertificateConstantQuery.DURATION_COLUMN)
+                .usingGeneratedKeyColumns(CertificateConstantQuery.KEY);
     }
 
     @Override
@@ -60,7 +62,6 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     public Optional<GiftCertificate> create(GiftCertificate giftCertificate) throws RepositoryException {
         try {
             Long giftCertificateId = saveGiftCertificateInfo(giftCertificate);
-            giftCertificate.setId(giftCertificateId);
             giftCertificate.getTags().forEach(tag -> saveTagIdAndGiftCertificateId(tag.getId(), giftCertificateId));
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while create Gift Certificate");
@@ -71,12 +72,12 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     private Long saveGiftCertificateInfo(GiftCertificate giftCertificate) {
         DurationConverter converter = new DurationConverter();
         Map<String, Object> values = new HashMap<>();
-        values.put("name", giftCertificate.getName());
-        values.put("description", giftCertificate.getDescription());
-        values.put("price", giftCertificate.getPrice());
-        values.put("create_date", giftCertificate.getCreateDate());
-        values.put("last_update_date", giftCertificate.getLastUpdateTime());
-        values.put("duration", converter.convertToDatabaseColumn(giftCertificate.getDuration()));
+        values.put(CertificateConstantQuery.NAME_COLUMN, giftCertificate.getName());
+        values.put(CertificateConstantQuery.DESCRIPTION_COLUMN, giftCertificate.getDescription());
+        values.put(CertificateConstantQuery.PRICE_COLUMN, giftCertificate.getPrice());
+        values.put(CertificateConstantQuery.CREATE_DATE_COLUMN, giftCertificate.getCreateDate());
+        values.put(CertificateConstantQuery.LAST_UPDATE_COLUMN, giftCertificate.getLastUpdateTime());
+        values.put(CertificateConstantQuery.DURATION_COLUMN, converter.convertToDatabaseColumn(giftCertificate.getDuration()));
         return giftCertificateInserter.executeAndReturnKey(values).longValue();
     }
 
@@ -96,9 +97,10 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
 
     @Override
     public boolean update(GiftCertificate giftCertificate) throws RepositoryException {
+        DurationConverter converter = new DurationConverter();
         try {
             return getJdbcTemplate().update(CertificateConstantQuery.SQL_UPDATE_GIFT_CERTIFICATE, giftCertificate.getName(), giftCertificate.getDescription(),
-                    giftCertificate.getPrice(), giftCertificate.getLastUpdateTime(), giftCertificate.getDuration().getSeconds(), giftCertificate.getId()) == 1;
+                    giftCertificate.getPrice(), giftCertificate.getLastUpdateTime(), converter.convertToDatabaseColumn(giftCertificate.getDuration()), giftCertificate.getId()) == 1;
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while update GiftCertificateId");
         }

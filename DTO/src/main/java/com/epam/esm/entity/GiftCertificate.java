@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -23,9 +24,13 @@ import java.util.List;
 public class GiftCertificate implements Serializable{
     private static final long serialVersionUID = -1734150257366390793L;
 
+    @NotNull(message = "Id can not be null")
     private Long id;
+    @NotNull(message = "Please provide name")
     private String name;
-    private String Description;
+    @NotNull(message = "Please provide description")
+    private String description;
+    @NotNull(message = "Please provide price")
     private Double price;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
@@ -41,7 +46,4 @@ public class GiftCertificate implements Serializable{
     public GiftCertificate(Long id, String name, String description, Double price, LocalDateTime toLocalDateTime, LocalDateTime toLocalDateTime1, Duration duration) {
     }
 
-    public void addTag(Tag tag){
-        tags.add(tag);
-    }
 }

@@ -5,8 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Data
-@ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "not valid params was entered")
 public class NotValidParamsRequest extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
+    private String message;
 
+    public NotValidParamsRequest(String message) {
+        this.message = message;
+    }
 }

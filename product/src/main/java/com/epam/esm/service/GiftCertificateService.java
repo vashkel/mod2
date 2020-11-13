@@ -2,6 +2,7 @@ package com.epam.esm.service;
 
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.exception.ServiceException;
@@ -47,10 +48,10 @@ public interface GiftCertificateService {
      * This method is used to update the certificate
      *
      * @param giftCertificate the certificate to be updated
-     * @return value of updated certificate
+     * @return updated GiftCertificateDTO
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    boolean update(GiftCertificate giftCertificate, Long id) throws ServiceException;
+    GiftCertificateDTO update(GiftCertificate giftCertificate, Long id) throws ServiceException;
 
     /**
      * This method is used to return the list of certificates by name

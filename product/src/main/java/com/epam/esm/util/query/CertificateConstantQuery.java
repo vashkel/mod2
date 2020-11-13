@@ -21,4 +21,13 @@ public class CertificateConstantQuery {
     public static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT  c.id, c.name, c.description, " +
             "c.price, c.create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN  " +
             "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
+
+    public static final String TABLE_NAME = "gift_certificate";
+    public static final String NAME_COLUMN = "name";
+    public static final String DESCRIPTION_COLUMN = "description";
+    public static final String PRICE_COLUMN = "price";
+    public static final String CREATE_DATE_COLUMN = "create_date";
+    public static final String LAST_UPDATE_COLUMN = "last_update_date";
+    public static final String DURATION_COLUMN = "duration";
+    public static final String KEY = "id";
 }

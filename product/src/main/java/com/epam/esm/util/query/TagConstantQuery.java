@@ -9,4 +9,8 @@ public class TagConstantQuery {
     public static String SQL_FIND_ALL_TAGS_BY_CERTIFICATE_ID = "SELECT tag.id, tag.name from tag " +
             "left join gift_certificate_tags " +
             "AS gct ON tag.id=gct.tag_id left join gift_certificate AS c ON c.id = gct.gift_Certificate_id where c.id =?";
+
+    public static final String TABLE_NAME = "tag";
+    public static final String NAME_COLUMN = "name";
+    public static final String KEY = "id";
 }

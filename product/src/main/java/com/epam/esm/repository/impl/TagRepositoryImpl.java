@@ -27,7 +27,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
         this.tagInserter = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName("tag").usingColumns("name").usingGeneratedKeyColumns("id");
+                .withTableName(TagConstantQuery.TABLE_NAME).usingColumns(TagConstantQuery.NAME_COLUMN).usingGeneratedKeyColumns(TagConstantQuery.KEY);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
                 return isCreated.get().getId();
             }
             Map<String, Object> values = new HashMap<>();
-            values.put("name", tag.getName());
+            values.put(TagConstantQuery.NAME_COLUMN, tag.getName());
             return tagInserter.executeAndReturnKey(values).longValue();
         } catch (DataAccessException e) {
             throw new RepositoryException("Exception while create tag");

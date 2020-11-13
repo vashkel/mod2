@@ -33,8 +33,4 @@ public class GiftCertificateWithTagsDTO implements Serializable {
     private Duration duration;
     private List<TagDTO> tagsDTO = new ArrayList<>();
 
-    public void addTag(TagDTO tag) {
-        tagsDTO.add(tag);
-    }
-
 }

@@ -20,11 +20,7 @@ dependencies {
     def springVersion = '5.2.9.RELEASE'
     def jacksonVersion = '2.11.2'
     def jupiterVersion = '5.7.0'
-    compile group: 'org.springframework', name: 'spring-core', version: "${springVersion}"
-    compile group: 'org.springframework', name: 'spring-web', version: "${springVersion}"
     compile group: 'org.springframework', name: 'spring-webmvc', version: "${springVersion}"
-    compile group: 'org.springframework', name: 'spring-jdbc', version: "${springVersion}"
-    compile group: 'org.springframework', name: 'spring-context', version:"${springVersion}"
     testCompile group: 'org.springframework', name: 'spring-test', version: "${springVersion}"
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'

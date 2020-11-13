@@ -1,15 +1,15 @@
 package com.epam.esm.util;
 
 public enum GiftCertificateFilterInfo {
-    NAME, DATE, ASC, DESC;
+    NAME, CREATE_DATE, ASC, DESC;
 
     public static GiftCertificateFilterInfo getSortParams(String input) {
 
         switch (input.toUpperCase()) {
             case "NAME":
                 return NAME;
-            case "DATE":
-                return DATE;
+            case "CREATE_DATE":
+                return CREATE_DATE;
             default:
                 return null;
         }

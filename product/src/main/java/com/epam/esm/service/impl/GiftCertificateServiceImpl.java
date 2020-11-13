@@ -105,7 +105,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public boolean update(GiftCertificate giftCertificate, Long id) throws ServiceException {
+    public GiftCertificateDTO update(GiftCertificate giftCertificate, Long id) throws ServiceException {
+        GiftCertificateDTO giftCertificateDTO = null;
         try {
             Optional<GiftCertificate> certificate = giftCertificateRepository.findById(id);
             if (!certificate.isPresent()) {
@@ -113,10 +114,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             }
             giftCertificate.setId(id);
             giftCertificate.setLastUpdateTime(LocalDateTime.now());
-            return giftCertificateRepository.update(giftCertificate);
+            if (giftCertificateRepository.update(giftCertificate)) {
+                giftCertificateDTO = GiftCertificateDTOConverter
+                        .convertToGiftCertificateDTO(giftCertificateRepository.findById(id).get());
+            }
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown update gift certificate : ", e);
         }
+        return giftCertificateDTO;
     }
 
     @Override
@@ -147,18 +152,19 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         for (GiftCertificate giftCertificate : giftCertificates) {
             List<Tag> tags = tagRepository.findAllTagsByCertificateId(giftCertificate.getId());
             for (Tag tag : tags) {
-                giftCertificate.addTag(tag);
+                giftCertificate.getTags().add(tag);
             }
             giftCertificateWithTagsDTOS.add(GiftCertificateWithTagsDTOConverter.convertToGiftCertificateWithTagsDTO(giftCertificate));
         }
         return giftCertificateWithTagsDTOS;
     }
+
     @Override
     public List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException {
         GiftCertificateFilterInfo correctSortParam = GiftCertificateFilterInfo.getSortParams(sortBy);
         GiftCertificateFilterInfo correctOrderParam = GiftCertificateFilterInfo.getOrderParams(orderBy);
-        if (correctSortParam == null && correctOrderParam == null) {
-            throw new NotValidParamsRequest();
+        if (correctSortParam == null || correctOrderParam == null) {
+            throw new NotValidParamsRequest("were entered not valid params");
         }
         try {
             List<GiftCertificate> giftCertificates = giftCertificateRepository.getSortedGiftCertificates(sortBy, orderBy);

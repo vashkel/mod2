@@ -1,0 +1,45 @@
+group 'com.epam.esm'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.8
+test {
+    useJUnitPlatform()
+    testLogging.showStandardStreams(true)
+}
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation project(':DTO')
+}
+dependencies {
+    def springVersion = '5.2.9.RELEASE'
+    def jacksonVersion = '2.11.2'
+    def jupiterVersion = '5.7.0'
+    compile group: 'org.springframework', name: 'spring-core', version: "${springVersion}"
+    compile group: 'org.springframework', name: 'spring-web', version: "${springVersion}"
+    compile group: 'org.springframework', name: 'spring-webmvc', version: "${springVersion}"
+    compile group: 'org.springframework', name: 'spring-jdbc', version: "${springVersion}"
+    compile group: 'org.springframework', name: 'spring-context', version:"${springVersion}"
+    testCompile group: 'org.springframework', name: 'spring-test', version: "${springVersion}"
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
+    testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.5.15'
+    testImplementation 'org.mockito:mockito-core:3.6.0'
+    compileOnly "org.projectlombok:lombok:1.18.16"
+    compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
+    compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "${jacksonVersion}"
+}
+
+

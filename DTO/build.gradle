@@ -1,0 +1,30 @@
+
+plugins {
+    id 'java'
+    id 'war'
+    id "io.freefair.lombok" version "5.2.1"
+}
+group 'com.epam.esm'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+configurations {
+    providedCompile
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    def jacksonVersion = '2.11.2'
+    compileOnly 'org.projectlombok:lombok:1.18.16'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "${jacksonVersion}"
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "${jacksonVersion}"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.3'
+}

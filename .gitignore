@@ -1,0 +1,9 @@
+**/build/
+!src/**/build/
+giftCertificate.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+.idea
+application.properties
+lombok.config
+.gradle

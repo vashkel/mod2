@@ -13,7 +13,10 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 @Data
 public class GiftCertificateWithTagsDTO implements Serializable {
     private static final long serialVersionUID = -1784150257366720793L;
@@ -31,6 +34,6 @@ public class GiftCertificateWithTagsDTO implements Serializable {
     @JsonDeserialize(using = DurationDeserializer.class)
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
-    private List<TagDTO> tagsDTO = new ArrayList<>();
+    private Set<TagDTO> tagsDTO = new HashSet<>();
 
 }

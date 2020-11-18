@@ -2,8 +2,11 @@ package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface GiftCertificateRepository {
@@ -21,7 +24,7 @@ public interface GiftCertificateRepository {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List<GiftCertificate> findAll() throws RepositoryException;
+    List findAll() throws RepositoryException;
 
     /**
      * This method is used to create the certificate
@@ -77,4 +80,13 @@ public interface GiftCertificateRepository {
      */
     List<GiftCertificate> getSortedGiftCertificates(String sortBy, String orderBy) throws RepositoryException;
 
+    List<GiftCertificate> filterCertificate(Map<String, String> filterParam) throws RepositoryException;
+
+    /**
+     * This method is used to return certificate by name
+     *
+     * @param name the name of certificate to be returned
+     * @return on Optional with the value of find Certificate
+     */
+    Optional<GiftCertificate> findByName(String name) throws RepositoryException;
 }

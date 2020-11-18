@@ -3,12 +3,15 @@ package com.epam.esm.service;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exception.NotValidParamsRequest;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.exception.ServiceException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+import java.util.Map;
 public interface GiftCertificateService {
     /**
      * This method is used to return certificate by id
@@ -17,7 +20,7 @@ public interface GiftCertificateService {
      * @return value of find Certificate
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate was not found
      */
-    GiftCertificateDTO find(Long id) throws ServiceException;
+    GiftCertificateWithTagsDTO find(Long id) throws ServiceException;
 
     /**
      * This method is used to return the list of certificates
@@ -25,7 +28,7 @@ public interface GiftCertificateService {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List<GiftCertificateDTO> findAll() throws ServiceException;
+    List<GiftCertificateWithTagsDTO> findAll() throws ServiceException;
 
     /**
      * This method is used to create the certificate
@@ -82,4 +85,6 @@ public interface GiftCertificateService {
      * does not exist(or null) or received certificates is null
      */
     List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException;
+
+    List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam) throws ServiceException, RepositoryException;
 }

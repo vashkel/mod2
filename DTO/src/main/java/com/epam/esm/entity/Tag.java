@@ -1,31 +1,35 @@
 package com.epam.esm.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "tag")
 public class Tag implements Serializable {
     private static final long serialVersionUID = -1784132457366390793L;
 
+    @Id
     private Long id;
+
+    @Column(name = "name")
     private String name;
-    private List<GiftCertificate> giftCertificates = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "tags")
+    private Set<GiftCertificate> giftCertificates = new HashSet<>();
 
     public Tag(Long id, String name) {
         this.id = id;
         this.name = name;
     }
-
-
-    public void addGiftCertificate(GiftCertificate giftCertificate){
-        giftCertificates.add(giftCertificate);
-    }
-
 }

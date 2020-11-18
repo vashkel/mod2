@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.NotValidParamsRequest;
+import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/certificates")
@@ -24,30 +25,38 @@ public class GiftCertificatesController {
     public GiftCertificatesController(GiftCertificateService giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
     }
+    @GetMapping("/all")
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> giftAllCertificates(@RequestParam Map<String,String> filterParam) throws ServiceException, RepositoryException {
+        if (filterParam.isEmpty()) {
+           return ResponseEntity.ok().body(giftCertificateService.findAll());
+        }
+        return ResponseEntity.ok().body(giftCertificateService.getFilteredListCertificates(filterParam));
+    }
 
     @GetMapping()
-    public ResponseEntity<List<GiftCertificateDTO>> giftCertificates() throws ServiceException {
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> giftCertificates() throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findAll());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<GiftCertificateDTO> giftCertificate(@PathVariable("id") long id) throws ServiceException {
+    public ResponseEntity<GiftCertificateWithTagsDTO> giftCertificate(@PathVariable("id") long id) throws ServiceException {
         return ResponseEntity.ok().body(giftCertificateService.find(id));
     }
 
     @PostMapping()
     public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@Valid @RequestBody GiftCertificate giftCertificate)
             throws ServiceException {
-        if (giftCertificateService.create(giftCertificate) == null) {
+        GiftCertificateDTO giftCertificateDTO = giftCertificateService.create(giftCertificate);
+        if (giftCertificateDTO == null) {
             ResponseEntity.notFound();
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(giftCertificateService.create(giftCertificate));
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<GiftCertificateDTO> deleteCertificate(@PathVariable("id") Long id) throws ServiceException {
         giftCertificateService.deleteById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("{id}")
@@ -56,22 +65,22 @@ public class GiftCertificatesController {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
     }
 
-    @GetMapping("/filter")
+    @GetMapping("/search")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> sortedGiftCertificatesWithTags
             (@RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order") String order)
             throws ServiceException{
         return ResponseEntity.ok().body(giftCertificateService.getFilteredGiftCertificates(sort, order));
     }
 
-    @GetMapping("/tag-name/{tag-name}")
+    @GetMapping("/tag_name/{tag_name}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag
-            (@PathVariable(name = "tag-name") String tagName) throws ServiceException {
+            (@PathVariable(name = "tag_name") String tagName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
     }
 
-    @GetMapping("/part-name/{part-name}")
+    @GetMapping("/part_name/{part_name}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName
-            (@PathVariable(name = "part-name") String partName) throws ServiceException {
+            (@PathVariable(name = "part_name") String partName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
 

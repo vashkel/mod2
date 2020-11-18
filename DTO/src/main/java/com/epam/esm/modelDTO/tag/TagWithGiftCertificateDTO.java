@@ -5,7 +5,9 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class TagWithGiftCertificateDTO implements Serializable {
@@ -13,7 +15,7 @@ public class TagWithGiftCertificateDTO implements Serializable {
 
     private Long id;
     private String name;
-    private List<GiftCertificateDTO> giftCertificatesDTO = new ArrayList<>();
+    private Set<GiftCertificateDTO> giftCertificatesDTO = new HashSet<>();
 
     public void addGiftCertificates(GiftCertificateDTO giftCertificateDTO) {
         giftCertificatesDTO.add(giftCertificateDTO);

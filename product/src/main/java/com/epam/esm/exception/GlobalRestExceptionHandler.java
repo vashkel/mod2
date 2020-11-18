@@ -37,9 +37,9 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(NotValidParamsRequest ex,
                                                                             WebRequest request) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
-                .withStatus(HttpStatus.BAD_REQUEST)
+                .withStatus(HttpStatus.BAD_REQUEST )
                 .withDetail("not valid arguments")
-                .withMessage(ex.getLocalizedMessage())
+                .withMessage(ex.getMessage())
                 .withError_code("400")
                 .withError_code(HttpStatus.NOT_ACCEPTABLE.name())
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))

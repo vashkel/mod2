@@ -19,9 +19,6 @@ allprojects {
         def springVersion = '5.2.9.RELEASE'
         def jacksonVersion = '2.11.2'
         def jupiterVersion = '5.7.0'
-        compile group: 'org.springframework', name: 'spring-core', version: "${springVersion}"
-        compile group: 'org.springframework', name: 'spring-web', version: "${springVersion}"
-        compile group: 'org.springframework', name: 'spring-webmvc', version: "${springVersion}"
         compile group: 'org.springframework', name: 'spring-jdbc', version: "${springVersion}"
         compile group: 'org.springframework', name: 'spring-context', version:"${springVersion}"
         testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
@@ -29,9 +26,14 @@ allprojects {
         testCompile group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.7.0'
         compileOnly "org.projectlombok:lombok:1.18.16"
         compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonVersion}"
+        compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonVersion}"
+        compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: "${jacksonVersion}"
+        compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "${jacksonVersion}"
         compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
         compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
-
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.3.4.RELEASE'
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.3.4.RELEASE'
+        testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.3.4.RELEASE'
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.3.4.RELEASE'
     }
 }
-

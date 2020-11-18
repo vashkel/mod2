@@ -7,9 +7,9 @@ import javax.persistence.Converter;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 
-@Configuration
 @Converter(autoApply = true)
 public class DurationConverter implements AttributeConverter<Duration, Long> {
+
     @Override
     public Long convertToDatabaseColumn(Duration attribute) {
         return attribute.toMillis();

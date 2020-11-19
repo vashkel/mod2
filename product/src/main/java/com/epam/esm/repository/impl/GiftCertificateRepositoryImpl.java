@@ -78,7 +78,6 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     }
 
     private Long saveGiftCertificateInfo(GiftCertificate giftCertificate) {
-
         DurationConverter converter = new DurationConverter();
         Map<String, Object> values = new HashMap<>();
         values.put(CertificateConstantQuery.NAME_COLUMN, giftCertificate.getName());
@@ -125,35 +124,13 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_CERTIFICATES_BY_PART_NAME,
-                    new GiftCertificateMapper(), partName + "%");
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find gift certificate by part of name ");
-        }
-    }
-
-    @Override
-    public List<GiftCertificate> getSortedGiftCertificates(String sortBy, String order) throws RepositoryException {
-        String query = CertificateConstantQuery.SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS;
-        if (sortBy != null) {
-            query += "ORDER BY c." + sortBy;
-        }
-        if (order != null) {
-            query += " " + order;
-        }
-        try {
-            return getJdbcTemplate().query(query, new GiftCertificateMapper());
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while getting are filtered gift certificates ");
-        }
-    }
-
-    @Override
     public List<GiftCertificate> filterCertificate(Map<String, String> filterParam) throws RepositoryException {
         SelectFilterCreator query = new SelectFilterCreator();
-        return getJdbcTemplate().query(query.createFilterQuery(filterParam), new GiftCertificateMapper());
+        try {
+            return getJdbcTemplate().query(query.createFilterQuery(filterParam), new GiftCertificateMapper());
+        } catch (DataAccessException e) {
+            throw new RepositoryException("Exception while filter gift certificate ");
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ public class SelectFilterCreator {
     private static final String LIMIT = " limit ";
     private static final String OFFSET = " offset ";
     private static final List<String> wrongPaginationParam = Arrays.asList(
-            ParamName.DIRECTION.getParamName(),
+            ParamName.ORDER.getParamName(),
             ParamName.FIELD.getParamName(),
             ParamName.LIMIT.getParamName(),
             ParamName.OFFSET.getParamName());
@@ -60,7 +60,7 @@ public class SelectFilterCreator {
 
     private String sortingParams(Map<String, String> filterParam) {
         StringBuilder sb = new StringBuilder();
-        String direction = filterParam.get(ParamName.DIRECTION.getParamName());
+        String direction = filterParam.get(ParamName.ORDER.getParamName());
         String field = filterParam.get(ParamName.FIELD.getParamName());
         if (Objects.nonNull(direction) && Objects.nonNull(field)) {
             sb.append(ORDER_BY).append(field).append(SPACE).append(direction);
@@ -73,7 +73,7 @@ public class SelectFilterCreator {
         String limit = filterParam.get(ParamName.LIMIT.getParamName());
         String offset = filterParam.get(ParamName.OFFSET.getParamName());
         if (Objects.nonNull(limit) && Objects.nonNull(offset)) {
-            sb.append(LIMIT).append(limit + SPACE).append(OFFSET).append(offset);
+            sb.append(LIMIT).append(limit).append(SPACE).append(OFFSET).append(offset);
         }
         return sb.toString();
     }

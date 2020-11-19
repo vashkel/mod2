@@ -1,29 +1,21 @@
 package com.epam.esm.config;
 
 
-import com.epam.esm.util.DurationConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -31,9 +23,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
@@ -43,16 +35,15 @@ import java.util.Properties;
 @EnableTransactionManagement
 public class ProductSpringConfiguration implements WebMvcConfigurer {
 
-    private static final String PACKAGE_TO_SCAN = "com.epam.esm.entity";
+    private static final String PACKAGE_TO_SCAN = "com.epam.esm";
+    private static final String DDL_AUTO_PROPERTY = "hibernate.hbm2ddl.auto";
+    private static final String DIALECT_PROPERTY = "hibernate.dialect";
+    private static final String SHOW_SQL_PROPERTY = "hibernate.show_sql";
+    private static final String FORMAT_SQL_PROPERTY = "hibernate.format_sql";
+    private static final String NAMING_STRATEGY = "hibernate.ejb.naming_strategy";
 
     @Autowired
     private Environment environment;
-    private ApplicationContext applicationContext;
-
-    @Autowired
-    public ProductSpringConfiguration(ApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
-    }
 
     @Bean
     public DataSource dataSource() {
@@ -60,7 +51,7 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         dataSource.setUrl(environment.getProperty("spring.datasource.url"));
         dataSource.setUsername(environment.getProperty("spring.datasource.username"));
         dataSource.setPassword(environment.getProperty("spring.datasource.password"));
-        dataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name"));
+        dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
         return dataSource;
     }
 
@@ -75,30 +66,14 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();
         entityManagerFactoryBean.setDataSource(dataSource);
         entityManagerFactoryBean.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        entityManagerFactoryBean.setPackagesToScan("com.epam.esm");
+        entityManagerFactoryBean.setPackagesToScan(PACKAGE_TO_SCAN);
 
         Properties jpaProperties = new Properties();
-
-        //Configures the used database dialect. This allows Hibernate to create SQL
-        //that is optimized for the used database.
-        jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
-
-        //Specifies the action that is invoked to the database when the Hibernate
-        //SessionFactory is created or closed.
-        jpaProperties.put("hibernate.hbm2ddl.auto", "none");
-
-        //Configures the naming strategy that is used when Hibernate creates
-        //new database objects and schema elements
-        jpaProperties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-
-        //If the value of this property is true, Hibernate writes all SQL
-        //statements to the console.
-        jpaProperties.put("hibernate.show_sql", "true");
-
-        //If the value of this property is true, Hibernate will format the SQL
-        //that is written to the console.
-        jpaProperties.put("hibernate.format_sql", "true");
-
+        jpaProperties.put(DIALECT_PROPERTY, Objects.requireNonNull(environment.getProperty(DIALECT_PROPERTY)));
+        jpaProperties.put(DDL_AUTO_PROPERTY, Objects.requireNonNull(environment.getProperty(DDL_AUTO_PROPERTY)));
+        jpaProperties.put(NAMING_STRATEGY, Objects.requireNonNull(environment.getProperty(NAMING_STRATEGY)));
+        jpaProperties.put(SHOW_SQL_PROPERTY, Objects.requireNonNull(environment.getProperty(SHOW_SQL_PROPERTY)));
+        jpaProperties.put(FORMAT_SQL_PROPERTY, Objects.requireNonNull(environment.getProperty(FORMAT_SQL_PROPERTY)));
         entityManagerFactoryBean.setJpaProperties(jpaProperties);
 
         return entityManagerFactoryBean;
@@ -125,7 +100,7 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         dataSource.setUsername(environment.getProperty("spring.datasource.username.test"));
         dataSource.setPassword(environment.getProperty("spring.datasource.password.test"));
         dataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name.test"));
-        dataSource.setInitialSize(Integer.parseInt(environment.getProperty("spring.datasource.db.pool.test")));
+        dataSource.setInitialSize(Integer.parseInt(Objects.requireNonNull(environment.getProperty("spring.datasource.db.pool.test"))));
         return dataSource;
     }
 

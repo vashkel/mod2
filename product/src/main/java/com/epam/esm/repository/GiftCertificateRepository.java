@@ -60,26 +60,13 @@ public interface GiftCertificateRepository {
     List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException;
 
     /**
-     * This method is used to return the list of certificates by part of name
-     * certificate
-     *
-     * @return List of all certificates by part of name or empty List if
-     * no certificates were found
-     */
-    List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException;
-
-    /**
      * This method is used to
      * sort the certificates by name asc/desc, date asc/date and find the certificates
      * with tag
-     *
-     * @param sortBy  name tag for searching in certificateList. (can be Null)
-     * @param orderBy the sorting type selection. Possible values: asc, desc ,null
+     * @param filterParam  searching params(can be Null)
      * @return List of sorted certificates, or unsorted List if received orderBy
      * does not exist(or null) or received certificates is null
      */
-    List<GiftCertificate> getSortedGiftCertificates(String sortBy, String orderBy) throws RepositoryException;
-
     List<GiftCertificate> filterCertificate(Map<String, String> filterParam) throws RepositoryException;
 
     /**

@@ -1,7 +1,6 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
@@ -25,17 +24,13 @@ public class GiftCertificatesController {
     public GiftCertificatesController(GiftCertificateService giftCertificateService) {
         this.giftCertificateService = giftCertificateService;
     }
-    @GetMapping("/all")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> giftAllCertificates(@RequestParam Map<String,String> filterParam) throws ServiceException, RepositoryException {
-        if (filterParam.isEmpty()) {
-           return ResponseEntity.ok().body(giftCertificateService.findAll());
-        }
-        return ResponseEntity.ok().body(giftCertificateService.getFilteredListCertificates(filterParam));
-    }
 
     @GetMapping()
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> giftCertificates() throws ServiceException {
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findAll());
+    public ResponseEntity<List<GiftCertificateWithTagsDTO>> giftCertificates(@RequestParam Map<String,String> filterParam) throws ServiceException {
+        if (filterParam.isEmpty()) {
+            return ResponseEntity.ok().body(giftCertificateService.findAll());
+        }
+        return ResponseEntity.ok().body(giftCertificateService.getFilteredListCertificates(filterParam));
     }
 
     @GetMapping("{id}")
@@ -65,23 +60,10 @@ public class GiftCertificatesController {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> sortedGiftCertificatesWithTags
-            (@RequestParam(value = "sort", required = false) String sort, @RequestParam(value = "order") String order)
-            throws ServiceException{
-        return ResponseEntity.ok().body(giftCertificateService.getFilteredGiftCertificates(sort, order));
-    }
-
     @GetMapping("/tag_name/{tag_name}")
     public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag
             (@PathVariable(name = "tag_name") String tagName) throws ServiceException {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
-    }
-
-    @GetMapping("/part_name/{part_name}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificateByPartName
-            (@PathVariable(name = "part_name") String partName) throws ServiceException {
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findGiftCertificateByPartName(partName));
     }
 
 }

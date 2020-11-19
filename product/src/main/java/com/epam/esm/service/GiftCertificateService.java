@@ -66,25 +66,12 @@ public interface GiftCertificateService {
     List<GiftCertificateWithTagsDTO> findCertificatesByTagName(String tagName) throws ServiceException;
 
     /**
-     * This method is used to return the list of certificates by part of name
-     * certificate
-     *
-     * @return List of all certificates by part of name or empty List if
-     * no certificates were found
-     */
-    List<GiftCertificateWithTagsDTO> findGiftCertificateByPartName(String partName) throws ServiceException;
-
-    /**
      * This method is used to
      * sort the certificates by name asc/desc, date asc/date and find the certificates
      * with tag
-     *
-     * @param sortBy  name tag for searching in certificateList. (can be Null)
-     * @param orderBy the sorting type selection. Possible values: asc, desc ,null
+     * @param filterParam  searching params(can be Null)
      * @return List of sorted certificates, or unsorted List if received orderBy
      * does not exist(or null) or received certificates is null
      */
-    List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException;
-
-    List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam) throws ServiceException, RepositoryException;
+    List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam) throws ServiceException;
 }

@@ -3,7 +3,6 @@ package com.epam.esm.service.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.exception.ServiceException;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
@@ -13,10 +12,8 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificateWithTagsDTOConverter;
-import com.epam.esm.util.GiftCertificateFilterInfo;
 import com.epam.esm.util.ParamName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -136,16 +133,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
-    @Override
-    public List<GiftCertificateWithTagsDTO> findGiftCertificateByPartName(String partName) throws ServiceException {
-        try {
-            List<GiftCertificate> giftCertificates = giftCertificateRepository.findGiftCertificateByPartName(partName);
-            return checkCertificateListAndFillWithTags(giftCertificates);
-        } catch (RepositoryException e) {
-            throw new ServiceException("An exception was thrown find gift certificate by part of name of tag : ", e);
-        }
-    }
-
     private List<GiftCertificateWithTagsDTO> checkCertificateListAndFillWithTags(List<GiftCertificate> giftCertificates) throws RepositoryException {
         List<GiftCertificateWithTagsDTO> giftCertificateWithTagsDTOS = new ArrayList<>();
         if (giftCertificates.isEmpty()) {
@@ -162,31 +149,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException {
-        GiftCertificateFilterInfo correctSortParam = GiftCertificateFilterInfo.getSortParams(sortBy);
-        GiftCertificateFilterInfo correctOrderParam = GiftCertificateFilterInfo.getOrderParams(orderBy);
-        if (correctSortParam == null || correctOrderParam == null) {
-            throw new NotValidParamsRequest("were entered not valid params");
-        }
+    public List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam) throws ServiceException {
+        deleteWrongSearchParam(filterParam);
+        deleteWrongSortParam(filterParam);
         try {
-            List<GiftCertificate> giftCertificates = giftCertificateRepository.getSortedGiftCertificates(sortBy, orderBy);
-            return checkCertificateListAndFillWithTags(giftCertificates);
+            return checkCertificateListAndFillWithTags(giftCertificateRepository.filterCertificate(filterParam));
         } catch (RepositoryException e) {
             throw new ServiceException("An exception was thrown get filtered gift certificates : ", e);
         }
     }
 
-    @Override
-    public List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam) throws ServiceException, RepositoryException {
-        deleteWrongSearchParam(filterParam);
-        deleteWrongSortParam(filterParam);
-        return checkCertificateListAndFillWithTags(giftCertificateRepository.filterCertificate(filterParam));
-    }
-
     private void deleteWrongSortParam(Map<String, String> filterParam) {
         filterParam.entrySet().removeIf(
                 entry -> ParamName.getPossibleDirectionParam().stream().noneMatch(e -> {
-                    if (entry.getKey().equals(ParamName.DIRECTION.getParamName())) {
+                    if (entry.getKey().equals(ParamName.ORDER.getParamName())) {
                         return entry.getValue().equals(e);
                     }
                     return true;

@@ -6,7 +6,7 @@ import java.util.List;
 public enum ParamName {
     NAME("name"),
     DESCRIPTION("description"),
-    DIRECTION("direction"),
+    ORDER("order"),
     FIELD("field"),
     TAG("tags"),
     LIMIT("limit"),

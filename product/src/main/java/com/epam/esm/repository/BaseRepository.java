@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import java.util.function.Function;
 
 @Component
 
@@ -19,8 +20,6 @@ public abstract class BaseRepository {
         this.jdbcTemplate = getJdbcTemplate();
     }
 
-
-
     private EntityManager entityManager;
 
     @Autowired
@@ -32,7 +31,4 @@ public abstract class BaseRepository {
         return jdbcTemplate;
     }
 
-    protected EntityManager entityManager() {
-        return entityManager;
-    }
 }

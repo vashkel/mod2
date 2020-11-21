@@ -1,4 +1,4 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.util;
 
 import com.epam.esm.util.ParamName;
 
@@ -9,9 +9,10 @@ import java.util.Objects;
 
 public class SelectFilterCreator {
 
-    public static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT  c.id, c.name AS name, c.description, " +
-            "c.price, c.create_date AS create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN  " +
-            "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
+    public static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT g FROM GiftCertificate g LEFT JOIN fetch g.tags t ";
+//            "SELECT DISTINCT  c.id, c.name AS name, c.description, " +
+//            "c.price, c.create_date AS create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN  " +
+//            "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
 
     private static final String HAVING = " having ";
     private static final String AND = " and ";
@@ -39,8 +40,6 @@ public class SelectFilterCreator {
         }
         sb.append(sortQuery);
 //        sb.append(paginationQuery);
-//        //delete comment
-//        System.out.println("query = "+sb.toString());
         return sb.toString();
     }
 
@@ -63,7 +62,7 @@ public class SelectFilterCreator {
         String direction = filterParam.get(ParamName.ORDER.getParamName());
         String field = filterParam.get(ParamName.FIELD.getParamName());
         if (Objects.nonNull(direction) && Objects.nonNull(field)) {
-            sb.append(ORDER_BY).append(field).append(SPACE).append(direction);
+            sb.append(ORDER_BY).append("g.").append(field).append(SPACE).append(direction);
         }
         return sb.toString();
     }

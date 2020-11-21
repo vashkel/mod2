@@ -13,7 +13,7 @@ public interface TagRepository {
      * @param tag the tag to be created
      * @return 1 if tag was created, 0 if it were not
      */
-    long create(Tag tag) throws RepositoryException;
+    long create(Tag tag);
 
     /**
      * This method is used to delete the tag by id
@@ -21,7 +21,7 @@ public interface TagRepository {
      * @param tagId the id of tag to be deleted
      * @return true if tag was deleted, false if it were not
      */
-    boolean delete(Long tagId) throws RepositoryException;
+    boolean delete(Long tagId);
 
     /**
      * This method is used to return tag by id
@@ -29,7 +29,7 @@ public interface TagRepository {
      * @param id the id of tag to be returned
      * @return Optional Tag or Optional null if tag doesnt exist
      */
-    Optional<Tag> find(Long id) throws RepositoryException;
+    Optional<Tag> find(Long id);
 
     /**
      * This method is used to return tag by name
@@ -37,7 +37,7 @@ public interface TagRepository {
      * @param tagName name of tag to be returned
      * @return Optional tag or Optional null if tag doesnt exist
      */
-    Optional<Tag> findByName(String tagName) throws RepositoryException;
+    Optional<Tag> findByName(String tagName);
 
     /**
      * This method is used to return the list of tags
@@ -45,7 +45,7 @@ public interface TagRepository {
      * @return List of all tags or empty List if
      * no certificates were found
      */
-    List<Tag> findAll() throws RepositoryException;
+    List<Tag> findAll();
 
      /**
       * This method is used to return the list of tags by certificate id
@@ -53,5 +53,5 @@ public interface TagRepository {
       * @return List of all tags or empty List if
       * no certificates were found
       */
-     List<Tag> findAllTagsByCertificateId(Long id) throws RepositoryException;
+     List<Tag> findAllTagsByCertificateId(Long id);
 }

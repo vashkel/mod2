@@ -1,6 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.entity.Pagination;
 import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public interface GiftCertificateRepository {
      * @param id the id of certificate to be returned
      * @return Optional value of find Certificate
      */
-    Optional<GiftCertificate> findById(Long id) throws RepositoryException;
+    Optional<GiftCertificate> findById(Long id);
 
     /**
      * This method is used to return the list of certificates
@@ -24,7 +25,7 @@ public interface GiftCertificateRepository {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List findAll() throws RepositoryException;
+    List<GiftCertificate> findAll(String hql, Pagination pagination);
 
     /**
      * This method is used to create the certificate
@@ -32,7 +33,7 @@ public interface GiftCertificateRepository {
      * @param giftCertificate the certificate to be created
      * @return the value of created certificate
      */
-    Optional<GiftCertificate> create(GiftCertificate giftCertificate) throws RepositoryException;
+    Optional<GiftCertificate> create(GiftCertificate giftCertificate);
 
     /**
      * This method is used to delete the certificate by id
@@ -40,7 +41,7 @@ public interface GiftCertificateRepository {
      * @param id the id of certificate to be deleted
      * @return value of deleted certificate
      */
-    boolean delete(Long id) throws RepositoryException;
+    void delete(GiftCertificate giftCertificate);
 
     /**
      * This method is used to update the certificate
@@ -48,7 +49,7 @@ public interface GiftCertificateRepository {
      * @param giftCertificate the certificate to be updated
      * @return value of updated certificate
      */
-    boolean update(GiftCertificate giftCertificate) throws RepositoryException;
+    boolean update(GiftCertificate giftCertificate);
 
     /**
      * This method is used to return the list of certificates by name
@@ -57,7 +58,7 @@ public interface GiftCertificateRepository {
      * @return List of all certificates by tag name or empty List if
      * no certificates were found
      */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException;
+    List<GiftCertificate> findGiftCertificatesByTagName(String tag);
 
     /**
      * This method is used to
@@ -67,7 +68,7 @@ public interface GiftCertificateRepository {
      * @return List of sorted certificates, or unsorted List if received orderBy
      * does not exist(or null) or received certificates is null
      */
-    List<GiftCertificate> filterCertificate(Map<String, String> filterParam) throws RepositoryException;
+    List<GiftCertificate> filterCertificate(Map<String, String> filterParam);
 
     /**
      * This method is used to return certificate by name
@@ -75,5 +76,5 @@ public interface GiftCertificateRepository {
      * @param name the name of certificate to be returned
      * @return on Optional with the value of find Certificate
      */
-    Optional<GiftCertificate> findByName(String name) throws RepositoryException;
+    Optional<List<GiftCertificate>> findByName(String name);
 }

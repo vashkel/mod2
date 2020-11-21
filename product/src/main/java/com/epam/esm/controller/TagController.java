@@ -3,7 +3,6 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.service.impl.TagServiceImpl;
-import com.epam.esm.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,17 +18,17 @@ public class TagController {
     private TagServiceImpl tagService;
 
     @GetMapping
-    public ResponseEntity<List<TagDTO>> getTags() throws ServiceException {
+    public ResponseEntity<List<TagDTO>> getTags() {
         return ResponseEntity.ok().body(tagService.findAll());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TagDTO> getTag(@PathVariable("id") Long id) throws ServiceException {
+    public ResponseEntity<TagDTO> getTag(@PathVariable("id") Long id) {
         return ResponseEntity.ok().body(tagService.findById(id));
     }
 
     @PostMapping()
-    public ResponseEntity<String> createTag(@RequestBody Tag tag) throws ServiceException {
+    public ResponseEntity<String> createTag(@RequestBody Tag tag) {
         if (tagService.create(tag) == null) {
             return ResponseEntity.notFound().build();
         }
@@ -37,7 +36,7 @@ public class TagController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable("id") Long id) throws ServiceException {
+    public ResponseEntity<Object> deleteTag(@PathVariable("id") Long id) {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
 

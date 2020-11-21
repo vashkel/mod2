@@ -11,4 +11,11 @@ public class TagDTOConverter {
         tagDTO.setName(tag.getName());
         return tagDTO;
     }
+
+    public static Tag convertFromTagDTOToTag(TagDTO tagDTO) {
+        Tag tag = new Tag();
+        tag.setId(tagDTO.getId());
+        tag.setName(tagDTO.getName());
+        return tag;
+    }
 }

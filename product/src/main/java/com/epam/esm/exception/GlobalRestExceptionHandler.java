@@ -12,6 +12,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityExistsException;
+import javax.persistence.NoResultException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -20,16 +22,28 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler({GiftCertificateNotFoundException.class})
+    @ExceptionHandler({GiftCertificateNotFoundException.class, NoResultException.class})
     public ResponseEntity<ApiErrorResponse> customerNotFound(GiftCertificateNotFoundException ex, WebRequest request) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withDetail("Not able to find gift certificate record")
-                .withMessage("Not a valid gift certificate id.Please provide a gift certificate id .")
+                .withMessage(ex.getLocalizedMessage())
                 .withError_code("404")
                 .withStatus(HttpStatus.NOT_FOUND)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<ApiErrorResponse>(apiResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({EntityExistsException.class})
+    public ResponseEntity<ApiErrorResponse> entityExistsException(EntityExistsException ex, WebRequest request) {
+        ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
+                .withDetail("you are creating already existed entity ")
+                .withMessage(ex.getMessage())
+                .withError_code("403")
+                .withStatus(HttpStatus.CONFLICT)
+                .atTime(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
+        return new ResponseEntity<ApiErrorResponse>(apiResponse, apiResponse.getStatus());
     }
 
 

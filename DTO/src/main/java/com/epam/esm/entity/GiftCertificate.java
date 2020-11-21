@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -27,12 +28,14 @@ import java.util.Set;
 @Table(name = "gift_certificate")
 @NamedQueries({
         @NamedQuery(name = "GiftCertificate.findAll",
-                query = "SELECT DISTINCT g FROM GiftCertificate g LEFT JOIN fetch g.tags t"),
+                query = "SELECT DISTINCT g FROM GiftCertificate g LEFT JOIN fetch g.tags t "),
         @NamedQuery(name = "GiftCertificate.findById",
-                query = "FROM GiftCertificate WHERE id = :id")
+                query = "FROM GiftCertificate WHERE id = :id"),
+        @NamedQuery(name = "GiftCertificate.DeleteById",
+                query = "DELETE GiftCertificate WHERE id = :id")
 
 })
-public class GiftCertificate implements Serializable {
+public class GiftCertificate implements Serializable  {
     private static final long serialVersionUID = -1734150257366390793L;
 
     @NotNull(message = "Id can not be null")

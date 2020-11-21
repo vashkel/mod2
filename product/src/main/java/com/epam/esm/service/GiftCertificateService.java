@@ -2,16 +2,12 @@ package com.epam.esm.service;
 
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.NotValidParamsRequest;
-import com.epam.esm.exception.RepositoryException;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
-import com.epam.esm.exception.ServiceException;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+
 public interface GiftCertificateService {
     /**
      * This method is used to return certificate by id
@@ -20,7 +16,7 @@ public interface GiftCertificateService {
      * @return value of find Certificate
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate was not found
      */
-    GiftCertificateWithTagsDTO find(Long id) throws ServiceException;
+    GiftCertificateWithTagsDTO find(Long id);
 
     /**
      * This method is used to return the list of certificates
@@ -28,15 +24,15 @@ public interface GiftCertificateService {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List<GiftCertificateWithTagsDTO> findAll() throws ServiceException;
+    List<GiftCertificateWithTagsDTO> findAll(Map<String, String> filterParam);
 
     /**
      * This method is used to create the certificate
      *
-     * @param giftCertificate the certificate to be created
+     * @param giftCertificateWithTagsDTO the certificate to be created
      * @return true if certificate was created, false if it were not
      */
-    GiftCertificateDTO create(GiftCertificate giftCertificate) throws ServiceException;
+    GiftCertificateWithTagsDTO create(GiftCertificateWithTagsDTO giftCertificateWithTagsDTO);
 
     /**
      * This method is used to delete the certificate by id
@@ -45,7 +41,7 @@ public interface GiftCertificateService {
      * @return true if certificate was deleted, false if it were not
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    boolean deleteById(Long id) throws ServiceException;
+    void deleteById(Long id);
 
     /**
      * This method is used to update the certificate
@@ -54,7 +50,7 @@ public interface GiftCertificateService {
      * @return updated GiftCertificateDTO
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    GiftCertificateDTO update(GiftCertificate giftCertificate, Long id) throws ServiceException;
+    GiftCertificateDTO update(GiftCertificate giftCertificate, Long id);
 
     /**
      * This method is used to return the list of certificates by name
@@ -63,15 +59,16 @@ public interface GiftCertificateService {
      * @return List of all certificates by tag name or empty List if
      * no certificates were found
      */
-    List<GiftCertificateWithTagsDTO> findCertificatesByTagName(String tagName) throws ServiceException;
+    List<GiftCertificateWithTagsDTO> findCertificatesByTagName(String tagName);
 
     /**
      * This method is used to
      * sort the certificates by name asc/desc, date asc/date and find the certificates
      * with tag
-     * @param filterParam  searching params(can be Null)
+     *
+     * @param filterParam searching params(can be Null)
      * @return List of sorted certificates, or unsorted List if received orderBy
      * does not exist(or null) or received certificates is null
      */
-    List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam) throws ServiceException;
+    List<GiftCertificateWithTagsDTO> getFilteredListCertificates(Map<String, String> filterParam);
 }

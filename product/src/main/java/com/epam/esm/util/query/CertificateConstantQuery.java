@@ -9,7 +9,7 @@ public class CertificateConstantQuery {
             "c.create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags" +
             " AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id WHERE c.name LIKE ?";
     public static String SQL_FIND_GIFT_CERTIFICATE_BY_NAME = "SELECT DISTINCT  c.id, c.name, c.description, c.price," +
-            "c.create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags" +
+            "c.create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN  gift_certificate_tags " +
             "AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id WHERE c.name = ?";
     public static String SQL_FIND_ALL_GIFT_CERTIFICATES = "SELECT DISTINCT  c.id, c.name, c.description," +
             "c.price, c.create_date, c.last_update_date, c.duration FROM gift_certificate AS c LEFT JOIN " +

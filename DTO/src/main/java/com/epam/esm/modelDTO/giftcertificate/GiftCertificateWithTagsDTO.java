@@ -1,5 +1,6 @@
 package com.epam.esm.modelDTO.giftcertificate;
 
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.util.DurationDeserializer;
 import com.epam.esm.util.DurationSerializer;
@@ -8,6 +9,7 @@ import com.epam.esm.util.LocalDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.time.Duration;
@@ -18,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class GiftCertificateWithTagsDTO implements Serializable {
+public class GiftCertificateWithTagsDTO extends RepresentationModel<GiftCertificateWithTagsDTO> implements Serializable {
     private static final long serialVersionUID = -1784150257366720793L;
 
     private Long id;
@@ -34,6 +36,6 @@ public class GiftCertificateWithTagsDTO implements Serializable {
     @JsonDeserialize(using = DurationDeserializer.class)
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
-    private Set<TagDTO> tagsDTO = new HashSet<>();
+    private Set<TagDTO> tags = new HashSet<>();
 
 }

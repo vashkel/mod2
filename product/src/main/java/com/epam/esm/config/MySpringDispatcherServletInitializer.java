@@ -8,7 +8,6 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-
 public class MySpringDispatcherServletInitializer extends
         AbstractAnnotationConfigDispatcherServletInitializer {
 
@@ -41,4 +40,3 @@ public class MySpringDispatcherServletInitializer extends
         servletContext.setInitParameter("spring.profiles.active", "dev");
     }
 }
-

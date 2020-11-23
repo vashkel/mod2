@@ -1,12 +1,11 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,6 +17,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@Validated
 @RequestMapping("/certificates")
 public class GiftCertificatesController {
 
@@ -29,29 +29,23 @@ public class GiftCertificatesController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> giftCertificates(
+    public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
             @RequestParam Map<String, String> filterParam) {
-
-        return ResponseEntity.ok().body(giftCertificateService.findAll(filterParam));
+        List<GiftCertificateDTO> giftCertificatesDTO = giftCertificateService.findAll(filterParam);
+        giftCertificatesDTO.forEach(this::addLinks);
+        return ResponseEntity.ok().body(giftCertificatesDTO);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<GiftCertificateWithTagsDTO> giftCertificate(@PathVariable("id") @Min(value = 1) long id) {
-        GiftCertificateWithTagsDTO giftCertificateWithTagsDTO = giftCertificateService.find(id);
-        addLinks(giftCertificateWithTagsDTO);
-        return ResponseEntity.ok().body(giftCertificateWithTagsDTO);
+    public ResponseEntity<GiftCertificateDTO> giftCertificate(@PathVariable("id") @Min(value = 1) long id) {
+        GiftCertificateDTO giftCertificateDTO = giftCertificateService.find(id);
+        addLinks(giftCertificateDTO);
+        return ResponseEntity.ok().body(giftCertificateDTO);
     }
-
-    private void addLinks(GiftCertificateWithTagsDTO giftCertificateWithTagsDTO) {
-        giftCertificateWithTagsDTO.getTags().forEach(tagDTO -> tagDTO.add(linkTo(methodOn(TagController.class)
-                .getTag(tagDTO.getId())).withSelfRel()));
-        giftCertificateWithTagsDTO.add(linkTo(methodOn(GiftCertificatesController.class).giftCertificate(giftCertificateWithTagsDTO.getId())).withSelfRel());
-    }
-
 
     @PostMapping()
-    public ResponseEntity<GiftCertificateWithTagsDTO> createGiftCertificate(@Valid @RequestBody GiftCertificateWithTagsDTO certificateWithTagsDTO) {
-        GiftCertificateWithTagsDTO giftCertificateWithTagsDTO = giftCertificateService.create(certificateWithTagsDTO);
+    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@Valid @RequestBody GiftCertificateDTO certificateDTO) {
+        GiftCertificateDTO giftCertificateWithTagsDTO = giftCertificateService.create(certificateDTO);
         if (giftCertificateWithTagsDTO == null) {
             ResponseEntity.notFound();
         }
@@ -65,15 +59,22 @@ public class GiftCertificatesController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id, @Valid
-    @RequestBody GiftCertificate giftCertificate) {
-        return ResponseEntity.ok(giftCertificateService.update(giftCertificate, id));
+    public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id,
+                                                                @RequestBody @Valid GiftCertificateDTO giftCertificateDTO) {
+        return ResponseEntity.ok(giftCertificateService.update(giftCertificateDTO, id));
     }
 
     @GetMapping("/tag_name/{tag_name}")
-    public ResponseEntity<List<GiftCertificateWithTagsDTO>> findGiftCertificatesByTag
+    public ResponseEntity<List<GiftCertificateDTO>> findGiftCertificatesByTag
             (@PathVariable(name = "tag_name") String tagName) {
         return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
     }
+
+    private void addLinks(GiftCertificateDTO giftCertificateDTO) {
+        giftCertificateDTO.getTags().forEach(tagDTO -> tagDTO.add(linkTo(methodOn(TagController.class)
+                .getTag(tagDTO.getId())).withSelfRel()));
+        giftCertificateDTO.add(linkTo(methodOn(GiftCertificatesController.class).giftCertificate(giftCertificateDTO.getId())).withSelfRel());
+    }
+
 
 }

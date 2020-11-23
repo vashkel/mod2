@@ -1,4 +1,4 @@
-package com.epam.esm.entity;
+package com.epam.esm.util.pagination;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

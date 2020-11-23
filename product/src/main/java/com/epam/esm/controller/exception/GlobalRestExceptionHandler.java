@@ -1,5 +1,8 @@
-package com.epam.esm.exception;
+package com.epam.esm.controller.exception;
 
+import com.epam.esm.exception.GiftCertificateNotFoundException;
+import com.epam.esm.exception.NotValidParamsRequest;
+import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.model.ApiErrorResponse;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;

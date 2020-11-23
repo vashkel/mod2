@@ -31,6 +31,8 @@ allprojects {
         compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: "${jacksonVersion}"
         compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
         compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+        compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.6.Final'
+        compile group: 'org.glassfish', name: 'javax.el', version: '3.0.1-b08'
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.4.RELEASE'
         compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.3.4.RELEASE'
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.3.4.RELEASE'

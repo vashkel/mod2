@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -32,26 +31,24 @@ import java.util.Set;
         @NamedQuery(name = "GiftCertificate.findById",
                 query = "FROM GiftCertificate WHERE id = :id"),
         @NamedQuery(name = "GiftCertificate.DeleteById",
-                query = "DELETE GiftCertificate WHERE id = :id")
+                query = "DELETE GiftCertificate WHERE id = :id"),
+        @NamedQuery(name = "GiftCertificate.findByName",
+                query = "FROM GiftCertificate WHERE name = :name")
 
 })
 public class GiftCertificate implements Serializable  {
     private static final long serialVersionUID = -1734150257366390793L;
 
-    @NotNull(message = "Id can not be null")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Please provide name")
     @Column(name = "name")
     private String name;
 
-    @NotNull(message = "Please provide description")
     @Column(name = "description")
     private String description;
 
-    @NotNull(message = "Please provide price")
     @Column(name = "price")
     private Double price;
 
@@ -70,7 +67,7 @@ public class GiftCertificate implements Serializable  {
     @Column(name = "duration")
     private Duration duration;
 
-    @ManyToMany()
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "gift_certificate_tags",
             joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))

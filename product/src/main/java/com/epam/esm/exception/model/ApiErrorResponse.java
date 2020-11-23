@@ -1,4 +1,4 @@
-package com.epam.esm.entity;
+package com.epam.esm.exception.model;
 
 import com.epam.esm.util.LocalDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;

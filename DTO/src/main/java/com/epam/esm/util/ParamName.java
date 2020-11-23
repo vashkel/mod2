@@ -7,7 +7,7 @@ public enum ParamName {
     NAME("name"),
     DESCRIPTION("description"),
     ORDER("order"),
-    FIELD("field"),
+    SORT_FIELD("sort_field"),
     TAG("tags"),
     LIMIT("limit"),
     OFFSET("offset");

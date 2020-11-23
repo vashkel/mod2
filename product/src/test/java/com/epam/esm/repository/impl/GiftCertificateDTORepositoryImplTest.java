@@ -23,7 +23,7 @@ import java.util.Optional;
 @Sql({"classpath:drop_schema.sql", "classpath:create_schema.sql"})
 @SpringJUnitConfig(H2Config.class)
 @WebAppConfiguration
-class GiftCertificateRepositoryImplTest {
+class GiftCertificateDTORepositoryImplTest {
 
     private List<GiftCertificate> certificateList;
     private GiftCertificate certificate1;

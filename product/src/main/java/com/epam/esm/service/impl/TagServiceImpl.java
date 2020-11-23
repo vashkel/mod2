@@ -24,13 +24,19 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Long create(Tag tag) {
-        return tagRepository.create(tag);
+    public TagDTO create(TagDTO tagDTO) {
+        Tag tag;
+        tag = TagDTOConverter.convertFromTagDTO(tagDTO);
+        Optional<Tag> tagOptional = tagRepository.create(tag);
+        if (tagOptional.isPresent()){
+           tagDTO = TagDTOConverter.converterToTagDTO(tag);
+        }
+        return tagDTO;
     }
 
     @Override
     public boolean delete(Long id) {
-        Optional<Tag> createdTag = tagRepository.find(id);
+        Optional<Tag> createdTag = tagRepository.findById(id);
         if (!createdTag.isPresent()) {
             throw new TagNotFoundException("tog not found");
         }
@@ -39,7 +45,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDTO findById(Long id) {
-        Optional<Tag> tag = tagRepository.find(id);
+        Optional<Tag> tag = tagRepository.findById(id);
         if (!tag.isPresent()) {
             throw new TagNotFoundException(id, "Tag not found");
         }

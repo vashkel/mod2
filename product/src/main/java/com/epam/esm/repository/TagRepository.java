@@ -1,7 +1,6 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.RepositoryException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +12,7 @@ public interface TagRepository {
      * @param tag the tag to be created
      * @return 1 if tag was created, 0 if it were not
      */
-    long create(Tag tag);
+    Optional<Tag> create(Tag tag);
 
     /**
      * This method is used to delete the tag by id
@@ -29,7 +28,7 @@ public interface TagRepository {
      * @param id the id of tag to be returned
      * @return Optional Tag or Optional null if tag doesnt exist
      */
-    Optional<Tag> find(Long id);
+    Optional<Tag> findById(Long id);
 
     /**
      * This method is used to return tag by name

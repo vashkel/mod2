@@ -50,22 +50,22 @@ class TagServiceImplTest {
     @Test
     void findTag_whenTagNotFound_thenThrowTagNotFoundException() throws RepositoryException, ServiceException {
         long tagId = 0;
-        Mockito.when(tagRepository.find(tagId)).thenReturn(Optional.empty());
+        Mockito.when(tagRepository.findById(tagId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
     }
     @Test
     void createTag_whenCreated_thenReturnTrue() throws RepositoryException, ServiceException {
-        Mockito.when(tagRepository.create(tag1)).thenReturn(tag1.getId());
-        Long expected = tag1.getId();
-        Long actual = tagService.create(tag1);
+        Mockito.when(tagRepository.create(tag1)).thenReturn(tag1);
+        TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
+        TagDTO actual = tagService.create(TagDTOConverter.converterToTagDTO(tag1));
 
         Assertions.assertEquals(expected, actual);
     }
 
     @Test
     void find_whenTagExisted_thenReturnTag() throws RepositoryException, ServiceException {
-        Mockito.when(tagRepository.find(1L)).thenReturn(Optional.ofNullable(tag1));
+        Mockito.when(tagRepository.findById(1L)).thenReturn(Optional.ofNullable(tag1));
         TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
         TagDTO actual = tagService.findById(1L);
 

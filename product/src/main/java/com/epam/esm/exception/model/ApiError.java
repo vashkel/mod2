@@ -1,4 +1,4 @@
-package com.epam.esm.entity;
+package com.epam.esm.exception.model;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

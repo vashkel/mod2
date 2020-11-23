@@ -1,10 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Pagination;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
-import org.springframework.http.ResponseEntity;
+import com.epam.esm.util.pagination.Pagination;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +35,7 @@ public interface GiftCertificateRepository {
     /**
      * This method is used to delete the certificate by id
      *
-     * @param id the id of certificate to be deleted
+     * @param giftCertificate the id of certificate to be deleted
      * @return value of deleted certificate
      */
     void delete(GiftCertificate giftCertificate);

@@ -12,7 +12,7 @@ public interface TagService {
      * @param tag the tag to be created
      * @return true if tag was created, false if it were not
      */
-    Long create(Tag tag);
+    TagDTO create(TagDTO tagDTO);
 
     /**
      * This method is used to delete the tag by name

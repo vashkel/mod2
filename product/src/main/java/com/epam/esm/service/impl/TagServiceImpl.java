@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.TagNotFoundException;
-import com.epam.esm.modelDTO.tag.TagDTO;
+import com.epam.esm.modelDTO.TagDTO;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
@@ -35,12 +35,12 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public boolean delete(Long id) {
+    public void delete(Long id) {
         Optional<Tag> createdTag = tagRepository.findById(id);
         if (!createdTag.isPresent()) {
             throw new TagNotFoundException("tog not found");
         }
-        return tagRepository.delete(id);
+        tagRepository.delete(createdTag.get());
     }
 
     @Override

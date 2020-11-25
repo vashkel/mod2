@@ -46,7 +46,7 @@ public interface GiftCertificateRepository {
      * @param giftCertificate the certificate to be updated
      * @return value of updated certificate
      */
-    boolean update(GiftCertificate giftCertificate);
+    Optional<GiftCertificate> update(GiftCertificate giftCertificate);
 
     /**
      * This method is used to return the list of certificates by name

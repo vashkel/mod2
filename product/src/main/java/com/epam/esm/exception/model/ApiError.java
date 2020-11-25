@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Data
+
 public class ApiError {
 
     private HttpStatus status;

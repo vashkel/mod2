@@ -1,7 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.entity.Tag;
-import com.epam.esm.modelDTO.tag.TagDTO;
+import com.epam.esm.modelDTO.TagDTO;
 
 import java.util.List;
 
@@ -9,7 +8,7 @@ public interface TagService {
     /**
      * This method is used to create the tag
      *
-     * @param tag the tag to be created
+     * @param tagDTO the tag to be created
      * @return true if tag was created, false if it were not
      */
     TagDTO create(TagDTO tagDTO);
@@ -18,10 +17,9 @@ public interface TagService {
      * This method is used to delete the tag by name
      *
      * @param id the id of tag to be deleted
-     * @return true if tag was deleted, false if it were not
      * @throws com.epam.esm.exception.TagNotFoundException if tag does not exist
      */
-    boolean delete(Long id);
+    void delete(Long id);
 
     /**
      * This method is used to return tag by id

@@ -17,10 +17,10 @@ public interface TagRepository {
     /**
      * This method is used to delete the tag by id
      *
-     * @param tagId the id of tag to be deleted
+     * @param tag the tag to be deleted
      * @return true if tag was deleted, false if it were not
      */
-    boolean delete(Long tagId);
+    void delete(Tag tag);
 
     /**
      * This method is used to return tag by id

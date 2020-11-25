@@ -14,6 +14,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -43,28 +44,28 @@ public class GiftCertificate implements Serializable  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name" , nullable = false)
     private String name;
 
     @Column(name = "description")
     private String description;
 
-    @Column(name = "price")
-    private Double price;
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @Column(name = "create_date")
+    @Column(name = "create_date", nullable = false)
     private LocalDateTime createDate;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @Column(name = "last_update_date")
+    @Column(name = "last_update_date", nullable = false)
     private LocalDateTime lastUpdateTime;
 
     @JsonDeserialize(using = DurationDeserializer.class)
     @JsonSerialize(using = DurationSerializer.class)
-    @Column(name = "duration")
+    @Column(name = "duration", nullable = false)
     private Duration duration;
 
     @ManyToMany(cascade = CascadeType.PERSIST)

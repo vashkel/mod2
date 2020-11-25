@@ -1,5 +1,6 @@
 package com.epam.esm.repository;
 
+import com.epam.esm.entity.BasicEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +17,7 @@ public abstract class BaseRepository {
 
     @Autowired
     @Qualifier("createEntityManager")
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     public BaseRepository(JdbcTemplate jdbcTemplate){
         this.jdbcTemplate = getJdbcTemplate();
@@ -27,12 +28,19 @@ public abstract class BaseRepository {
         this.entityManager = entityManager;
     }
 
-//    protected BasicEntity persistWithTransaction(BasicEntity basicEntity){
-//        entityManager.getTransaction().begin();
-//        entityManager.persist(basicEntity);
-//        entityManager.getTransaction().commit();
-//        return basicEntity;
-//    }
+    protected  <T> T persistWithTransaction(T entity){
+        getEntityManager().getTransaction().begin();
+        getEntityManager().persist(entity);
+        getEntityManager().getTransaction().commit();
+        return (T) entity;
+    }
+
+    protected <T> void removeWithTransaction(T entity){
+        getEntityManager().getTransaction().begin();
+        getEntityManager().remove(entity);
+        getEntityManager().getTransaction().commit();
+    }
+
 
     protected JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;

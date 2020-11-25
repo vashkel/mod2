@@ -1,8 +1,11 @@
+plugins {
+    id 'java'
+    id 'war'
+    id "io.freefair.lombok" version "5.2.1"
+}
+
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'war'
 
 sourceCompatibility = 1.8
 test {
@@ -17,6 +20,7 @@ dependencies {
     implementation project(':DTO')
 }
 dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.16'
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
     testImplementation 'org.mockito:mockito-core:3.6.0'

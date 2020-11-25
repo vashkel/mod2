@@ -7,8 +7,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +22,7 @@ public class User implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany()
+    @OneToMany(mappedBy = "user")
     private Set<Order> orders = new HashSet<>();
 
 

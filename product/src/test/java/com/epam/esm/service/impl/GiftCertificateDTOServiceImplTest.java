@@ -2,12 +2,9 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Pagination;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.exception.ServiceException;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.GiftCertificateDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.GiftCertificateService;
@@ -60,7 +57,7 @@ class GiftCertificateDTOServiceImplTest {
     }
 
     @Test
-    void find_whenGiftCertificatesExisted_thenReturnCertificate() throws RepositoryException, ServiceException {
+    void find_whenGiftCertificatesExisted_thenReturnCertificate()  {
         Mockito.when(giftCertificateRepository.findById(1L)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.find(1L);
@@ -71,7 +68,7 @@ class GiftCertificateDTOServiceImplTest {
     }
 
     @Test
-    void find_whenGiftCertificateNotFound_thenCertificateNotFoundException() throws RepositoryException {
+    void find_whenGiftCertificateNotFound_thenCertificateNotFoundException(){
         Mockito.when(giftCertificateRepository.findById(0L)).thenThrow(GiftCertificateNotFoundException.class);
 
         Assertions.assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.find(0L));
@@ -96,7 +93,7 @@ class GiftCertificateDTOServiceImplTest {
 //    }
 
     @Test
-    void createGiftCertificate_whenCertificateIsCreated_returnGiftCertificate() throws ServiceException, RepositoryException {
+    void createGiftCertificate_whenCertificateIsCreated_returnGiftCertificate() {
         Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
         GiftCertificateDTO actual = giftCertificateService.create(GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1));

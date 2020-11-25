@@ -2,13 +2,10 @@ package com.epam.esm.repository.impl;
 
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.util.pagination.Pagination;
-import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.repository.util.SelectFilterCreator;
 import com.epam.esm.util.DurationConverter;
-import com.epam.esm.util.query.CertificateConstantQuery;
+import com.epam.esm.util.pagination.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -45,38 +42,35 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
 
     @Override
     public Optional<GiftCertificate> create(GiftCertificate giftCertificate) {
-        getEntityManager().getTransaction().begin();
-        getEntityManager().persist(giftCertificate);
+        return Optional.ofNullable(persistWithTransaction(giftCertificate));
+    }
+
+    @Override
+    public void delete(GiftCertificate giftCertificate) {
+       removeWithTransaction(giftCertificate);
+      }
+
+    @Override
+    public Optional<GiftCertificate> update (GiftCertificate giftCertificate) {
+        DurationConverter converter = new DurationConverter();
+        getEntityManager().getTransaction().commit();
+        getEntityManager().merge(giftCertificate);
         getEntityManager().getTransaction().commit();
         return Optional.ofNullable(giftCertificate);
     }
 
     @Override
-    public void delete(GiftCertificate giftCertificate) {
-        getEntityManager().getTransaction().begin();
-        getEntityManager().remove(giftCertificate);
-        getEntityManager().getTransaction().commit();
-      }
-
-    @Override
-    public boolean update(GiftCertificate giftCertificate) {
-        DurationConverter converter = new DurationConverter();
-        return getJdbcTemplate().update(CertificateConstantQuery.SQL_UPDATE_GIFT_CERTIFICATE,
-                giftCertificate.getName(), giftCertificate.getDescription(),
-                giftCertificate.getPrice(), giftCertificate.getLastUpdateTime(),
-                converter.convertToDatabaseColumn(giftCertificate.getDuration()), giftCertificate.getId()) == 1;
-    }
-
-    @Override
     public List<GiftCertificate> findGiftCertificatesByTagName(String tag) {
-        return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_CERTIFICATES_BY_TAG,
-                new GiftCertificateMapper(), tag);
+//        return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_CERTIFICATES_BY_TAG,
+//                new GiftCertificateMapper(), tag);
+        return null;
     }
 
     @Override
     public List<GiftCertificate> filterCertificate(Map<String, String> filterParam) {
-        SelectFilterCreator query = new SelectFilterCreator();
-        return getJdbcTemplate().query(query.createFilterQuery(filterParam), new GiftCertificateMapper());
+//        SelectFilterCreator query = new SelectFilterCreator();
+//        return getJdbcTemplate().query(query.createFilterQuery(filterParam), new GiftCertificateMapper());
+        return null;
     }
 
     @Override

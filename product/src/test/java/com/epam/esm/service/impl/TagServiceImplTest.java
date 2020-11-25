@@ -2,11 +2,9 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.modelDTO.tag.TagDTO;
-import com.epam.esm.repository.impl.TagRepositoryImpl;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.exception.ServiceException;
 import com.epam.esm.exception.TagNotFoundException;
+import com.epam.esm.modelDTO.TagDTO;
+import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,15 +46,16 @@ class TagServiceImplTest {
     }
 
     @Test
-    void findTag_whenTagNotFound_thenThrowTagNotFoundException() throws RepositoryException, ServiceException {
+    void findTag_whenTagNotFound_thenThrowTagNotFoundException() {
         long tagId = 0;
         Mockito.when(tagRepository.findById(tagId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(TagNotFoundException.class, () -> tagService.findById(tagId));
     }
+
     @Test
-    void createTag_whenCreated_thenReturnTrue() throws RepositoryException, ServiceException {
-        Mockito.when(tagRepository.create(tag1)).thenReturn(tag1);
+    void createTag_whenCreated_thenReturnTrue() {
+        Mockito.when(tagRepository.create(tag1)).thenReturn(Optional.ofNullable(tag1));
         TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
         TagDTO actual = tagService.create(TagDTOConverter.converterToTagDTO(tag1));
 
@@ -64,7 +63,7 @@ class TagServiceImplTest {
     }
 
     @Test
-    void find_whenTagExisted_thenReturnTag() throws RepositoryException, ServiceException {
+    void find_whenTagExisted_thenReturnTag() {
         Mockito.when(tagRepository.findById(1L)).thenReturn(Optional.ofNullable(tag1));
         TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
         TagDTO actual = tagService.findById(1L);
@@ -75,7 +74,7 @@ class TagServiceImplTest {
     }
 
     @Test
-    void findAll() throws RepositoryException, ServiceException {
+    void findAll(){
         List<TagDTO> expected = new ArrayList<>();
         Mockito.when(tagRepository.findAll()).thenReturn(tagList);
         tagList.forEach(tag -> expected.add(TagDTOConverter.converterToTagDTO(tag)));
@@ -84,7 +83,7 @@ class TagServiceImplTest {
         Assertions.assertIterableEquals(actual, expected);
     }
 
-    private Tag tagCreator(Long id, String name){
+    private Tag tagCreator(Long id, String name) {
         return new Tag(id, name);
     }
 }

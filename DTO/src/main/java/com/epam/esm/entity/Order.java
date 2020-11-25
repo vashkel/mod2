@@ -1,17 +1,15 @@
 package com.epam.esm.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,5 +27,14 @@ public class Order implements Serializable {
     @Column(name = "cost")
     private BigDecimal cost;
 
+    @ManyToMany
+    @JoinTable(name = "order_gift_certificate",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
+    private List<GiftCertificate> giftCertificateSet;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

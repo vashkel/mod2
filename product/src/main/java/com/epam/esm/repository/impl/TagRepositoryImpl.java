@@ -24,15 +24,13 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     @Override
     public Optional<Tag> create(Tag tag) {
-        getEntityManager().getTransaction().begin();
-        getEntityManager().persist(tag);
-        getEntityManager().getTransaction().commit();
-        return Optional.ofNullable(tag);
+        return Optional.ofNullable(persistWithTransaction(tag));
     }
 
     @Override
-    public boolean delete(Long tagId) {
-        return getJdbcTemplate().update(TagConstantQuery.SQL_DELETE_TAG, tagId) == 1;
+    public void delete(Tag tag) {
+        removeWithTransaction(tag);
+//        return getJdbcTemplate().update(TagConstantQuery.SQL_DELETE_TAG, tagId) == 1;
     }
 
     @Override

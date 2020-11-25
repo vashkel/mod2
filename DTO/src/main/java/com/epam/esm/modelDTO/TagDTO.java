@@ -1,6 +1,5 @@
-package com.epam.esm.modelDTO.tag;
+package com.epam.esm.modelDTO;
 
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;

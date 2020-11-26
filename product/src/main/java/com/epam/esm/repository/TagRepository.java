@@ -44,7 +44,7 @@ public interface TagRepository {
      * @return List of all tags or empty List if
      * no certificates were found
      */
-    List<Tag> findAll();
+    Optional<List<Tag>> findAll();
 
      /**
       * This method is used to return the list of tags by certificate id

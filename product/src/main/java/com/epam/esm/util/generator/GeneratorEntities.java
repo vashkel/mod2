@@ -68,8 +68,6 @@ public class GeneratorEntities {
                 .plusDays(new Random().nextInt((int) days + 1))
                 .minusHours(new Random().nextInt((int) days + 1))
                 .minusMinutes(new Random().nextInt((int) days + 1));
-
-
         return randomDateTime.format(DateTimeFormatter.ofPattern(LOCAL_DATE_TIME_PATTERN));
     }
 
@@ -96,7 +94,7 @@ public class GeneratorEntities {
     }
 
     public static void main(String[] args) throws IOException {
-        writeQueryToFile("orderGIftCertificate.sql");
+        writeQueryToFile("data/orderGIftCertificate.sql");
     }
 }
 

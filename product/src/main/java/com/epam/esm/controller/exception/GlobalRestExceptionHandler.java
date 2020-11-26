@@ -71,7 +71,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
-                .withStatus(status)
+                .withStatus(HttpStatus.BAD_GATEWAY)
                 .withDetail("Something went wrong")
                 .withMessage(ex.getLocalizedMessage())
                 .withError_code("502")

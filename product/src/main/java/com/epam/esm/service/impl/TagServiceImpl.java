@@ -55,11 +55,11 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDTO> findAll() {
         List<TagDTO> tagDTOList = new ArrayList<>();
-        List<Tag> tags = tagRepository.findAll();
-        if (tags.isEmpty()) {
+        Optional<List<Tag>> tags = tagRepository.findAll();
+        if (tags.get().isEmpty()) {
             throw new TagNotFoundException("Tag not found");
         }
-        tags.forEach(tag -> tagDTOList.add(TagDTOConverter.converterToTagDTO(tag)));
+        tags.get().forEach(tag -> tagDTOList.add(TagDTOConverter.converterToTagDTO(tag)));
         return tagDTOList;
     }
 }

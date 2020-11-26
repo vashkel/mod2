@@ -1,6 +1,8 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.modelDTO.GiftCertificateDTO;
+import com.epam.esm.modelDTO.GiftCertificatePatchDTO;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -30,8 +31,15 @@ public class GiftCertificatesController {
 
     @GetMapping()
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
-            @RequestParam Map<String, String> filterParam) {
-        List<GiftCertificateDTO> giftCertificatesDTO = giftCertificateService.findAll(filterParam);
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "sort_field", required = false) String sortField,
+            @RequestParam(name = "name", required = false) String tag_name,
+            @RequestParam(name = "order", required = false) String order,
+            @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit
+    ) {
+        CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = initCommonParamsQuery(name, tag_name, sortField, order, offset, limit);
+        List<GiftCertificateDTO> giftCertificatesDTO = giftCertificateService.findAll(commonParamsGiftCertificateQuery);
         giftCertificatesDTO.forEach(this::addLinks);
         return ResponseEntity.ok().body(giftCertificatesDTO);
     }
@@ -59,15 +67,15 @@ public class GiftCertificatesController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id,
-                                                                @RequestBody @Valid GiftCertificateDTO giftCertificateDTO) {
+    public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id, @RequestBody
+                                                                @Valid GiftCertificateDTO giftCertificateDTO) {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificateDTO, id));
     }
 
-    @GetMapping("/tag_name/{tag_name}")
-    public ResponseEntity<List<GiftCertificateDTO>> findGiftCertificatesByTag
-            (@PathVariable(name = "tag_name") String tagName) {
-        return ResponseEntity.status(HttpStatus.OK).body(giftCertificateService.findCertificatesByTagName(tagName));
+    @PatchMapping("{id}")
+    public ResponseEntity<GiftCertificatePatchDTO> updateCertificate(
+            @PathVariable Long id, @RequestBody GiftCertificatePatchDTO giftCertificatePatchDTO){
+        return ResponseEntity.ok(giftCertificateService.updatePatch(giftCertificatePatchDTO, id));
     }
 
     private void addLinks(GiftCertificateDTO giftCertificateDTO) {
@@ -76,5 +84,14 @@ public class GiftCertificatesController {
         giftCertificateDTO.add(linkTo(methodOn(GiftCertificatesController.class).giftCertificate(giftCertificateDTO.getId())).withSelfRel());
     }
 
-
+    private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField, String order, int offset, int limit) {
+        CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = new CommonParamsGiftCertificateQuery();
+        commonParamsGiftCertificateQuery.setName(name);
+        commonParamsGiftCertificateQuery.setTag_name(tag_name);
+        commonParamsGiftCertificateQuery.setOrder(order);
+        commonParamsGiftCertificateQuery.setSortField(sortField);
+        commonParamsGiftCertificateQuery.setOffset(offset);
+        commonParamsGiftCertificateQuery.setLimit(limit);
+        return commonParamsGiftCertificateQuery;
+    }
 }

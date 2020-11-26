@@ -2,9 +2,10 @@ package com.epam.esm.service;
 
 
 import com.epam.esm.modelDTO.GiftCertificateDTO;
+import com.epam.esm.modelDTO.GiftCertificatePatchDTO;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 
 import java.util.List;
-import java.util.Map;
 
 public interface GiftCertificateService {
     /**
@@ -22,7 +23,7 @@ public interface GiftCertificateService {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List<GiftCertificateDTO> findAll(Map<String, String> filterParam);
+    List<GiftCertificateDTO> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery);
 
     /**
      * This method is used to create the certificate
@@ -51,12 +52,11 @@ public interface GiftCertificateService {
     GiftCertificateDTO update(GiftCertificateDTO giftCertificate, Long id);
 
     /**
-     * This method is used to return the list of certificates by name
-     * of tag
+     * This method is used to update the certificate
      *
-     * @return List of all certificates by tag name or empty List if
-     * no certificates were found
+     * @param giftCertificatePatchDTO the certificate to be updated
+     * @return updated GiftCertificateDTO
+     * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    List<GiftCertificateDTO> findCertificatesByTagName(String tagName);
-
+    GiftCertificatePatchDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO, Long id);
 }

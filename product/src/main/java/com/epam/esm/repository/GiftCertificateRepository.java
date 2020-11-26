@@ -1,10 +1,9 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.util.pagination.Pagination;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface GiftCertificateRepository {
@@ -22,7 +21,7 @@ public interface GiftCertificateRepository {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List<GiftCertificate> findAll(String hql, Pagination pagination);
+    Optional<List<GiftCertificate>> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery);
 
     /**
      * This method is used to create the certificate
@@ -47,25 +46,6 @@ public interface GiftCertificateRepository {
      * @return value of updated certificate
      */
     Optional<GiftCertificate> update(GiftCertificate giftCertificate);
-
-    /**
-     * This method is used to return the list of certificates by name
-     * of tag
-     *
-     * @return List of all certificates by tag name or empty List if
-     * no certificates were found
-     */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tag);
-
-    /**
-     * This method is used to
-     * sort the certificates by name asc/desc, date asc/date and find the certificates
-     * with tag
-     * @param filterParam  searching params(can be Null)
-     * @return List of sorted certificates, or unsorted List if received orderBy
-     * does not exist(or null) or received certificates is null
-     */
-    List<GiftCertificate> filterCertificate(Map<String, String> filterParam);
 
     /**
      * This method is used to return certificate by name

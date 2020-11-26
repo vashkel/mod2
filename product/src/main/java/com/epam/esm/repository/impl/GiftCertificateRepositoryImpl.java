@@ -4,20 +4,23 @@ package com.epam.esm.repository.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.util.DurationConverter;
-import com.epam.esm.util.pagination.Pagination;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
+import com.epam.esm.repository.util.GiftCertificateParamFetcher;
+import com.epam.esm.repository.util.SelectFilterCreator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class GiftCertificateRepositoryImpl extends BaseRepository implements GiftCertificateRepository {
+
+    private static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT c.id, c.name AS name, c.description,\n" +
+            "c.price, c.create_date AS create_date, c.last_update_date, c.duration, tag.name AS tag_name FROM gift_certificate AS c LEFT JOIN\n" +
+            "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
 
     @Autowired
     public GiftCertificateRepositoryImpl(@Qualifier("createEntityManager")EntityManager entityManager) {
@@ -33,11 +36,12 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
 
 
     @Override
-    public List<GiftCertificate> findAll(String hql, Pagination pagination) {
-        return getEntityManager().createQuery(hql, GiftCertificate.class)
-                .setFirstResult(pagination.getOffset())
-                .setMaxResults(pagination.getLimit())
-                .getResultList();
+    public Optional<List<GiftCertificate>> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery) {
+        return Optional.ofNullable(getEntityManager().createNativeQuery(SelectFilterCreator
+                .createFilterQuery(GiftCertificateParamFetcher.fetchParams(commonParamsGiftCertificateQuery), SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS), GiftCertificate.class)
+                .setFirstResult(commonParamsGiftCertificateQuery.getOffset())
+                .setMaxResults(commonParamsGiftCertificateQuery.getLimit())
+                .getResultList());
     }
 
     @Override
@@ -52,7 +56,6 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
 
     @Override
     public Optional<GiftCertificate> update (GiftCertificate giftCertificate) {
-        DurationConverter converter = new DurationConverter();
         getEntityManager().getTransaction().commit();
         getEntityManager().merge(giftCertificate);
         getEntityManager().getTransaction().commit();
@@ -60,27 +63,8 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesByTagName(String tag) {
-//        return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_CERTIFICATES_BY_TAG,
-//                new GiftCertificateMapper(), tag);
-        return null;
-    }
-
-    @Override
-    public List<GiftCertificate> filterCertificate(Map<String, String> filterParam) {
-//        SelectFilterCreator query = new SelectFilterCreator();
-//        return getJdbcTemplate().query(query.createFilterQuery(filterParam), new GiftCertificateMapper());
-        return null;
-    }
-
-    @Override
     public Optional<List<GiftCertificate>> findByName(String name) {
-        try {
             return Optional.ofNullable(getEntityManager().createNamedQuery("GiftCertificate.findByName", GiftCertificate.class).setParameter("name", name).getResultList());
-        }catch (NoResultException e){
-            return Optional.empty();
-        }
-
     }
 }
 

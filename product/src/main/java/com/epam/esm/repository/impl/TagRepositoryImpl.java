@@ -30,7 +30,6 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public void delete(Tag tag) {
         removeWithTransaction(tag);
-//        return getJdbcTemplate().update(TagConstantQuery.SQL_DELETE_TAG, tagId) == 1;
     }
 
     @Override
@@ -52,12 +51,8 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     }
 
     @Override
-    public List<Tag> findAll() {
-        try {
-            return getEntityManager().createNamedQuery("Tag.findAll", Tag.class).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+    public Optional<List<Tag>> findAll() {
+            return Optional.ofNullable(getEntityManager().createNamedQuery("Tag.findAll", Tag.class).getResultList());
     }
 
     @Override

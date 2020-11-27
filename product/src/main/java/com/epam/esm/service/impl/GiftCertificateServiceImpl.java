@@ -27,15 +27,17 @@ import java.util.stream.Stream;
 @Transactional
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
+    private static final String NOT_FOUND = "locale.message.GiftCertificateNotFound";
+    private static final String CERTIFICATE_EXIST = "locale.message.CertificateExist";
+
     private GiftCertificateRepository giftCertificateRepository;
     private TagRepository tagRepository;
-    private PlatformTransactionManager txManager;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository, PlatformTransactionManager txManager) {
+    public GiftCertificateServiceImpl(GiftCertificateRepository giftCertificateRepository, TagRepository tagRepository) {
         this.giftCertificateRepository = giftCertificateRepository;
         this.tagRepository = tagRepository;
-        this.txManager = txManager;
+
     }
 
     @Transactional(readOnly = true)
@@ -43,7 +45,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDTO find(Long id){
             Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
             if (!giftCertificate.isPresent()) {
-                throw new GiftCertificateNotFoundException("certificate not found");
+                throw new GiftCertificateNotFoundException(NOT_FOUND);
             }
         return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.findById(id).get());
     }
@@ -53,13 +55,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<GiftCertificateDTO> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery) {
         List<GiftCertificateDTO> giftCertificateDTOS = new ArrayList<>();
         Optional<List<GiftCertificate>> certificates = giftCertificateRepository.findAll(commonParamsGiftCertificateQuery);
-        if (!certificates.get().isEmpty()) {
-            certificates.get().forEach(giftCertificate -> giftCertificateDTOS
-                    .add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate)));
-        }
+        certificates.ifPresent(giftCertificates -> giftCertificates.forEach(giftCertificate -> giftCertificateDTOS
+                .add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate))));
         return giftCertificateDTOS;
     }
 
+    @Transactional
     @Override
     public GiftCertificateDTO create(GiftCertificateDTO giftCertificateDTO) {
         Optional<List<GiftCertificate>> certificatesFromDb;
@@ -76,17 +77,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         for (Tag insertedTag : giftCertificate.getTags()) {
             Optional<Tag> tagFromDb = tagRepository.findByName(insertedTag.getName());
-            if(tagFromDb.isPresent()){
+            if (tagFromDb.isPresent()) {
                 tags.add(tagFromDb.get());
-            }else {
+            } else {
                 tags.add(insertedTag);
             }
-            }
+        }
         giftCertificate.setTags(tags);
         Optional<GiftCertificate> createdGiftCertificate = giftCertificateRepository.create(giftCertificate);
-        return GiftCertificateDTOConverter.convertToGiftCertificateDTO(createdGiftCertificate.get());
+        if (createdGiftCertificate.isPresent())
+            giftCertificateDTO = GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate);
+        return giftCertificateDTO;
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         Optional<GiftCertificate> createdCertificate = giftCertificateRepository.findById(id);
@@ -96,6 +100,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificateRepository.delete(createdCertificate.get());
     }
 
+    @Transactional
     @Override
     public GiftCertificateDTO update(GiftCertificateDTO certificateDTO, Long id) {
         GiftCertificateDTO giftCertificateDTO = null;
@@ -114,6 +119,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDTO;
     }
 
+    @Transactional
     @Override
     public GiftCertificatePatchDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO, Long id) {
         GiftCertificate newGiftCertificate;
@@ -139,9 +145,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new GiftCertificateNotFoundException("gift Certificate not found");
         }
         for (com.epam.esm.entity.GiftCertificate giftCertificate : giftCertificates) {
-            List<Tag> tags = tagRepository.findAllTagsByCertificateId(giftCertificate.getId());
-            for (Tag tag : tags) {
-                giftCertificate.getTags().add(tag);
+            Optional<List<Tag>> tags = tagRepository.findAllTagsByCertificateId(giftCertificate.getId());
+            if (tags.isPresent()) {
+                for (Tag tag : tags.get()) {
+                    giftCertificate.getTags().add(tag);
+                }
             }
             giftCertificateDTOS.add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate));
         }
@@ -163,29 +171,4 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional.ofNullable(newGiftCertificate.getDuration()).ifPresent(oldGiftCertificate::setDuration);
         oldGiftCertificate.setLastUpdateTime(LocalDateTime.now());
     }
-
-//    private void deleteWrongSortParam(Map<String, String> filterParam) {
-//        filterParam.entrySet().removeIf(
-//                entry -> ParamName.getPossibleDirectionParam().stream().noneMatch(e -> {
-//                    if (entry.getKey().equals(ParamName.ORDER.getParamName())) {
-//                        return entry.getValue().equals(e);
-//                    }
-//                    return true;
-//                })
-//        );
-//        filterParam.entrySet().removeIf(
-//                entry -> ParamName.getPossibleFieldParam().stream().noneMatch(e -> {
-//                    if (entry.getKey().equals(ParamName.SORT_FIELD.getParamName())) {
-//                        return entry.getValue().equals(e);
-//                    }
-//                    return true;
-//                })
-//        );
-//    }
-//
-//    private void deleteWrongSearchParam(Map<String, String> filterParam) {
-//        filterParam.entrySet().removeIf(entry -> Arrays.stream(ParamName.values())
-//                .noneMatch(paramName -> paramName.getParamName().equals(entry.getKey())));
-//    }
-
 }

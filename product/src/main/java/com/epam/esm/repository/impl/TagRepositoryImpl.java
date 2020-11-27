@@ -3,7 +3,6 @@ package com.epam.esm.repository.impl;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.TagRepository;
-import com.epam.esm.util.query.TagConstantQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -24,12 +23,13 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     @Override
     public Optional<Tag> create(Tag tag) {
-        return Optional.ofNullable(persistWithTransaction(tag));
+        getEntityManager().persist(tag);
+        return Optional.ofNullable(tag);
     }
 
     @Override
     public void delete(Tag tag) {
-        removeWithTransaction(tag);
+        getEntityManager().remove(tag);
     }
 
     @Override
@@ -44,7 +44,10 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public Optional<Tag> findByName(String tagName) {
         try {
-            return Optional.ofNullable(getEntityManager().createNamedQuery("Tag.findByName", Tag.class).setParameter("name", tagName).getSingleResult());
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("Tag.findByName", Tag.class)
+                    .setParameter("name", tagName)
+                    .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -52,15 +55,16 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     @Override
     public Optional<List<Tag>> findAll() {
-            return Optional.ofNullable(getEntityManager().createNamedQuery("Tag.findAll", Tag.class).getResultList());
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("Tag.findAll", Tag.class)
+                    .getResultList());
     }
 
     @Override
-    public List<Tag> findAllTagsByCertificateId(Long id) {
-        try {
-            return getEntityManager().createNamedQuery("Tag.findAllTagsByCertificateId", Tag.class).setParameter("id", id).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
+    public Optional<List<Tag>> findAllTagsByCertificateId(Long id) {
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("Tag.findAllTagsByCertificateId", Tag.class)
+                    .setParameter("id", id)
+                    .getResultList());
     }
 }

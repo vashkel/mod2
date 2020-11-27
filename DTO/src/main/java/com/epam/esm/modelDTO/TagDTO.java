@@ -1,6 +1,7 @@
 package com.epam.esm.modelDTO;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 

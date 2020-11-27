@@ -14,7 +14,7 @@ public class SelectFilterCreator {
     private static final String LIKE = " like '%";
     private static final String ORDER_BY = " order by ";
     private static final String SPACE = " ";
-    private static final List<String> sortingParams = Arrays.asList(
+    private static final List<String> skipSortingParams = Arrays.asList(
             GiftCertificateParamName.ORDER.getParamName(),
             GiftCertificateParamName.SORT_FIELD.getParamName(),
             GiftCertificateParamName.LIMIT.getParamName(),
@@ -36,7 +36,7 @@ public class SelectFilterCreator {
     private static String searchingParams(Map<String, String> availableParams) {
         StringBuilder sb = new StringBuilder();
         availableParams.entrySet().stream()
-                .filter(e -> sortingParams.stream().noneMatch(w -> e.getKey().equals(w)))
+                .filter(e -> skipSortingParams.stream().noneMatch(w -> e.getKey().equals(w)))
                 .forEach(e -> {
                     sb.append(e.getKey());
                     sb.append(LIKE);

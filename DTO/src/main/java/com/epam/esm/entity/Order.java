@@ -15,6 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "order")
+@NamedQueries( {
+        @NamedQuery(name = "Order.findById", query = "FROM Order WHERE id = :id"),
+        @NamedQuery(name = "Order.findAll",
+                    query = "SELECT o FROM Order o LEFT JOIN fetch o.giftCertificateSet c LEFT JOIN fetch o.user u")
+})
 public class Order implements Serializable {
     private static final long serialVersionUID = -6684132457366390793L;
 

@@ -12,6 +12,10 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "user")
+@NamedQueries({
+        @NamedQuery(name = "User.findById", query = "FROM User WHERE id = :id "),
+        @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u LEFT JOIN fetch u.orders o")
+})
 public class User implements Serializable {
     private static final long serialVersionUID = -17888390793L;
 

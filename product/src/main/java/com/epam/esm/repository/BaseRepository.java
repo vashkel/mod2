@@ -13,37 +13,12 @@ import javax.persistence.EntityManager;
 public abstract class BaseRepository {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
     @Qualifier("createEntityManager")
     private EntityManager entityManager;
-
-    public BaseRepository(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate = getJdbcTemplate();
-    }
 
     @Autowired
     public BaseRepository(@Qualifier("createEntityManager") EntityManager entityManager){
         this.entityManager = entityManager;
-    }
-
-    protected  <T> T persistWithTransaction(T entity){
-        getEntityManager().getTransaction().begin();
-        getEntityManager().persist(entity);
-        getEntityManager().getTransaction().commit();
-        return (T) entity;
-    }
-
-    protected <T> void removeWithTransaction(T entity){
-        getEntityManager().getTransaction().begin();
-        getEntityManager().remove(entity);
-        getEntityManager().getTransaction().commit();
-    }
-
-
-    protected JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
     }
     protected EntityManager getEntityManager(){
         return entityManager;

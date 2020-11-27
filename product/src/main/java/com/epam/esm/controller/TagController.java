@@ -39,10 +39,7 @@ public class TagController {
 
     @PostMapping()
     public ResponseEntity<TagDTO> createTag(@RequestBody @Valid TagDTO tag) {
-        if (tagService.create(tag) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(tag);
     }
 
     @DeleteMapping("{id}")

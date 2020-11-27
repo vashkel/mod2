@@ -52,5 +52,5 @@ public interface TagRepository {
       * @return List of all tags or empty List if
       * no certificates were found
       */
-     List<Tag> findAllTagsByCertificateId(Long id);
+     Optional<List<Tag>>  findAllTagsByCertificateId(Long id);
 }

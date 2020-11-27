@@ -33,7 +33,7 @@ public class GiftCertificatesController {
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "sort_field", required = false) String sortField,
-            @RequestParam(name = "name", required = false) String tag_name,
+            @RequestParam(name = "tag_name", required = false) String tag_name,
             @RequestParam(name = "order", required = false) String order,
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "8") int limit
@@ -81,7 +81,8 @@ public class GiftCertificatesController {
     private void addLinks(GiftCertificateDTO giftCertificateDTO) {
         giftCertificateDTO.getTags().forEach(tagDTO -> tagDTO.add(linkTo(methodOn(TagController.class)
                 .getTag(tagDTO.getId())).withSelfRel()));
-        giftCertificateDTO.add(linkTo(methodOn(GiftCertificatesController.class).giftCertificate(giftCertificateDTO.getId())).withSelfRel());
+        giftCertificateDTO.add(linkTo(methodOn(GiftCertificatesController.class)
+                .giftCertificate(giftCertificateDTO.getId())).withSelfRel());
     }
 
     private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField, String order, int offset, int limit) {

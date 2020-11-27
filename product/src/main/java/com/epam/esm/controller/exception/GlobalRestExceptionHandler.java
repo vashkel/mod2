@@ -4,6 +4,8 @@ import com.epam.esm.exception.GiftCertificateNotFoundException;
 import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.exception.PaginationException;
 import com.epam.esm.exception.model.ApiErrorResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,20 +22,20 @@ import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @Autowired
+    private MessageSource messageSource;
+
     @ExceptionHandler({GiftCertificateNotFoundException.class})
-    public ResponseEntity<ApiErrorResponse> customerNotFound(GiftCertificateNotFoundException ex, WebRequest request) {
+    public ResponseEntity<ApiErrorResponse> customerNotFound(GiftCertificateNotFoundException ex, WebRequest request, Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withDetail("Not able to find gift certificate record")
-                .withMessage(ex.getLocalizedMessage())
+                .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
                 .withError_code("404")
                 .withStatus(HttpStatus.NOT_FOUND)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))

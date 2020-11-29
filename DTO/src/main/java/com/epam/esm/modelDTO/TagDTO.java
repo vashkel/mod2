@@ -1,6 +1,7 @@
 package com.epam.esm.modelDTO;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
@@ -9,6 +10,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = false)
 @Data
 @RequiredArgsConstructor
 public class TagDTO extends RepresentationModel<TagDTO> implements Serializable {
@@ -16,6 +18,7 @@ public class TagDTO extends RepresentationModel<TagDTO> implements Serializable 
 
     private Long id;
     private String name;
+
     private Set<GiftCertificateDTO> giftCertificates = new HashSet<>();
 
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @Table(name = "user")
 @NamedQueries({
-        @NamedQuery(name = "User.findById", query = "FROM User WHERE id = :id "),
+        @NamedQuery(name = "User.findById", query = "FROM User WHERE id = :id"),
         @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u LEFT JOIN fetch u.orders o")
 })
 public class User implements Serializable {
@@ -26,7 +26,7 @@ public class User implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Order> orders = new HashSet<>();
 
 

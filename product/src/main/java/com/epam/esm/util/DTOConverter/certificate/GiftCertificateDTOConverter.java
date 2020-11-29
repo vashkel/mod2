@@ -15,7 +15,7 @@ public class GiftCertificateDTOConverter {
         GiftCertificateDTO giftCertificateDTO = giftCertificateDTOCreator(giftCertificate);
         if (!giftCertificate.getTags().isEmpty()) {
             giftCertificate.getTags().forEach(tag -> giftCertificateDTO.getTags()
-                    .add(TagDTOConverter.converterToTagDTO(tag)));
+                    .add(TagDTOConverter.converterToTagDTOWithoutGiftCertificate(tag)));
         }
         return giftCertificateDTO;
     }
@@ -25,7 +25,7 @@ public class GiftCertificateDTOConverter {
         GiftCertificate gIftCertificate = giftCertificateCreator(giftCertificateDTO);
         if (!giftCertificateDTO.getTags().isEmpty()) {
             for (TagDTO tagDTO : giftCertificateDTO.getTags()) {
-                tags.add(TagDTOConverter.convertFromTagDTO(tagDTO));
+                tags.add(TagDTOConverter.convertFromTagDTOWithoutGiftCertificate(tagDTO));
             }
             gIftCertificate.setTags(tags);
         }

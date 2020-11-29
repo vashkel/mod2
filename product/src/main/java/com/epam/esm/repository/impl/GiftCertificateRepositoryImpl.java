@@ -46,7 +46,8 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public Optional<List<GiftCertificate>> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery) {
         String query = SelectFilterCreator
-                .createFilterQuery(CommonParamsGiftCertificateQuery.fetchParams(commonParamsGiftCertificateQuery), SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS);
+                .createFilterQuery(CommonParamsGiftCertificateQuery
+                        .fetchParams(commonParamsGiftCertificateQuery), SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS);
         return Optional.ofNullable(getEntityManager().createNativeQuery(query, GiftCertificate.class)
                 .setFirstResult(commonParamsGiftCertificateQuery.getOffset())
                 .setMaxResults(commonParamsGiftCertificateQuery.getLimit())

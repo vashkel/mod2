@@ -23,13 +23,24 @@ public class OrderRepositoryImpl extends BaseRepository implements OrderReposito
         try {
             return Optional.ofNullable(getEntityManager().createNamedQuery("Order.findById", Order.class)
                     .setParameter("id", id).getSingleResult());
-        }catch (NoResultException e){
+        } catch (NoResultException e) {
             return Optional.empty();
         }
     }
 
     @Override
-    public Optional<List<Order>> findAll() {
-        return Optional.ofNullable(getEntityManager().createNamedQuery("Order.findAll", Order.class).getResultList());
+    public Optional<List<Order>> findAll(int offset, int limit) {
+        return Optional.ofNullable(getEntityManager().createNamedQuery("Order.findAll", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList());
+    }
+
+    @Override
+    public Optional<Order> createOrder(Order order) {
+        getEntityManager().getTransaction().begin();
+        getEntityManager().persist(order);
+        getEntityManager().getTransaction().commit();
+        return Optional.ofNullable(order);
     }
 }

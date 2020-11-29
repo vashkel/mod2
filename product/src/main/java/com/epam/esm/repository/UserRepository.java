@@ -9,5 +9,5 @@ import java.util.Optional;
 public interface UserRepository {
 
     Optional<User> findById(Long id);
-    Optional<List<User>> findAll();
+    Optional<List<User>> findAll(int offset, int limit);
 }

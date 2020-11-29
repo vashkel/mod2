@@ -5,11 +5,9 @@ import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
@@ -24,9 +22,11 @@ public class UserController {
         return ResponseEntity.ok(userService.findById(id));
     }
 
-    @GetMapping()
-    public ResponseEntity<List<UserDTO>> findAll(){
-        return ResponseEntity.ok(userService.findAll());
+    @GetMapping
+    public ResponseEntity<List<UserDTO>> findAll(
+            @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit){
+        return ResponseEntity.ok(userService.findAll(offset,limit));
     }
 
 

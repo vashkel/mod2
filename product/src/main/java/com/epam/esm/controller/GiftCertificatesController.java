@@ -29,7 +29,7 @@ public class GiftCertificatesController {
         this.giftCertificateService = giftCertificateService;
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "sort_field", required = false) String sortField,
@@ -39,9 +39,11 @@ public class GiftCertificatesController {
             @RequestParam(name = "limit", required = false, defaultValue = "8") int limit
     ) {
         CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = initCommonParamsQuery(name, tag_name, sortField, order, offset, limit);
-        List<GiftCertificateDTO> giftCertificatesDTO = giftCertificateService.findAll(commonParamsGiftCertificateQuery);
-        giftCertificatesDTO.forEach(this::addLinks);
-        return ResponseEntity.ok().body(giftCertificatesDTO);
+        List<GiftCertificateDTO> giftCertificatesDTOS = giftCertificateService.findAll(commonParamsGiftCertificateQuery);
+        for(GiftCertificateDTO giftCertificateDTO: giftCertificatesDTOS){
+            addLinks(giftCertificateDTO);
+        };
+        return ResponseEntity.ok().body(giftCertificatesDTOS);
     }
 
     @GetMapping("{id}")
@@ -51,7 +53,7 @@ public class GiftCertificatesController {
         return ResponseEntity.ok().body(giftCertificateDTO);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@Valid @RequestBody GiftCertificateDTO certificateDTO) {
         GiftCertificateDTO giftCertificateWithTagsDTO = giftCertificateService.create(certificateDTO);
         if (giftCertificateWithTagsDTO == null) {

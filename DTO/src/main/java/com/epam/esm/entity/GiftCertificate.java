@@ -53,18 +53,12 @@ public class GiftCertificate implements Serializable  {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name = "create_date", nullable = false)
     private LocalDateTime createDate;
 
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
     @Column(name = "last_update_date", nullable = false)
     private LocalDateTime lastUpdateTime;
 
-    @JsonDeserialize(using = DurationDeserializer.class)
-    @JsonSerialize(using = DurationSerializer.class)
     @Column(name = "duration", nullable = false)
     private Duration duration;
 

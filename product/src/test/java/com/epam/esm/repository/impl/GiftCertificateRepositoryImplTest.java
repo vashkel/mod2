@@ -100,6 +100,5 @@ class GiftCertificateRepositoryImplTest {
         giftCertificate.setDuration(duration);
         return giftCertificate;
 
-
     }
 }

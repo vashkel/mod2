@@ -43,4 +43,20 @@ public class TagDTOConverter {
         }
         return tag;
     }
+
+    public static TagDTO converterToTagDTOWithoutGiftCertificate(Tag tag) {
+        Set<GiftCertificateDTO> giftCertificatesDTO = new HashSet<>();
+        TagDTO tagDTO = new TagDTO();
+        tagDTO.setId(tag.getId());
+        tagDTO.setName(tag.getName());
+        return tagDTO;
+
+    }
+
+    public static Tag convertFromTagDTOWithoutGiftCertificate(TagDTO tagDTO) {
+        Tag tag = new Tag();
+        tag.setId(tagDTO.getId());
+        tag.setName(tagDTO.getName());
+        return tag;
+    }
 }

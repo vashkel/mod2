@@ -60,7 +60,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDTOS;
     }
 
-    @Transactional
     @Override
     public GiftCertificateDTO create(GiftCertificateDTO giftCertificateDTO) {
         Optional<List<GiftCertificate>> certificatesFromDb;
@@ -90,7 +89,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDTO;
     }
 
-    @Transactional
     @Override
     public void deleteById(Long id) {
         Optional<GiftCertificate> createdCertificate = giftCertificateRepository.findById(id);
@@ -100,7 +98,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificateRepository.delete(createdCertificate.get());
     }
 
-    @Transactional
     @Override
     public GiftCertificateDTO update(GiftCertificateDTO certificateDTO, Long id) {
         GiftCertificateDTO giftCertificateDTO = null;
@@ -119,7 +116,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDTO;
     }
 
-    @Transactional
     @Override
     public GiftCertificatePatchDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO, Long id) {
         GiftCertificate newGiftCertificate;

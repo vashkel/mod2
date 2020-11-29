@@ -54,9 +54,11 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     }
 
     @Override
-    public Optional<List<Tag>> findAll() {
+    public Optional<List<Tag>> findAll(int offset, int limit) {
             return Optional.ofNullable(getEntityManager()
                     .createNamedQuery("Tag.findAll", Tag.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(limit)
                     .getResultList());
     }
 

@@ -1,23 +1,21 @@
 package com.epam.esm.modelDTO;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.User;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+@Value
 public class OrderDTO {
+    Long userId;
+    List<GiftCertificateDTO> giftCertificates;
 
-    private Long Id;
-    private LocalDateTime createDate;
-    private BigDecimal cost;
-    private List<GiftCertificateDTO> giftCertificateSet;
-    private User user;
+    @JsonCreator
+    public OrderDTO(@JsonProperty("userId") Long userId, @JsonProperty("giftCertificates") List <GiftCertificateDTO> giftCertificates) {
+        this.userId = userId;
+        this.giftCertificates = giftCertificates;
+    }
 }

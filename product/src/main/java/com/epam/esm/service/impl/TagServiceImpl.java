@@ -59,9 +59,9 @@ public class TagServiceImpl implements TagService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<TagDTO> findAll() {
+    public List<TagDTO> findAll(int offset, int limit) {
         List<TagDTO> tagDTOList = new ArrayList<>();
-        Optional<List<Tag>> tags = tagRepository.findAll();
+        Optional<List<Tag>> tags = tagRepository.findAll(offset, limit);
         if (!tags.isPresent()) {
             throw new TagNotFoundException("Tag not found");
         }

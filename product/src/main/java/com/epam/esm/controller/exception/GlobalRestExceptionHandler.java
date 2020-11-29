@@ -1,8 +1,6 @@
 package com.epam.esm.controller.exception;
 
-import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.exception.NotValidParamsRequest;
-import com.epam.esm.exception.PaginationException;
+import com.epam.esm.exception.*;
 import com.epam.esm.exception.model.ApiErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -31,8 +29,8 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
-    @ExceptionHandler({GiftCertificateNotFoundException.class})
-    public ResponseEntity<ApiErrorResponse> customerNotFound(GiftCertificateNotFoundException ex, WebRequest request, Locale locale) {
+    @ExceptionHandler({GiftCertificateNotFoundException.class, OrderNotFoundException.class, TagNotFoundException.class})
+    public ResponseEntity<ApiErrorResponse> customerNotFound(RuntimeException ex, WebRequest request, Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withDetail("Not able to find gift certificate record")
                 .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))

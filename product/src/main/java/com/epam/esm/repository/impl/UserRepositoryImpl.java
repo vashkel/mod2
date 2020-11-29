@@ -21,14 +21,21 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
     @Override
     public Optional<User> findById(Long id) {
         try {
-            return Optional.ofNullable(getEntityManager().createNamedQuery("User.findById", User.class).setParameter("id", id).getSingleResult());
+            return Optional.ofNullable(getEntityManager()
+                    .createQuery("FROM User WHERE id = :id", User.class)
+                    .setParameter("id", id)
+                    .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
     }
 
     @Override
-    public Optional<List<User>> findAll() {
-        return Optional.ofNullable(getEntityManager().createNamedQuery("User.findAll", User.class).getResultList());
+    public Optional<List<User>> findAll(int offset, int limit) {
+        return Optional.ofNullable(getEntityManager()
+                .createNamedQuery("User.findAll", User.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList());
     }
 }

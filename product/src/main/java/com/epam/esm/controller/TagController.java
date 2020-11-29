@@ -24,8 +24,9 @@ public class TagController {
     private TagServiceImpl tagService;
 
     @GetMapping
-    public ResponseEntity<List<TagDTO>> getTags() {
-        List<TagDTO> tagsDTO = tagService.findAll();
+    public ResponseEntity<List<TagDTO>> getTags(@RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
+                                                @RequestParam(name = "limit", required = false, defaultValue = "8") int limit) {
+        List<TagDTO> tagsDTO = tagService.findAll(offset, limit);
         tagsDTO.forEach(this::addLinks);
         return ResponseEntity.ok().body(tagsDTO);
     }
@@ -37,7 +38,7 @@ public class TagController {
         return ResponseEntity.ok().body(tagDTO);
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<TagDTO> createTag(@RequestBody @Valid TagDTO tag) {
         return ResponseEntity.status(HttpStatus.CREATED).body(tag);
     }

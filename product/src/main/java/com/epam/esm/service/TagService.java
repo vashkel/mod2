@@ -36,5 +36,5 @@ public interface TagService {
      * @return List of all tags or empty List if
      * no certificates were found
      */
-    List<TagDTO> findAll();
+    List<TagDTO> findAll(int offset, int limit);
 }

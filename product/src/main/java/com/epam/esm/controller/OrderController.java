@@ -1,17 +1,16 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.modelDTO.OrderDTO;
+import com.epam.esm.modelDTO.OrderRepresentationDTO;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
-@RestController()
+@RestController
 @RequestMapping("/orders")
 public class OrderController {
 
@@ -19,13 +18,19 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("{id}")
-    public ResponseEntity<OrderDTO> findById(@PathVariable Long id){
+    public ResponseEntity<OrderRepresentationDTO> findById(@PathVariable Long id){
         return ResponseEntity.ok(orderService.findById(id));
     }
 
-    @GetMapping()
-    public ResponseEntity<List<OrderDTO>> findAll(){
-        return ResponseEntity.ok(orderService.findAll());
+    @GetMapping
+    public ResponseEntity<List<OrderRepresentationDTO>> findAll( @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
+                                                                 @RequestParam(name = "limit", required = false, defaultValue = "8") int limit){
+        return ResponseEntity.ok(orderService.findAll(offset, limit));
+    }
+
+    @PostMapping
+    public ResponseEntity<OrderRepresentationDTO> createOrder(@RequestBody OrderDTO orderDTO){
+        return ResponseEntity.ok(orderService.createOrder(orderDTO));
     }
 
 }

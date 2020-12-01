@@ -4,8 +4,8 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.OrderNotFoundException;
-import com.epam.esm.modelDTO.OrderDTO;
-import com.epam.esm.modelDTO.OrderRepresentationDTO;
+import com.epam.esm.modelDTO.order.OrderDTO;
+import com.epam.esm.modelDTO.order.CreateOrderRequestDTO;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Transactional
+
 @Service
+@Transactional
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -34,9 +35,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true)
     @Override
-    public OrderRepresentationDTO findById(Long id) {
+    public CreateOrderRequestDTO findById(Long id) {
         Optional<Order> order = orderRepository.findById(id);
-        OrderRepresentationDTO orderDTO = null;
+        CreateOrderRequestDTO orderDTO;
         if (order.isPresent()) {
             orderDTO = orderDTOConverter.convertToRepresentationOrderDTO(order.get());
         } else {
@@ -47,16 +48,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<OrderRepresentationDTO> findAll(int offset, int limit) {
+    public List<CreateOrderRequestDTO> findAll(int offset, int limit) {
         Optional<List<Order>> orders = orderRepository.findAll(offset, limit);
-        List<OrderRepresentationDTO> orderDTOS = new ArrayList<>();
+        List<CreateOrderRequestDTO> orderDTOS = new ArrayList<>();
         orders.ifPresent(orderList -> orderList.forEach(order ->
                 orderDTOS.add(orderDTOConverter.convertToRepresentationOrderDTO(order))));
         return orderDTOS;
     }
 
     @Override
-    public OrderRepresentationDTO createOrder(OrderDTO orderDTO) {
+    public CreateOrderRequestDTO createOrder(OrderDTO orderDTO) {
         Order order = orderDTOConverter.convertToOrder(orderDTO);
         Optional<User> user = userRepository.findById(order.getUser().getId());
         Optional<Order> createdOrder = Optional.empty();

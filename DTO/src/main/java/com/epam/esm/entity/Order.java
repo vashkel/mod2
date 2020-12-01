@@ -36,8 +36,8 @@ public class Order implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "users_order_gift_certificate",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
+            joinColumns = @JoinColumn(name = "order_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id"))
     private List<GiftCertificate> giftCertificate = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = User.class)

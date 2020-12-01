@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.modelDTO.TagDTO;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.service.impl.TagServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -54,6 +55,10 @@ public class TagController {
                 .linkTo(methodOn(GiftCertificatesController.class)
                         .giftCertificate(giftCertificateDTO.getId())).withSelfRel()));
         tagDTO.add(WebMvcLinkBuilder.linkTo(methodOn(TagController.class).getTag(tagDTO.getId())).withSelfRel());
+    }
 
+    @GetMapping("/popular_tag")
+    public ResponseEntity<TagDTO> findMostPopularTagWithHighestPriceOfOrders(){
+        return ResponseEntity.ok(tagService.findMostPopularTagWithHighestPriceOfOrders());
     }
 }

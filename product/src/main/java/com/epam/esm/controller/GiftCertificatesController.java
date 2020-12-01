@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.modelDTO.GiftCertificateDTO;
-import com.epam.esm.modelDTO.GiftCertificatePatchDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;

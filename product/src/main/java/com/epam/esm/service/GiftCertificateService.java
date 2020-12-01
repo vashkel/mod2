@@ -1,8 +1,8 @@
 package com.epam.esm.service;
 
 
-import com.epam.esm.modelDTO.GiftCertificateDTO;
-import com.epam.esm.modelDTO.GiftCertificatePatchDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 
 import java.util.List;

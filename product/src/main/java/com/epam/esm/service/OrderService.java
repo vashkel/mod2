@@ -1,13 +1,13 @@
 package com.epam.esm.service;
 
-import com.epam.esm.modelDTO.OrderDTO;
-import com.epam.esm.modelDTO.OrderRepresentationDTO;
+import com.epam.esm.modelDTO.order.OrderDTO;
+import com.epam.esm.modelDTO.order.CreateOrderRequestDTO;
 
 import java.util.List;
 
 public interface OrderService {
 
-    OrderRepresentationDTO findById(Long id);
-    List<OrderRepresentationDTO> findAll(int offset, int limit);
-    OrderRepresentationDTO createOrder(OrderDTO orderDTO);
+    CreateOrderRequestDTO findById(Long id);
+    List<CreateOrderRequestDTO> findAll(int offset, int limit);
+    CreateOrderRequestDTO createOrder(OrderDTO orderDTO);
 }

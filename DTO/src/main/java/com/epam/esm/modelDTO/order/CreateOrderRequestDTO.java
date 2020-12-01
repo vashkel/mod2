@@ -1,10 +1,11 @@
-package com.epam.esm.modelDTO;
+package com.epam.esm.modelDTO.order;
 
+import com.epam.esm.modelDTO.user.UserDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.util.LocalDateTimeDeserializer;
 import com.epam.esm.util.LocalDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 @Data
 @NoArgsConstructor
-public class OrderRepresentationDTO extends RepresentationModel<OrderRepresentationDTO> {
+public class CreateOrderRequestDTO extends RepresentationModel<CreateOrderRequestDTO> {
 
     private Long Id;
 

@@ -1,9 +1,8 @@
-package com.epam.esm.modelDTO;
+package com.epam.esm.modelDTO.order;
 
-import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Value;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.UserNotFoundException;
-import com.epam.esm.modelDTO.UserDTO;
+import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;

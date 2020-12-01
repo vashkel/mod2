@@ -3,8 +3,8 @@ package com.epam.esm.service.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.modelDTO.GiftCertificateDTO;
-import com.epam.esm.modelDTO.GiftCertificatePatchDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
@@ -13,7 +13,6 @@ import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificatePatchDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;

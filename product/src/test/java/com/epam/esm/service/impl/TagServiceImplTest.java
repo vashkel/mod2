@@ -3,7 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.TagNotFoundException;
-import com.epam.esm.modelDTO.TagDTO;
+import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.repository.impl.TagRepositoryImpl;
 import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 import org.junit.jupiter.api.Assertions;

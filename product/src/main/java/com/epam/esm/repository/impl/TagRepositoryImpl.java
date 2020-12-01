@@ -15,6 +15,14 @@ import java.util.Optional;
 @Repository
 public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
+    private static final String THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER = "select tag.id , COUNT(tag.id) as 'tagID', tag.name, user_id, uo.cost from tag\n"+
+            "LEFT JOIN gift_certificate_tags gct on tag.id = gct.tag_id\n"+
+            "LEFT JOIN gift_certificate gc on gct.gift_certificate_id = gc.id\n"+
+            "LEFT JOIN users_order_gift_certificate uogc on gc.id = uogc.gift_certificate_id\n"+
+            "LEFT JOIN users_order uo on uogc.order_id = uo.id\n"+
+            "where user_id = (select user_id from users_order\n"+
+            "where users_order.cost = ( select max(cost) from giftcertificate.users_order))\n"+
+            "group by tag.id order by tagID DESC LIMIT 1";
 
     @Autowired
     public TagRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
@@ -68,5 +76,11 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
                     .createNamedQuery("Tag.findAllTagsByCertificateId", Tag.class)
                     .setParameter("id", id)
                     .getResultList());
+    }
+
+    @Override
+    public Optional<Tag> findMostPopularTagOfUserWithHighestPriceOfOrders() {
+        Tag tag = (Tag) getEntityManager().createNativeQuery(THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER, Tag.class).getSingleResult();
+        return Optional.ofNullable(tag);
     }
 }

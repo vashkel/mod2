@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.modelDTO.UserDTO;
+import com.epam.esm.modelDTO.user.UserDTO;
 
 import java.util.List;
 

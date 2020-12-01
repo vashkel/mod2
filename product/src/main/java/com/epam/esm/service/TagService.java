@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
-import com.epam.esm.modelDTO.TagDTO;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.modelDTO.tag.TagDTO;
 
 import java.util.List;
 
@@ -37,4 +38,6 @@ public interface TagService {
      * no certificates were found
      */
     List<TagDTO> findAll(int offset, int limit);
+
+    TagDTO findMostPopularTagWithHighestPriceOfOrders();
 }

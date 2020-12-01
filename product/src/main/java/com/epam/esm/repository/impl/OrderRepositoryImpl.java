@@ -5,6 +5,7 @@ import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -38,9 +39,9 @@ public class OrderRepositoryImpl extends BaseRepository implements OrderReposito
 
     @Override
     public Optional<Order> createOrder(Order order) {
-        getEntityManager().getTransaction().begin();
+//        getEntityManager().getTransaction().begin();
         getEntityManager().persist(order);
-        getEntityManager().getTransaction().commit();
+//        getEntityManager().getTransaction().commit();
         return Optional.ofNullable(order);
     }
 }

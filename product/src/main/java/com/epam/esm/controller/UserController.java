@@ -1,7 +1,6 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.modelDTO.UserDTO;
-import com.epam.esm.repository.UserRepository;
+import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +27,5 @@ public class UserController {
             @RequestParam(name = "limit", required = false, defaultValue = "8") int limit){
         return ResponseEntity.ok(userService.findAll(offset,limit));
     }
-
 
 }

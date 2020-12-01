@@ -2,8 +2,8 @@ package com.epam.esm.util.DTOConverter.certificate;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.modelDTO.GiftCertificateDTO;
-import com.epam.esm.modelDTO.TagDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 
 import java.util.HashSet;

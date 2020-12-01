@@ -1,7 +1,7 @@
 package com.epam.esm.util.DTOConverter.user;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.modelDTO.UserDTO;
+import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.util.DTOConverter.order.OrderDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -53,4 +53,6 @@ public interface TagRepository {
       * no certificates were found
       */
      Optional<List<Tag>>  findAllTagsByCertificateId(Long id);
+
+    Optional<Tag> findMostPopularTagOfUserWithHighestPriceOfOrders();
 }

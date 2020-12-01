@@ -1,26 +1,24 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.entity.BasicEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Component
 
 public abstract class BaseRepository {
-
-    @Autowired
-    @Qualifier("createEntityManager")
+    @PersistenceContext
     private EntityManager entityManager;
 
-    @Autowired
-    public BaseRepository(@Qualifier("createEntityManager") EntityManager entityManager){
+
+    public BaseRepository(@Qualifier("createEntityManager") EntityManager entityManager) {
         this.entityManager = entityManager;
     }
-    protected EntityManager getEntityManager(){
+
+    protected EntityManager getEntityManager() {
         return entityManager;
     }
 }

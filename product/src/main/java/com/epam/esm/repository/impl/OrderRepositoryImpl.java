@@ -39,9 +39,16 @@ public class OrderRepositoryImpl extends BaseRepository implements OrderReposito
 
     @Override
     public Optional<Order> createOrder(Order order) {
-//        getEntityManager().getTransaction().begin();
         getEntityManager().persist(order);
-//        getEntityManager().getTransaction().commit();
         return Optional.ofNullable(order);
+    }
+
+    @Override
+    public Optional<List<Order>> findUserOrders(Long userId) {
+        List<Order> userOrders = getEntityManager()
+                .createNamedQuery("Order.findUserOrders", Order.class)
+                .setParameter("userId", userId)
+                .getResultList();
+        return Optional.ofNullable(userOrders);
     }
 }

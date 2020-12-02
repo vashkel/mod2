@@ -76,9 +76,9 @@ class TagServiceImplTest {
     @Test
     void findAll(){
         List<TagDTO> expected = new ArrayList<>();
-        Mockito.when(tagRepository.findAll()).thenReturn(tagList);
+        Mockito.when(tagRepository.findAll(1, 2)).thenReturn(Optional.ofNullable(tagList));
         tagList.forEach(tag -> expected.add(TagDTOConverter.converterToTagDTO(tag)));
-        List<TagDTO> actual = tagService.findAll();
+        List<TagDTO> actual = tagService.findAll(1, 2);
 
         Assertions.assertIterableEquals(actual, expected);
     }

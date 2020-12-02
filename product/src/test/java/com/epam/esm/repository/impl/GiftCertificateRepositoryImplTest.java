@@ -13,9 +13,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,15 +38,15 @@ class GiftCertificateRepositoryImplTest {
 
     @BeforeEach
     void setUp() {
-        certificate1 = giftCertificateCreator(1L, "swimming pool", 30.0, "the best",
+        certificate1 = giftCertificateCreator(1L, "swimming pool", new BigDecimal(30.0), "the best",
                 durationConverter.convertToEntityAttribute(2160000000L));
-        certificate2 = giftCertificateCreator(2L, "cinema", 15.5, "comedy",
+        certificate2 = giftCertificateCreator(2L, "cinema", new BigDecimal(15.5), "comedy",
                 durationConverter.convertToEntityAttribute(1900800000L));
         certificateList = Arrays.asList(certificate1, certificate2);
 
-        certificate1WithTags = giftCertificateCreator(1L, "swimming pool", 30.0, "the best",
+        certificate1WithTags = giftCertificateCreator(1L, "swimming pool", new BigDecimal(30.0), "the best",
                 durationConverter.convertToEntityAttribute(2160000000L));
-        certificate1WithTags.setTags(Arrays.asList(new Tag(1L, "vip")));
+        certificate1WithTags.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "vip"))));
     }
 
     @Test
@@ -54,10 +56,11 @@ class GiftCertificateRepositoryImplTest {
     }
 
     @Test
-    void updateCertificate_whenCertificateUpdated_thenReturnTrue({
-        certificate2.setPrice(40.0);
+    void updateCertificate_whenCertificateUpdated_thenReturnTrue(){
+        certificate2.setPrice(new BigDecimal(40.0));
 
-        Assertions.assertTrue(giftCertificateRepository.update(certificate2));
+        Assertions.assertEquals(certificate2.getPrice(), giftCertificateRepository.update(certificate2).get().getPrice());
+//        Assertions.assertTrue(giftCertificateRepository.update(certificate2));
     }
 
     @Test
@@ -83,13 +86,7 @@ class GiftCertificateRepositoryImplTest {
 //        Assertions.assertTrue(giftCertificateRepository.delete(certificate1.getId()));
     }
 
-    @Test
-    void findGiftCertificatesByTagName_whenCertificatesIsFounded_thenReturnListOfCertificates(){
-        Assertions.assertEquals(2, giftCertificateRepository.findGiftCertificatesByTagName("family").size());
-    }
-
-
-    private GiftCertificate giftCertificateCreator(Long id, String name, Double price, String description, Duration duration){
+    private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price, String description, Duration duration){
        GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(id);
         giftCertificate.setName(name);

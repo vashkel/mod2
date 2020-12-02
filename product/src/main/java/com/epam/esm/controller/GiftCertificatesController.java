@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
@@ -63,7 +64,8 @@ public class GiftCertificatesController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<GiftCertificateDTO> deleteCertificate(@PathVariable("id") @Min(value = 1) Long id) {
+    public ResponseEntity<GiftCertificateDTO> deleteCertificate(
+            @PathVariable("id") @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         giftCertificateService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -76,7 +78,8 @@ public class GiftCertificatesController {
 
     @PatchMapping("{id}")
     public ResponseEntity<GiftCertificatePatchDTO> updateCertificate(
-            @PathVariable Long id, @RequestBody GiftCertificatePatchDTO giftCertificatePatchDTO){
+            @PathVariable @Min(value = 1, message = "id must be 1 or grater then 1") Long id,
+            @RequestBody GiftCertificatePatchDTO giftCertificatePatchDTO){
         return ResponseEntity.ok(giftCertificateService.updatePatch(giftCertificatePatchDTO, id));
     }
 
@@ -87,7 +90,8 @@ public class GiftCertificatesController {
                 .giftCertificate(giftCertificateDTO.getId())).withSelfRel());
     }
 
-    private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField, String order, int offset, int limit) {
+    private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField,
+                                                                   String order, int offset, int limit) {
         CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = new CommonParamsGiftCertificateQuery();
         commonParamsGiftCertificateQuery.setName(name);
         commonParamsGiftCertificateQuery.setTag_name(tag_name);

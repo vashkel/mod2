@@ -1,6 +1,6 @@
 package com.epam.esm.modelDTO.user;
 
-import com.epam.esm.modelDTO.order.CreateOrderRequestDTO;
+import com.epam.esm.modelDTO.order.OrderResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,5 +15,5 @@ public class UserDTO {
 
     private Long id;
     private String name;
-    private Set<CreateOrderRequestDTO> orders = new HashSet<>();
+    private Set<OrderResponseDTO> orders = new HashSet<>();
 }

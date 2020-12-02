@@ -1,5 +1,6 @@
 package com.epam.esm.repository;
 
+import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +11,6 @@ public interface UserRepository {
 
     Optional<User> findById(Long id);
     Optional<List<User>> findAll(int offset, int limit);
+
+
 }

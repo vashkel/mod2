@@ -17,20 +17,9 @@ public class UserDTOConverter {
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         if (!user.getOrders().isEmpty()) {
-            user.getOrders().forEach(order -> userDTO.getOrders().add(orderDTOConverter.convertToRepresentationOrderDTO(order)));
+            user.getOrders().forEach(order -> userDTO.getOrders().add(orderDTOConverter.convertToOrderResponseDTO(order)));
         }
         return userDTO;
-    }
-
-    public User convertFromOrderDTO(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setName(userDTO.getName());
-        if (!userDTO.getOrders().isEmpty()) {
-            userDTO.getOrders().forEach(orderRepresentationDTO ->
-                    user.getOrders().add(orderDTOConverter.convertToOrderFromOrderRepresentationOrderDTO(orderRepresentationDTO)));
-        }
-        return user;
     }
 
     public static UserDTO convertToUserDTOWithoutOrders(User user) {
@@ -38,13 +27,6 @@ public class UserDTOConverter {
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         return userDTO;
-    }
-
-    public static User convertFromOrderDTOWithoutOrders(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.getId());
-        user.setName(userDTO.getName());
-        return user;
     }
 
 }

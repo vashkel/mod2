@@ -6,7 +6,6 @@ import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,19 +14,25 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository repository;
-    @Autowired
-    private UserDTOConverter userDTOConverter;
+
+    private static final String NOT_FOUND = "locale.message.UserNotFound";
+
+    private final UserRepository repository;
+    private final UserDTOConverter userDTOConverter;
+
+    public UserServiceImpl(UserRepository repository, UserDTOConverter userDTOConverter) {
+        this.repository = repository;
+        this.userDTOConverter = userDTOConverter;
+    }
 
     @Override
     public UserDTO findById(Long id) {
         Optional<User> user = repository.findById(id);
-        UserDTO userDTO = null;
+        UserDTO userDTO;
         if (user.isPresent()) {
             userDTO = userDTOConverter.convertToUserDTO(user.get());
         } else {
-                  throw new UserNotFoundException("not found");
+            throw new UserNotFoundException(NOT_FOUND);
         }
         return userDTO;
     }

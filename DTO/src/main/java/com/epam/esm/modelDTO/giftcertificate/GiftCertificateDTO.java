@@ -28,10 +28,10 @@ import java.util.Set;
 @NoArgsConstructor
 public class GiftCertificateDTO extends RepresentationModel<GiftCertificateDTO> implements Serializable {
     private static final long serialVersionUID = -7284150257366390793L;
-   
+
     private Long id;
 
-    @NotNull(message = "Please provide name"  )
+    @NotNull(message = "Please provide name")
     private String name;
 
     @NotNull(message = "Please provide description")

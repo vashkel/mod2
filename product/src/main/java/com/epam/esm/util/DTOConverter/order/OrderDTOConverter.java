@@ -2,8 +2,9 @@ package com.epam.esm.util.DTOConverter.order;
 
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
-import com.epam.esm.modelDTO.order.CreateOrderRequestDTO;
+import com.epam.esm.modelDTO.order.OrderResponseDTO;
 import com.epam.esm.modelDTO.order.OrderDTO;
+import com.epam.esm.modelDTO.order.UsersOrderDTO;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OrderDTOConverter {
 
-    public CreateOrderRequestDTO convertToRepresentationOrderDTO(Order order) {
-        CreateOrderRequestDTO orderDTO = new CreateOrderRequestDTO();
+    public OrderResponseDTO convertToOrderResponseDTO(Order order) {
+        OrderResponseDTO orderDTO = new OrderResponseDTO();
         orderDTO.setId(order.getId());
         orderDTO.setCost(order.getCost());
         orderDTO.setCreateDate(order.getCreateDate());
@@ -27,6 +28,13 @@ public class OrderDTOConverter {
             orderDTO.setUser(UserDTOConverter.convertToUserDTOWithoutOrders(order.getUser()));
         }
         return orderDTO;
+    }
+
+    public UsersOrderDTO convertToUserOrdersDTO(Order order){
+        UsersOrderDTO usersOrderDTO = new UsersOrderDTO();
+        usersOrderDTO.setCreateDate(order.getCreateDate());
+        usersOrderDTO.setCost(order.getCost());
+        return usersOrderDTO;
     }
 
     public Order convertToOrder(OrderDTO orderDTO) {
@@ -42,16 +50,5 @@ public class OrderDTOConverter {
         return order;
     }
 
-    public Order convertToOrderFromOrderRepresentationOrderDTO(CreateOrderRequestDTO createOrderRequestDTO) {
-        Order order = new Order();
-        order.setId(createOrderRequestDTO.getId());
-        order.setCost(createOrderRequestDTO.getCost());
-        order.setCreateDate(createOrderRequestDTO.getCreateDate());
-        if (!createOrderRequestDTO.getGiftCertificates().isEmpty()) {
-            createOrderRequestDTO.getGiftCertificates()
-                    .forEach(giftCertificateDTO -> order.getGiftCertificate()
-                            .add(GiftCertificateDTOConverter.convertFromGiftCertificateDTO(giftCertificateDTO)));
-        }
-        return order;
     }
-}
+

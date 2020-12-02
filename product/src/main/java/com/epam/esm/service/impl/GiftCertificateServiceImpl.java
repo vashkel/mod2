@@ -41,12 +41,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Transactional(readOnly = true)
     @Override
-    public GiftCertificateDTO find(Long id){
-            Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
-            if (!giftCertificate.isPresent()) {
-                throw new GiftCertificateNotFoundException(NOT_FOUND);
-            }
-        return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificateRepository.findById(id).get());
+    public GiftCertificateDTO find(Long id) {
+        Optional<GiftCertificate> giftCertificate = giftCertificateRepository.findById(id);
+        if (giftCertificate.isPresent()) {
+            return GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate.get());
+        } else {
+            throw new GiftCertificateNotFoundException(NOT_FOUND);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +67,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<Tag> tags = new HashSet<>();
         certificatesFromDb = giftCertificateRepository.findByName(giftCertificateDTO.getName());
         if (!certificatesFromDb.isPresent()) {
-            throw new EntityExistsException("certificate have already existed");
+            throw new EntityExistsException(CERTIFICATE_EXIST);
         }
         giftCertificateDTO.setCreateDate(LocalDateTime.now());
         giftCertificateDTO.setLastUpdateTime(LocalDateTime.now());
@@ -92,7 +93,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void deleteById(Long id) {
         Optional<GiftCertificate> createdCertificate = giftCertificateRepository.findById(id);
         if (!createdCertificate.isPresent()) {
-            throw new GiftCertificateNotFoundException("gift certificate not found");
+            throw new GiftCertificateNotFoundException(NOT_FOUND);
         }
         giftCertificateRepository.delete(createdCertificate.get());
     }
@@ -103,14 +104,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate giftCertificate;
         Optional<GiftCertificate> certificate = giftCertificateRepository.findById(id);
         if (!certificate.isPresent()) {
-            throw new GiftCertificateNotFoundException("gift certification not found");
+            throw new GiftCertificateNotFoundException(NOT_FOUND);
         }
         certificateDTO.setId(id);
         certificateDTO.setLastUpdateTime(LocalDateTime.now());
         giftCertificate = GiftCertificateDTOConverter.convertFromGiftCertificateDTO(certificateDTO);
-        if (giftCertificateRepository.update(giftCertificate).isPresent()) {
+        Optional<GiftCertificate> giftCertificateOptional = giftCertificateRepository.update(giftCertificate);
+        if (giftCertificateOptional.isPresent()) {
             giftCertificateDTO = GiftCertificateDTOConverter
-                    .convertToGiftCertificateDTO(giftCertificateRepository.findById(id).get());
+                    .convertToGiftCertificateDTO(giftCertificate);
         }
         return giftCertificateDTO;
     }
@@ -120,7 +122,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate newGiftCertificate;
         Optional<GiftCertificate> oldGiftCertificate = giftCertificateRepository.findById(id);
         if (!oldGiftCertificate.isPresent()) {
-            throw new GiftCertificateNotFoundException("gift certification not found");
+            throw new GiftCertificateNotFoundException(NOT_FOUND);
         }
         giftCertificatePatchDTO.setId(oldGiftCertificate.get().getId());
         giftCertificatePatchDTO.setLastUpdateTime(LocalDateTime.now());
@@ -132,23 +134,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         giftCertificatePatchDTO = GiftCertificatePatchDTOConverter
                 .convertToGiftCertificateDTO(oldGiftCertificate.get());
         return giftCertificatePatchDTO;
-    }
-
-    private List<GiftCertificateDTO> checkCertificateListAndFillWithTags(List<GiftCertificate> giftCertificates) {
-        List<GiftCertificateDTO> giftCertificateDTOS = new ArrayList<>();
-        if (giftCertificates.isEmpty()) {
-            throw new GiftCertificateNotFoundException("gift Certificate not found");
-        }
-        for (com.epam.esm.entity.GiftCertificate giftCertificate : giftCertificates) {
-            Optional<List<Tag>> tags = tagRepository.findAllTagsByCertificateId(giftCertificate.getId());
-            if (tags.isPresent()) {
-                for (Tag tag : tags.get()) {
-                    giftCertificate.getTags().add(tag);
-                }
-            }
-            giftCertificateDTOS.add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate));
-        }
-        return giftCertificateDTOS;
     }
 
     private boolean hasUpdateValues(GiftCertificate giftCertificate) {

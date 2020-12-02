@@ -13,4 +13,6 @@ public interface OrderRepository {
     Optional<Order> findById(Long id);
     Optional<List<Order>> findAll(int offset, int limit);
     Optional<Order> createOrder(Order order);
+
+    Optional<List<Order>> findUserOrders(Long userId);
 }

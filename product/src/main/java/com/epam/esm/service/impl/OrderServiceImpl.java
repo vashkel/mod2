@@ -4,8 +4,10 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.OrderNotFoundException;
+import com.epam.esm.exception.UserNotFoundException;
 import com.epam.esm.modelDTO.order.OrderDTO;
-import com.epam.esm.modelDTO.order.CreateOrderRequestDTO;
+import com.epam.esm.modelDTO.order.OrderResponseDTO;
+import com.epam.esm.modelDTO.order.UsersOrderDTO;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
@@ -26,55 +28,77 @@ import java.util.Optional;
 @Transactional
 public class OrderServiceImpl implements OrderService {
 
-    @Autowired
-    private OrderRepository orderRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private OrderDTOConverter orderDTOConverter;
+    private static final String NOT_FOUND = "locale.message.OrderNotFound";
+    private static final String USER_WHO_CREATES_ORDER_NOT_FOUND = "locale.message.UserCreatesOrderNotFound";
+
+    private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
+    private final OrderDTOConverter orderDTOConverter;
+
+    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, OrderDTOConverter orderDTOConverter) {
+        this.orderRepository = orderRepository;
+        this.userRepository = userRepository;
+        this.orderDTOConverter = orderDTOConverter;
+    }
 
     @Transactional(readOnly = true)
     @Override
-    public CreateOrderRequestDTO findById(Long id) {
+    public OrderResponseDTO findById(Long id) {
         Optional<Order> order = orderRepository.findById(id);
-        CreateOrderRequestDTO orderDTO;
+        OrderResponseDTO orderDTO;
         if (order.isPresent()) {
-            orderDTO = orderDTOConverter.convertToRepresentationOrderDTO(order.get());
+            orderDTO = orderDTOConverter.convertToOrderResponseDTO(order.get());
         } else {
-            throw new OrderNotFoundException("order with " + id+ " not found");
+            throw new OrderNotFoundException(NOT_FOUND);
         }
         return orderDTO;
     }
 
     @Transactional(readOnly = true)
     @Override
-    public List<CreateOrderRequestDTO> findAll(int offset, int limit) {
+    public List<OrderResponseDTO> findAll(int offset, int limit) {
         Optional<List<Order>> orders = orderRepository.findAll(offset, limit);
-        List<CreateOrderRequestDTO> orderDTOS = new ArrayList<>();
+        List<OrderResponseDTO> orderDTOS = new ArrayList<>();
         orders.ifPresent(orderList -> orderList.forEach(order ->
-                orderDTOS.add(orderDTOConverter.convertToRepresentationOrderDTO(order))));
+                orderDTOS.add(orderDTOConverter.convertToOrderResponseDTO(order))));
         return orderDTOS;
     }
 
     @Override
-    public CreateOrderRequestDTO createOrder(OrderDTO orderDTO) {
+    public OrderResponseDTO createOrder(OrderDTO orderDTO) {
         Order order = orderDTOConverter.convertToOrder(orderDTO);
         Optional<User> user = userRepository.findById(order.getUser().getId());
-        Optional<Order> createdOrder = Optional.empty();
-        if (user.isPresent()){
+        Optional<Order> createdOrder;
+        if (user.isPresent()) {
             order.setCreateDate(LocalDateTime.now());
             order.setCost(calculateOrderCost(order));
             order.setUser(user.get());
             createdOrder = orderRepository.createOrder(order);
-        }else {
-
+        } else {
+            throw new UserNotFoundException(USER_WHO_CREATES_ORDER_NOT_FOUND);
         }
-        return orderDTOConverter.convertToRepresentationOrderDTO(createdOrder.get());
+        return orderDTOConverter.convertToOrderResponseDTO(createdOrder.get());
+    }
+
+    @Override
+    public List<UsersOrderDTO> findUserOrders(Long userId) {
+        List<UsersOrderDTO> userOrders = new ArrayList<>();
+        if (isRegisteredUser(userId)) {
+            Optional<List<Order>> orders = orderRepository.findUserOrders(userId);
+            orders.ifPresent(orderList -> orderList.forEach(order ->
+                    userOrders.add(orderDTOConverter.convertToUserOrdersDTO(order))));
+        }
+        return userOrders;
     }
 
     private BigDecimal calculateOrderCost(Order order) {
         return order.getGiftCertificate().stream()
                 .map(GiftCertificate::getPrice)
                 .reduce(BigDecimal.valueOf(0).setScale(2, RoundingMode.HALF_UP), BigDecimal::add);
+    }
+
+    private boolean isRegisteredUser(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        return user.isPresent();
     }
 }

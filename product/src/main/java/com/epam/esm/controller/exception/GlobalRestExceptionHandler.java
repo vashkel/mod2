@@ -29,7 +29,12 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
-    @ExceptionHandler({GiftCertificateNotFoundException.class, OrderNotFoundException.class, TagNotFoundException.class})
+    @ExceptionHandler({
+            GiftCertificateNotFoundException.class,
+            OrderNotFoundException.class,
+            TagNotFoundException.class,
+            UserNotFoundException.class
+    })
     public ResponseEntity<ApiErrorResponse> customerNotFound(RuntimeException ex, WebRequest request, Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withDetail("Not able to find gift certificate record")
@@ -38,29 +43,30 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
                 .withStatus(HttpStatus.NOT_FOUND)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
-        return new ResponseEntity<ApiErrorResponse>(apiResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({EntityExistsException.class})
-    public ResponseEntity<ApiErrorResponse> entityExistsException(EntityExistsException ex, WebRequest request) {
+    public ResponseEntity<ApiErrorResponse> entityExistsException(EntityExistsException ex, WebRequest request,
+                                                                  Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withDetail("you are creating already existed entity ")
-                .withMessage(ex.getLocalizedMessage())
+                .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
                 .withError_code("403")
                 .withStatus(HttpStatus.CONFLICT)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
-        return new ResponseEntity<ApiErrorResponse>(apiResponse, apiResponse.getStatus());
+        return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
     }
 
 
     @ExceptionHandler({NotValidParamsRequest.class, PaginationException.class})
-    protected ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(RuntimeException ex,
-                                                                            WebRequest request) {
+    protected ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
+            RuntimeException ex, WebRequest request, Locale locale) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withStatus(HttpStatus.BAD_REQUEST)
                 .withDetail("not valid arguments")
-                .withMessage(ex.getLocalizedMessage())
+                .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
                 .withError_code("400")
                 .withError_code(HttpStatus.NOT_ACCEPTABLE.name())
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
@@ -69,11 +75,12 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<ApiErrorResponse> handleCustomAPIException(Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleCustomAPIException(
+            Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, Locale locale) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withStatus(HttpStatus.BAD_GATEWAY)
                 .withDetail("Something went wrong")
-                .withMessage(ex.getLocalizedMessage())
+                .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
                 .withError_code("502")
                 .withError_code(HttpStatus.BAD_GATEWAY.name())
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
@@ -104,13 +111,11 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> constraintViolationException(ConstraintViolationException ex, HttpServletResponse response) throws IOException {
         ApiErrorResponse responseError = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withStatus(HttpStatus.BAD_REQUEST)
-                .withDetail(ex.getMessage())
+                .withDetail(ex.getLocalizedMessage())
                 .withMessage(ex.getMessage())
                 .withError_code("400")
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<>(responseError, responseError.getStatus());
     }
-
-
 }

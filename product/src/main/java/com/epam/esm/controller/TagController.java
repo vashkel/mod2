@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.entity.Tag;
 import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.service.impl.TagServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +24,17 @@ public class TagController {
     private TagServiceImpl tagService;
 
     @GetMapping
-    public ResponseEntity<List<TagDTO>> getTags(@RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
-                                                @RequestParam(name = "limit", required = false, defaultValue = "8") int limit) {
+    public ResponseEntity<List<TagDTO>> getTags(
+            @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit) {
         List<TagDTO> tagsDTO = tagService.findAll(offset, limit);
         tagsDTO.forEach(this::addLinks);
         return ResponseEntity.ok().body(tagsDTO);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<TagDTO> getTag(@PathVariable("id") @Min(value = 1) Long id) {
+    public ResponseEntity<TagDTO> getTag(
+            @PathVariable("id") @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         TagDTO tagDTO = tagService.findById(id);
         addLinks(tagDTO);
         return ResponseEntity.ok().body(tagDTO);
@@ -45,7 +46,8 @@ public class TagController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteTag(@PathVariable("id") Long id) {
+    public ResponseEntity<Object> deleteTag(
+            @PathVariable("id") @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         tagService.delete(id);
         return ResponseEntity.noContent().build();
     }
@@ -58,7 +60,7 @@ public class TagController {
     }
 
     @GetMapping("/popular_tag")
-    public ResponseEntity<TagDTO> findMostPopularTagWithHighestPriceOfOrders(){
+    public ResponseEntity<TagDTO> findMostPopularTagWithHighestPriceOfOrders() {
         return ResponseEntity.ok(tagService.findMostPopularTagWithHighestPriceOfOrders());
     }
 }

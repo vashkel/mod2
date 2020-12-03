@@ -30,7 +30,7 @@ import java.util.Set;
         @NamedQuery(name = "GiftCertificate.findAll",
                 query = "SELECT DISTINCT g FROM GiftCertificate g LEFT JOIN fetch g.tags t "),
         @NamedQuery(name = "GiftCertificate.findById",
-                query = "FROM GiftCertificate WHERE id = :id"),
+                query = "SELECT g FROM GiftCertificate g LEFT JOIN FETCH g.tags t WHERE g.id = :id"),
         @NamedQuery(name = "GiftCertificate.DeleteById",
                 query = "DELETE GiftCertificate WHERE id = :id"),
         @NamedQuery(name = "GiftCertificate.findByName",

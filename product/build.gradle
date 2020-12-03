@@ -27,6 +27,7 @@ dependencies {
     compile group: 'javax.persistence', name: 'javax.persistence-api', version: '2.2'
     compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.3.4.RELEASE'
 }
 
 

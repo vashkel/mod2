@@ -4,6 +4,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.config.H2Config;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 import com.epam.esm.util.DurationConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -24,12 +26,14 @@ import java.util.Optional;
 @Sql({"classpath:drop_schema.sql", "classpath:create_schema.sql"})
 @SpringJUnitConfig(H2Config.class)
 @WebAppConfiguration
+@Transactional
 class GiftCertificateRepositoryImplTest {
 
     private List<GiftCertificate> certificateList;
     private GiftCertificate certificate1;
     private GiftCertificate certificate2;
     private GiftCertificate certificate1WithTags;
+    private CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery;
 
     @Autowired
     private GiftCertificateRepository giftCertificateRepository;
@@ -40,13 +44,16 @@ class GiftCertificateRepositoryImplTest {
     void setUp() {
         certificate1 = giftCertificateCreator(1L, "swimming pool", new BigDecimal(30.0), "the best",
                 durationConverter.convertToEntityAttribute(2160000000L));
+        certificate1.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "family"))));
+
         certificate2 = giftCertificateCreator(2L, "cinema", new BigDecimal(15.5), "comedy",
                 durationConverter.convertToEntityAttribute(1900800000L));
+        certificate2.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "family"), new Tag(2L, "vip"))));
+
         certificateList = Arrays.asList(certificate1, certificate2);
 
-        certificate1WithTags = giftCertificateCreator(1L, "swimming pool", new BigDecimal(30.0), "the best",
-                durationConverter.convertToEntityAttribute(2160000000L));
-        certificate1WithTags.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "vip"))));
+        commonParamsGiftCertificateQuery =
+                initCommonParamsQuery(null, null,null, null, 1, 10);
     }
 
     @Test
@@ -60,13 +67,12 @@ class GiftCertificateRepositoryImplTest {
         certificate2.setPrice(new BigDecimal(40.0));
 
         Assertions.assertEquals(certificate2.getPrice(), giftCertificateRepository.update(certificate2).get().getPrice());
-//        Assertions.assertTrue(giftCertificateRepository.update(certificate2));
     }
 
     @Test
     void findAllGiftCertificates_whenCertificatesExist_thenReturnListOfCertificates() {
-
-//        Assertions.assertIterableEquals(certificateList, giftCertificateRepository.findAll());
+        Optional<List<GiftCertificate>> certificateList = Optional.ofNullable(this.certificateList);
+        Assertions.assertIterableEquals(certificateList.get(), giftCertificateRepository.findAll(commonParamsGiftCertificateQuery).get());
     }
 
     @Test
@@ -81,10 +87,10 @@ class GiftCertificateRepositoryImplTest {
         Assertions.assertEquals(Optional.of(certificate1WithTags), giftCertificateRepository.create(certificate1WithTags));
     }
 
-    @Test
-    void delete_whenCertificateDeleted_thenReturnTrue() {
-//        Assertions.assertTrue(giftCertificateRepository.delete(certificate1.getId()));
-    }
+//    @Test
+//    void delete_whenCertificateDeleted_thenReturnTrue() {
+//      Assertions.assertTrue(giftCertificateRepository.delete(certificate1.getId());
+//    }
 
     private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price, String description, Duration duration){
        GiftCertificate giftCertificate = new GiftCertificate();
@@ -96,6 +102,17 @@ class GiftCertificateRepositoryImplTest {
         giftCertificate.setLastUpdateTime(Timestamp.valueOf("2020-10-10 10:10:10").toLocalDateTime());
         giftCertificate.setDuration(duration);
         return giftCertificate;
+    }
 
+    private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField,
+                                                                   String order, int offset, int limit) {
+        CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = new CommonParamsGiftCertificateQuery();
+        commonParamsGiftCertificateQuery.setName(name);
+        commonParamsGiftCertificateQuery.setTag_name(tag_name);
+        commonParamsGiftCertificateQuery.setOrder(order);
+        commonParamsGiftCertificateQuery.setSortField(sortField);
+        commonParamsGiftCertificateQuery.setOffset(offset);
+        commonParamsGiftCertificateQuery.setLimit(limit);
+        return commonParamsGiftCertificateQuery;
     }
 }

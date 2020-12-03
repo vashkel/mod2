@@ -30,4 +30,6 @@ public class User implements Serializable {
     private Set<Order> orders = new HashSet<>();
 
 
+    public User(Long userId, String name) {
+    }
 }

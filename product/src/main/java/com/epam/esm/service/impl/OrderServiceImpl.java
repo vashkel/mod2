@@ -12,7 +12,6 @@ import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.util.DTOConverter.order.OrderDTOConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,8 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final OrderDTOConverter orderDTOConverter;
 
-    public OrderServiceImpl(OrderRepository orderRepository, UserRepository userRepository, OrderDTOConverter orderDTOConverter) {
+    public OrderServiceImpl(
+            OrderRepository orderRepository, UserRepository userRepository, OrderDTOConverter orderDTOConverter) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.orderDTOConverter = orderDTOConverter;

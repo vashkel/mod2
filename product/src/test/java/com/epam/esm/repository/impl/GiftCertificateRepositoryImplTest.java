@@ -72,7 +72,8 @@ class GiftCertificateRepositoryImplTest {
     @Test
     void findAllGiftCertificates_whenCertificatesExist_thenReturnListOfCertificates() {
         Optional<List<GiftCertificate>> certificateList = Optional.ofNullable(this.certificateList);
-        Assertions.assertIterableEquals(certificateList.get(), giftCertificateRepository.findAll(commonParamsGiftCertificateQuery).get());
+        Assertions.assertIterableEquals(certificateList.get(), giftCertificateRepository
+                .findAll(commonParamsGiftCertificateQuery).get());
     }
 
     @Test
@@ -84,13 +85,10 @@ class GiftCertificateRepositoryImplTest {
     @Test
     void createGiftCertificate_whenCertificateWithTagsCreated_returnCertificateWithTag()  {
 
-        Assertions.assertEquals(Optional.of(certificate1WithTags), giftCertificateRepository.create(certificate1WithTags));
+        Assertions.assertEquals(Optional.of(certificate1WithTags), giftCertificateRepository
+                .create(certificate1WithTags));
     }
 
-//    @Test
-//    void delete_whenCertificateDeleted_thenReturnTrue() {
-//      Assertions.assertTrue(giftCertificateRepository.delete(certificate1.getId());
-//    }
 
     private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price, String description, Duration duration){
        GiftCertificate giftCertificate = new GiftCertificate();

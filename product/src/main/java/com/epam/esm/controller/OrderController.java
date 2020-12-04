@@ -18,21 +18,27 @@ import java.util.List;
 @RequestMapping("/orders")
 public class OrderController {
 
-    @Autowired
-    private OrderService orderService;
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
 
     @GetMapping("{id}")
-    public ResponseEntity<OrderResponseDTO> findById(@PathVariable  @Min(value = 1, message = "id must be 1 or grater then 1") Long id){
+    public ResponseEntity<OrderResponseDTO> findById(
+            @PathVariable  @Min(value = 1, message = "id must be 1 or grater then 1") Long id){
         return ResponseEntity.ok(orderService.findById(id));
     }
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<UsersOrderDTO>> findByUserId(@PathVariable @Min(value = 1, message = "id must be 1 or grater then 1") Long userId){
+    public ResponseEntity<List<UsersOrderDTO>> findByUserId(
+            @PathVariable @Min(value = 1, message = "id must be 1 or grater then 1") Long userId){
         return ResponseEntity.ok(orderService.findUserOrders(userId));
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponseDTO>> findAll(@RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
-                                                          @RequestParam(name = "limit", required = false, defaultValue = "8") int limit){
+    public ResponseEntity<List<OrderResponseDTO>> findAll(
+            @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit){
         return ResponseEntity.ok(orderService.findAll(offset, limit));
     }
 

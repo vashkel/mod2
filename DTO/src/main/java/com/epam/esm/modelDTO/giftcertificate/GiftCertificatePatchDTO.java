@@ -23,10 +23,12 @@ import java.util.Set;
 @NoArgsConstructor
 public class GiftCertificatePatchDTO implements Serializable {
     private static final long serialVersionUID = -7280296857366390793L;
+
     private Long id;
     private String name;
     private String description;
     private BigDecimal price;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDate;

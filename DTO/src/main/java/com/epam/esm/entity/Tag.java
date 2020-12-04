@@ -19,7 +19,7 @@ import java.util.Set;
         @NamedQuery(name = "Tag.findAll", query = "SELECT t FROM Tag t LEFT JOIN fetch t.giftCertificates g"),
         @NamedQuery(name = "Tag.findById", query = "FROM Tag WHERE id = :id"),
         @NamedQuery(name = "Tag.findAllTagsByCertificateId",
-                    query =  "SELECT t FROM Tag t LEFT JOIN fetch t.giftCertificates g WHERE g.id =:id")})
+                query = "SELECT t FROM Tag t LEFT JOIN fetch t.giftCertificates g WHERE g.id =:id")})
 public class Tag implements Serializable {
     private static final long serialVersionUID = -1784132457366390793L;
     @Id

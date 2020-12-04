@@ -59,7 +59,8 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         dataSource.setUrl(environment.getProperty("spring.datasource.url"));
         dataSource.setUsername(environment.getProperty("spring.datasource.username"));
         dataSource.setPassword(environment.getProperty("spring.datasource.password"));
-        dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
+        dataSource.setDriverClassName(Objects.requireNonNull(environment
+                .getProperty("spring.datasource.driver-class-name")));
         return dataSource;
     }
 
@@ -109,14 +110,6 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         slr.setDefaultLocale(new Locale("en"));
         return slr;
     }
-//    @Bean
-//    public MessageSource messageSource() {
-//        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-//        messageSource.setBasename("locale/locale");
-//        messageSource.setDefaultEncoding("UTF-8");
-//        messageSource.setDefaultLocale(new Locale("ru"));
-//        return messageSource;
-//    }
 
     @Bean
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
@@ -131,7 +124,8 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         dataSource.setUsername(environment.getProperty("spring.datasource.username.test"));
         dataSource.setPassword(environment.getProperty("spring.datasource.password.test"));
         dataSource.setDriverClassName(environment.getProperty("spring.datasource.driver-class-name.test"));
-        dataSource.setInitialSize(Integer.parseInt(Objects.requireNonNull(environment.getProperty("spring.datasource.db.pool.test"))));
+        dataSource.setInitialSize(Integer.parseInt(Objects.requireNonNull(environment
+                .getProperty("spring.datasource.db.pool.test"))));
         return dataSource;
     }
 

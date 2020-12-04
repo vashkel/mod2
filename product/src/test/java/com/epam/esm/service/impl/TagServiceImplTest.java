@@ -59,9 +59,11 @@ class TagServiceImplTest {
 
     @Test
     void find_whenTagExisted_thenReturnTag() {
-        Mockito.when(tagRepository.findById(1L)).thenReturn(Optional.ofNullable(tag1));
+        Long tagId = 1L;
+
+        Mockito.when(tagRepository.findById(tagId)).thenReturn(Optional.ofNullable(tag1));
         TagDTO expected = TagDTOConverter.converterToTagDTO(tag1);
-        TagDTO actual = tagService.findById(1L);
+        TagDTO actual = tagService.findById(tagId);
 
         Assertions.assertNotNull(actual, "Tag should not be found");
 
@@ -69,11 +71,14 @@ class TagServiceImplTest {
     }
 
     @Test
-    void findAll(){
+    void findAll() {
+        int limit = 2;
+        int offset = 1;
+
         List<TagDTO> expected = new ArrayList<>();
-        Mockito.when(tagRepository.findAll(1, 2)).thenReturn(Optional.ofNullable(tagList));
+        Mockito.when(tagRepository.findAll(offset, limit)).thenReturn(Optional.ofNullable(tagList));
         tagList.forEach(tag -> expected.add(TagDTOConverter.converterToTagDTO(tag)));
-        List<TagDTO> actual = tagService.findAll(1, 2);
+        List<TagDTO> actual = tagService.findAll(offset, limit);
 
         Assertions.assertIterableEquals(actual, expected);
     }

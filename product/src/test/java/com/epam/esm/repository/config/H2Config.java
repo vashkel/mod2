@@ -7,6 +7,8 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -34,25 +36,9 @@ public class H2Config implements WebMvcConfigurer {
     @Autowired
     private Environment environment;
 
-//    @Bean
-//    public DataSource dataSource() {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource ();
-//        dataSource.setUrl(environment.getProperty("spring.datasource.url"));
-//        dataSource.setUsername(environment.getProperty("spring.datasource.username"));
-//        dataSource.setPassword(environment.getProperty("spring.datasource.password"));
-//        dataSource.setDriverClassName(Objects.requireNonNull(environment.getProperty("spring.datasource.driver-class-name")));
-//        return dataSource;
-//    }
-
     @Bean
-    public DataSource dataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(environment.getProperty("db.driver"));
-        dataSource.setUrl(environment.getProperty("db.url"));
-        dataSource.setUsername(environment.getProperty("db.user"));
-        dataSource.setPassword(environment.getProperty("db.password"));
-        dataSource.setInitialSize(Integer.parseInt(environment.getProperty("db.pool")));
-        return dataSource;
+    public DataSource dataSource(){
+        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
     }
 
     @Bean
@@ -78,11 +64,4 @@ public class H2Config implements WebMvcConfigurer {
 
         return entityManagerFactoryBean;
     }
-//
-//    @Bean
-//    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate();
-//        jdbcTemplate.setDataSource(dataSource);
-//        return new JdbcTemplate(dataSource);
-//    }
 }

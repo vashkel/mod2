@@ -1,18 +1,11 @@
 package com.epam.esm.entity;
 
-import com.epam.esm.util.DurationDeserializer;
-import com.epam.esm.util.DurationSerializer;
-import com.epam.esm.util.LocalDateTimeDeserializer;
-import com.epam.esm.util.LocalDateTimeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -37,14 +30,14 @@ import java.util.Set;
                 query = "FROM GiftCertificate WHERE name = :name")
 
 })
-public class GiftCertificate implements Serializable  {
+public class GiftCertificate implements Serializable {
     private static final long serialVersionUID = -1734150257366390793L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name" , nullable = false)
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "description")
@@ -68,7 +61,8 @@ public class GiftCertificate implements Serializable  {
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private Set<Tag> tags = new HashSet<>();
 
-    public GiftCertificate(Long id, String name, String description, Double price, LocalDateTime toLocalDateTime, LocalDateTime toLocalDateTime1, Duration duration) {
+    public GiftCertificate(Long id, String name, String description, Double price, LocalDateTime toLocalDateTime,
+                           LocalDateTime toLocalDateTime1, Duration duration) {
     }
 
 }

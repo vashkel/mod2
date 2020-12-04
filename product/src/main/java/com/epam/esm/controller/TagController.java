@@ -20,8 +20,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/tags")
 public class TagController {
 
-    @Autowired
-    private TagServiceImpl tagService;
+    private final TagServiceImpl tagService;
+
+    public TagController(TagServiceImpl tagService) {
+        this.tagService = tagService;
+    }
 
     @GetMapping
     public ResponseEntity<List<TagDTO>> getTags(
@@ -59,7 +62,7 @@ public class TagController {
         tagDTO.add(WebMvcLinkBuilder.linkTo(methodOn(TagController.class).getTag(tagDTO.getId())).withSelfRel());
     }
 
-    @GetMapping("/popular_tag")
+    @GetMapping("/popular-tag")
     public ResponseEntity<TagDTO> findMostPopularTagWithHighestPriceOfOrders() {
         return ResponseEntity.ok(tagService.findMostPopularTagWithHighestPriceOfOrders());
     }

@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
@@ -39,11 +38,13 @@ public class GiftCertificatesController {
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "8") int limit
     ) {
-        CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = initCommonParamsQuery(name, tag_name, sortField, order, offset, limit);
+        CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery =
+                initCommonParamsQuery(name, tag_name, sortField, order, offset, limit);
         List<GiftCertificateDTO> giftCertificatesDTOS = giftCertificateService.findAll(commonParamsGiftCertificateQuery);
-        for(GiftCertificateDTO giftCertificateDTO: giftCertificatesDTOS){
+        for (GiftCertificateDTO giftCertificateDTO : giftCertificatesDTOS) {
             addLinks(giftCertificateDTO);
-        };
+        }
+        ;
         return ResponseEntity.ok().body(giftCertificatesDTOS);
     }
 
@@ -55,7 +56,8 @@ public class GiftCertificatesController {
     }
 
     @PostMapping
-    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(@Valid @RequestBody GiftCertificateDTO certificateDTO) {
+    public ResponseEntity<GiftCertificateDTO> createGiftCertificate(
+            @Valid @RequestBody GiftCertificateDTO certificateDTO) {
         GiftCertificateDTO giftCertificateWithTagsDTO = giftCertificateService.create(certificateDTO);
         if (giftCertificateWithTagsDTO == null) {
             ResponseEntity.notFound();
@@ -72,14 +74,14 @@ public class GiftCertificatesController {
 
     @PutMapping("{id}")
     public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id, @RequestBody
-                                                                @Valid GiftCertificateDTO giftCertificateDTO) {
+    @Valid GiftCertificateDTO giftCertificateDTO) {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificateDTO, id));
     }
 
     @PatchMapping("{id}")
     public ResponseEntity<GiftCertificatePatchDTO> updateCertificate(
             @PathVariable @Min(value = 1, message = "id must be 1 or grater then 1") Long id,
-            @RequestBody GiftCertificatePatchDTO giftCertificatePatchDTO){
+            @RequestBody GiftCertificatePatchDTO giftCertificatePatchDTO) {
         return ResponseEntity.ok(giftCertificateService.updatePatch(giftCertificatePatchDTO, id));
     }
 

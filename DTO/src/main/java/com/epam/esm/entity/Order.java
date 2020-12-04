@@ -1,13 +1,15 @@
 package com.epam.esm.entity;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 @Getter
@@ -16,10 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "users_order")
-@NamedQueries( {
+@NamedQueries({
         @NamedQuery(name = "Order.findById", query = "FROM Order WHERE id = :id"),
         @NamedQuery(name = "Order.findAll",
-                    query = "SELECT o FROM Order o LEFT JOIN fetch o.giftCertificate c LEFT JOIN fetch o.user u"),
+                query = "SELECT o FROM Order o LEFT JOIN fetch o.giftCertificate c LEFT JOIN fetch o.user u"),
         @NamedQuery(name = "Order.findUserOrders", query = "FROM Order where user.id = : userId")
 })
 public class Order implements Serializable {

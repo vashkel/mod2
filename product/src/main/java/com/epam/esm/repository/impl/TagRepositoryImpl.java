@@ -15,13 +15,13 @@ import java.util.Optional;
 @Repository
 public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
-    private static final String THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER = "select tag.id , COUNT(tag.id) as 'numberOfTag', tag.name, user_id from tag\n" +
+    private static final String THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER = "SELECT tag.id , COUNT(tag.id) AS 'numberOfTag', tag.name, user_id FROM tag\n" +
             "           LEFT JOIN gift_certificate_tags gct on tag.id = gct.tag_id\n" +
             "           LEFT JOIN gift_certificate gc on gct.gift_certificate_id = gc.id\n" +
             "           LEFT JOIN users_order_gift_certificate uogc on gc.id = uogc.gift_certificate_id\n" +
             "           LEFT JOIN users_order uo on uogc.order_id = uo.id\n" +
-            "         where user_id = (select user_id from users_order  group by users_order.user_id order by SUM(users_order.cost) DESC LIMIT 1)\n" +
-            "         group by tag.id order by numberOfTag DESC LIMIT 1";
+            "         WHERE user_id = (SELECT user_id FROM users_order GROUP BY users_order.user_id ORDER BY SUM(users_order.cost) DESC LIMIT 1)\n" +
+            "         GROUP BY tag.id ORDER BY numberOfTag DESC LIMIT 1;";
 
     @Autowired
     public TagRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {

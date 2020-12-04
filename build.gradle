@@ -16,11 +16,9 @@ test {
 allprojects {
     apply plugin: 'java'
     dependencies {
-        def springVersion = '5.2.9.RELEASE'
+        def springVersion = '2.3.4.RELEASE'
         def jacksonVersion = '2.11.2'
         def jupiterVersion = '5.7.0'
-        compile group: 'org.springframework', name: 'spring-jdbc', version: "${springVersion}"
-        compile group: 'org.springframework', name: 'spring-context', version:"${springVersion}"
         testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
         testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${jupiterVersion}"
         testCompile group: 'org.junit.platform', name: 'junit-platform-runner', version: '1.7.0'
@@ -33,11 +31,12 @@ allprojects {
         compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
         compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.6.Final'
         compile group: 'org.glassfish', name: 'javax.el', version: '3.0.1-b08'
-        compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.4.RELEASE'
-        compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.3.4.RELEASE'
-        compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: '2.3.4.RELEASE'
-        testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.3.4.RELEASE'
-        compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '2.3.4.RELEASE'
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: "${springVersion}"
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: "${springVersion}"
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springVersion}"
+        testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springVersion}"
+        compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: "${springVersion}"
+        compile group: 'org.hibernate', name: 'hibernate-envers', version: '5.4.25.Final'
         compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.2'
     }
 }

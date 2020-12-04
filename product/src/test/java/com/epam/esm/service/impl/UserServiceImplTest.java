@@ -48,9 +48,13 @@ public class UserServiceImplTest {
 
     @Test
      void testFindById(){
-        Mockito.when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user1));
+        Long userId = 1L;
+
+        Mockito.when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user1));
+
         UserDTO expectedUserTDO = UserDTOConverter.convertToUserDTOWithoutOrders(user1);
-        UserDTO actualUserDTO = userService.findById(1L);
+        UserDTO actualUserDTO = userService.findById(userId);
+
         Assertions.assertEquals(actualUserDTO, expectedUserTDO);
     }
 

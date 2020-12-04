@@ -15,12 +15,14 @@ import java.util.Optional;
 @Repository
 public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
-    private static final String THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER = "SELECT tag.id , COUNT(tag.id) AS 'numberOfTag', tag.name, user_id FROM tag\n" +
+    private static final String THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER =
+            "SELECT tag.id , COUNT(tag.id) AS 'numberOfTag', tag.name, user_id FROM tag\n" +
             "           LEFT JOIN gift_certificate_tags gct on tag.id = gct.tag_id\n" +
             "           LEFT JOIN gift_certificate gc on gct.gift_certificate_id = gc.id\n" +
             "           LEFT JOIN users_order_gift_certificate uogc on gc.id = uogc.gift_certificate_id\n" +
             "           LEFT JOIN users_order uo on uogc.order_id = uo.id\n" +
-            "         WHERE user_id = (SELECT user_id FROM users_order GROUP BY users_order.user_id ORDER BY SUM(users_order.cost) DESC LIMIT 1)\n" +
+            "         WHERE user_id = (SELECT user_id FROM users_order GROUP BY users_order.user_id " +
+                    "ORDER BY SUM(users_order.cost) DESC LIMIT 1)\n" +
             "         GROUP BY tag.id ORDER BY numberOfTag DESC LIMIT 1;";
 
     @Autowired
@@ -42,7 +44,8 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
     @Override
     public Optional<Tag> findById(Long id) {
         try {
-            return Optional.ofNullable(getEntityManager().createNamedQuery("Tag.findById", Tag.class).setParameter("id", id).getSingleResult());
+            return Optional.ofNullable(getEntityManager().createNamedQuery("Tag.findById", Tag.class)
+                    .setParameter("id", id).getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
         }
@@ -79,7 +82,9 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     @Override
     public Optional<Tag> findMostPopularTagOfUserWithHighestPriceOfOrders() {
-        Tag tag = (Tag) getEntityManager().createNativeQuery(THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER, Tag.class).getSingleResult();
+        Tag tag = (Tag) getEntityManager()
+                .createNativeQuery(THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER, Tag.class)
+                .getSingleResult();
         return Optional.ofNullable(tag);
     }
 }

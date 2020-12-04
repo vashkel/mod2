@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,6 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Audited
 @Table(name = "gift_certificate")
 @NamedQueries({
         @NamedQuery(name = "GiftCertificate.findAll",
@@ -55,6 +58,7 @@ public class GiftCertificate implements Serializable {
     @Column(name = "duration", nullable = false)
     private Duration duration;
 
+    @NotAudited
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "gift_certificate_tags",
             joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id"),

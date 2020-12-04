@@ -18,8 +18,9 @@ import java.util.Optional;
 @Repository
 public class GiftCertificateRepositoryImpl extends BaseRepository implements GiftCertificateRepository {
 
-    private static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT c.id, c.name AS name, c.description,\n" +
-            "c.price, c.create_date AS create_date, c.last_update_date, c.duration, tag.name AS tag_name FROM gift_certificate AS c LEFT JOIN\n" +
+    private static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT c.id, c.name AS name," +
+            " c.description,\n" + "c.price, c.create_date AS create_date, c.last_update_date, c.duration, " +
+            "tag.name AS tag_name FROM gift_certificate AS c LEFT JOIN\n" +
             "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
 
     @Autowired

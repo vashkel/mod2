@@ -11,23 +11,19 @@ public interface GiftCertificateRepository {
      * This method is used to return certificate by id
      *
      * @param id the id of certificate to be returned
-     * @return Optional value of find Certificate
+     * @return Optional value of find Certificate /**
+     *
      */
     Optional<GiftCertificate> findById(Long id);
 
-    /**
-     * This method is used to return the list of certificates
-     *
-     * @return List of all certificates or empty List if
-     * no certificates were found
-     */
+
     Optional<List<GiftCertificate>> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery);
 
     /**
      * This method is used to create the certificate
      *
      * @param giftCertificate the certificate to be created
-     * @return the value of created certificate
+     * @return the value of created certificate or empty
      */
     Optional<GiftCertificate> create(GiftCertificate giftCertificate);
 

@@ -1,6 +1,5 @@
 package com.epam.esm.util;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.AttributeConverter;

@@ -22,8 +22,8 @@ public class TagDTOConverter {
         TagDTO tagDTO = new TagDTO();
         tagDTO.setId(tag.getId());
         tagDTO.setName(tag.getName());
-        if (!tag.getGiftCertificates().isEmpty()){
-            for (GiftCertificate giftCertificate: tag.getGiftCertificates()){
+        if (!tag.getGiftCertificates().isEmpty()) {
+            for (GiftCertificate giftCertificate : tag.getGiftCertificates()) {
                 giftCertificatesDTO.add(GiftCertificateDTOConverter
                         .convertToGiftCertificateDTOWithoutTag(giftCertificate));
             }
@@ -37,7 +37,7 @@ public class TagDTOConverter {
         Tag tag = new Tag();
         tag.setId(tagDTO.getId());
         tag.setName(tagDTO.getName());
-        if (!tagDTO.getGiftCertificates().isEmpty()){
+        if (!tagDTO.getGiftCertificates().isEmpty()) {
             tagDTO.getGiftCertificates().forEach(giftCertificateDTO -> tag.getGiftCertificates()
                     .add(GiftCertificateDTOConverter.convertFromGiftCertificateDTO(giftCertificateDTO)));
         }

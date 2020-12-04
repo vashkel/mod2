@@ -17,11 +17,8 @@ import java.util.Set;
 public class TagDTO extends RepresentationModel<TagDTO> implements Serializable {
     private static final long serialVersionUID = -1784150257337720793L;
 
-    @NotNull(message = "Please provide id of tag")
     private Long id;
-
     private String name;
-
     private Set<GiftCertificateDTO> giftCertificates = new HashSet<>();
 
 }

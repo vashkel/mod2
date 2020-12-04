@@ -2,8 +2,8 @@ package com.epam.esm.util.DTOConverter.order;
 
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
-import com.epam.esm.modelDTO.order.OrderResponseDTO;
 import com.epam.esm.modelDTO.order.OrderDTO;
+import com.epam.esm.modelDTO.order.OrderResponseDTO;
 import com.epam.esm.modelDTO.order.UsersOrderDTO;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
@@ -30,7 +30,7 @@ public class OrderDTOConverter {
         return orderDTO;
     }
 
-    public UsersOrderDTO convertToUserOrdersDTO(Order order){
+    public UsersOrderDTO convertToUserOrdersDTO(Order order) {
         UsersOrderDTO usersOrderDTO = new UsersOrderDTO();
         usersOrderDTO.setCreateDate(order.getCreateDate());
         usersOrderDTO.setCost(order.getCost());
@@ -50,5 +50,5 @@ public class OrderDTOConverter {
         return order;
     }
 
-    }
+}
 

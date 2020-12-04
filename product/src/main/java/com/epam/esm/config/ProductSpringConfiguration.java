@@ -5,14 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.zaxxer.hikari.HikariDataSource;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.*;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -49,13 +46,24 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
     private static final String SHOW_SQL_PROPERTY = "hibernate.show_sql";
     private static final String FORMAT_SQL_PROPERTY = "hibernate.format_sql";
     private static final String NAMING_STRATEGY = "hibernate.ejb.naming_strategy";
+    private static final String ENVERS_NAMING_SUFFIX = "org.hibernate.envers.audit_table_suffix";
+    private static final String ENVERS_REVISION_FIELD_NAME = "org.hibernate.envers.revision_field_name";
+    private static final String ENVERS_REVISION_TYPE_FIELD_NAME = "org.hibernate.envers.revision_type_field_name";
+    private static final String ENVERS_AUDIT_STRATEGY = "org.hibernate.envers.audit_strategy";
+    private static final String ENVERS_AUDIT_STRATEGY_VALID_AND_REV_NAME =
+            "org.hibernate.envers.audit_strategy_validity_end_rev_field_name";
+    private static final String ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP =
+            "org.hibernate.envers.audit_strategy_validity_store_revend_timestamp";
+    private static final String ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME =
+            "org.hibernate.envers.audit_strategy_validity_revend_timestamp_field_name";
+
 
     @Autowired
     private Environment environment;
 
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource ();
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setUrl(environment.getProperty("spring.datasource.url"));
         dataSource.setUsername(environment.getProperty("spring.datasource.username"));
         dataSource.setPassword(environment.getProperty("spring.datasource.password"));
@@ -83,6 +91,19 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
         jpaProperties.put(NAMING_STRATEGY, Objects.requireNonNull(environment.getProperty(NAMING_STRATEGY)));
         jpaProperties.put(SHOW_SQL_PROPERTY, Objects.requireNonNull(environment.getProperty(SHOW_SQL_PROPERTY)));
         jpaProperties.put(FORMAT_SQL_PROPERTY, Objects.requireNonNull(environment.getProperty(FORMAT_SQL_PROPERTY)));
+        jpaProperties.put(ENVERS_NAMING_SUFFIX, Objects.requireNonNull(environment.getProperty(ENVERS_NAMING_SUFFIX)));
+        jpaProperties.put(ENVERS_REVISION_FIELD_NAME,
+                Objects.requireNonNull(environment.getProperty(ENVERS_REVISION_FIELD_NAME)));
+        jpaProperties.put(ENVERS_REVISION_TYPE_FIELD_NAME,
+                Objects.requireNonNull(environment.getProperty(ENVERS_REVISION_TYPE_FIELD_NAME)));
+        jpaProperties.put(ENVERS_AUDIT_STRATEGY,
+                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY)));
+        jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_AND_REV_NAME,
+                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_AND_REV_NAME)));
+        jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP,
+                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP)));
+        jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME,
+                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME)));
         entityManagerFactoryBean.setJpaProperties(jpaProperties);
 
         return entityManagerFactoryBean;
@@ -112,7 +133,7 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public PersistenceExceptionTranslationPostProcessor exceptionTranslation(){
+    public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
 

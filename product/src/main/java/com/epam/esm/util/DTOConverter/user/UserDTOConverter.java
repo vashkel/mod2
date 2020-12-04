@@ -17,7 +17,8 @@ public class UserDTOConverter {
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         if (!user.getOrders().isEmpty()) {
-            user.getOrders().forEach(order -> userDTO.getOrders().add(orderDTOConverter.convertToOrderResponseDTO(order)));
+            user.getOrders().forEach(order ->
+                    userDTO.getOrders().add(orderDTOConverter.convertToOrderResponseDTO(order)));
         }
         return userDTO;
     }

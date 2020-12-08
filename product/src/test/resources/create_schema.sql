@@ -32,10 +32,12 @@ create table if not exists gift_certificate_tags
     constraint `gift-certificate_tags_tag_test_id_fk`
         foreign key (tag_id) references tag (id)
 );
+
+
 insert into tag (name) values ('vip');
 insert into tag (name) values ('family');
 
-insert into gift_certificate (name, description, price, create_date, last_update_date, duration) values ('swimming pool', 'the best', '30', '2020-10-10 10:10:10', '2020-10-10 10:10:10', '2160000000');
+insert into gift_certificate (name, description, price, create_date, last_update_date, duration) values ('swimming pool', 'the best', '35.5', '2020-10-10 10:10:10', '2020-10-10 10:10:10', '2160000000');
 insert into gift_certificate (name, description, price, create_date, last_update_date, duration) values ('cinema', 'comedy', '15.5', '2020-10-10 10:10:10', '2020-10-10 10:10:10', '1900800000');
 
 insert into gift_certificate_tags (gift_certificate_id, tag_id) values (1, 2);

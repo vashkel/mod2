@@ -79,9 +79,14 @@ public class GeneratorEntities {
     }
 
     private static String generateQuery() {
-        return "INSERT INTO users_order_gift_certificate (order_id, gift_certificate_Id) " +
-        "VALUES ('" + generateRandomInteger() + "'," +
-                " '" + generateRandomInteger() + "');\n";
+        return "INSERT INTO gift_certificate " +
+                "(name, description, price, create_date, last_update_date, duration) " +
+                "VALUES ('" + generatingRandomAlphabeticString() + "'," +
+                " '" + generatingRandomAlphabeticString() + "'," +
+                " '" + generateRandomDouble() + "'," +
+                " '" + generateRandomLocalDateTime() + "'," +
+                " '" + generateRandomLocalDateTime() + "'," +
+                " '" + generateRandomDuration() + "');\n";
     }
 
     private static void writeQueryToFile(String fileName) throws IOException {
@@ -94,7 +99,7 @@ public class GeneratorEntities {
     }
 
     public static void main(String[] args) throws IOException {
-        writeQueryToFile("orderGIftCertificate.sql");
+        writeQueryToFile("data/dataGiftCertificate.sql");
     }
 }
 

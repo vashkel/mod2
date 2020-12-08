@@ -5,7 +5,6 @@ import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;

@@ -1,4 +1,4 @@
-create schema if not exists giftcertificate collate utf8mb4_0900_ai_ci;
+create schema if not exists giftcertificate;
 
 create table if not exists gift_certificate
 (

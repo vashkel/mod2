@@ -10,22 +10,19 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
+@ActiveProfiles("test")
 @Sql({"classpath:drop_schema.sql", "classpath:create_schema.sql"})
-@SpringJUnitConfig(H2Config.class)
-@WebAppConfiguration
+@SpringBootTest(classes = H2Config.class)
 @Transactional
 class GiftCertificateRepositoryImplTest {
 
@@ -40,30 +37,32 @@ class GiftCertificateRepositoryImplTest {
     @Autowired
     private DurationConverter durationConverter;
 
+
     @BeforeEach
     void setUp() {
-        certificate1 = giftCertificateCreator(1L, "swimming pool", new BigDecimal(30.0), "the best",
-                durationConverter.convertToEntityAttribute(2160000000L));
-        certificate1.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "family"))));
+        certificate1 = giftCertificateCreator(1L, "swimming pool", new BigDecimal(35.5),
+                "the best", durationConverter.convertToEntityAttribute(2160000000L));
+        certificate1.setTags(new HashSet<>(Arrays.asList(new Tag(2L, "family"))));
 
-        certificate2 = giftCertificateCreator(2L, "cinema", new BigDecimal(15.5), "comedy",
-                durationConverter.convertToEntityAttribute(1900800000L));
-        certificate2.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "family"), new Tag(2L, "vip"))));
+        certificate2 = giftCertificateCreator(2L, "cinema", new BigDecimal(15.5),
+                "comedy", durationConverter.convertToEntityAttribute(1900800000L));
+        certificate2.setTags(new HashSet<>(Arrays.asList(new Tag(1L, "vip"), new Tag(2L, "family"))));
 
         certificateList = Arrays.asList(certificate1, certificate2);
 
         commonParamsGiftCertificateQuery =
-                initCommonParamsQuery(null, null,null, null, 1, 10);
+                initCommonParamsQuery(null, null, null, null, 1, 10);
     }
 
     @Test
-    void findById_whenCertificateExist_thenReturnCertificate()  {
-
-        Assertions.assertEquals(Optional.of(certificate1), giftCertificateRepository.findById(certificate1.getId()));
+    void findById_whenCertificateExist_thenReturnCertificate() {
+        Long certificateId = certificate1.getId();
+        Optional<GiftCertificate> byId = giftCertificateRepository.findById(certificateId);
+        Assertions.assertEquals(Optional.of(certificate1), byId);
     }
 
     @Test
-    void updateCertificate_whenCertificateUpdated_thenReturnTrue(){
+    void updateCertificate_whenCertificateUpdated_thenReturnTrue() {
         certificate2.setPrice(new BigDecimal(40.0));
 
         Assertions.assertEquals(certificate2.getPrice(), giftCertificateRepository.update(certificate2).get().getPrice());
@@ -83,15 +82,16 @@ class GiftCertificateRepositoryImplTest {
     }
 
     @Test
-    void createGiftCertificate_whenCertificateWithTagsCreated_returnCertificateWithTag()  {
+    void createGiftCertificate_whenCertificateWithTagsCreated_returnCertificateWithTag() {
 
         Assertions.assertEquals(Optional.of(certificate1WithTags), giftCertificateRepository
                 .create(certificate1WithTags));
     }
 
 
-    private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price, String description, Duration duration){
-       GiftCertificate giftCertificate = new GiftCertificate();
+    private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price,
+                                                   String description, Duration duration) {
+        GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setId(id);
         giftCertificate.setName(name);
         giftCertificate.setDescription(description);

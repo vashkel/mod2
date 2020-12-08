@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,10 @@ public class TagServiceImpl implements TagService {
     public TagDTO create(TagDTO tagDTO) {
         Tag tag;
         tag = TagDTOConverter.convertFromTagDTO(tagDTO);
+        Optional<Tag> byName = tagRepository.findByName(tagDTO.getName());
+        if(byName.isPresent()){
+            throw new EntityExistsException("already created");
+        }
         Optional<Tag> createdTag = tagRepository.create(tag);
         if (createdTag.isPresent()) {
             tagDTO = TagDTOConverter.converterToTagDTO(createdTag.get());

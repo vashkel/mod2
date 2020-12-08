@@ -1,6 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.modelDTO.tag.TagDTO;
+import com.epam.esm.service.TagService;
 import com.epam.esm.service.impl.TagServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -20,9 +21,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/tags")
 public class TagController {
 
-    private final TagServiceImpl tagService;
+    private final TagService tagService;
 
-    public TagController(TagServiceImpl tagService) {
+    public TagController(TagService tagService) {
         this.tagService = tagService;
     }
 

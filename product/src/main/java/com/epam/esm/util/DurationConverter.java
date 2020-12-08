@@ -13,7 +13,10 @@ public class DurationConverter implements AttributeConverter<Duration, Long> {
 
     @Override
     public Long convertToDatabaseColumn(Duration attribute) {
-        return attribute.toMillis();
+        if (attribute != null){
+            return attribute.toMillis();
+        }
+        return null;
     }
 
     @Override

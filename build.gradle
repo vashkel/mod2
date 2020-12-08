@@ -16,7 +16,7 @@ test {
 allprojects {
     apply plugin: 'java'
     dependencies {
-        def springVersion = '2.3.4.RELEASE'
+        def springVersion = '2.3.5.RELEASE'
         def jacksonVersion = '2.11.2'
         def jupiterVersion = '5.7.0'
         testImplementation "org.junit.jupiter:junit-jupiter-api:${jupiterVersion}"
@@ -31,11 +31,12 @@ allprojects {
         compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
         compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.6.Final'
         compile group: 'org.glassfish', name: 'javax.el', version: '3.0.1-b08'
+
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: "${springVersion}"
         compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: "${springVersion}"
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: "${springVersion}"
-        testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springVersion}"
         compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: "${springVersion}"
+        testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "${springVersion}"
         compile group: 'org.hibernate', name: 'hibernate-envers', version: '5.4.25.Final'
         compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.2'
     }

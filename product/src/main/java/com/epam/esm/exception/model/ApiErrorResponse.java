@@ -1,9 +1,10 @@
 package com.epam.esm.exception.model;
 
+import com.epam.esm.util.LocalDateTimeDeserializer;
 import com.epam.esm.util.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
@@ -14,15 +15,16 @@ public class ApiErrorResponse  {
     private HttpStatus status;
     private String error_code;
     private String message;
-    private String detail;
+    private String detail_error_code;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime timeStamp;
 
     public static final class ApiErrorResponseBuilder {
         private HttpStatus status;
         private String error_code;
         private String message;
-        private String detail;
+        private String detailErrorCode;
         private LocalDateTime timeStamp;
 
         public ApiErrorResponseBuilder() {}
@@ -47,7 +49,7 @@ public class ApiErrorResponse  {
         }
 
         public ApiErrorResponseBuilder withDetail(String detail) {
-            this.detail = detail;
+            this.detailErrorCode = detail;
             return this;
         }
 
@@ -59,7 +61,7 @@ public class ApiErrorResponse  {
             ApiErrorResponse apiErrorResponse = new ApiErrorResponse();
             apiErrorResponse.status = this.status;
             apiErrorResponse.error_code = this.error_code;
-            apiErrorResponse.detail = this.detail;
+            apiErrorResponse.detail_error_code = this.detailErrorCode;
             apiErrorResponse.message = this.message;
             apiErrorResponse.timeStamp = this.timeStamp;
             return apiErrorResponse;

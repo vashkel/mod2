@@ -8,13 +8,12 @@ import com.epam.esm.modelDTO.order.UsersOrderDTO;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
 
-@Component
+
 @RequiredArgsConstructor
 public class OrderDTOConverter {
 
-    public OrderResponseDTO convertToOrderResponseDTO(Order order) {
+    public static OrderResponseDTO convertToOrderResponseDTO(Order order) {
         OrderResponseDTO orderDTO = new OrderResponseDTO();
         orderDTO.setId(order.getId());
         orderDTO.setCost(order.getCost());
@@ -30,23 +29,25 @@ public class OrderDTOConverter {
         return orderDTO;
     }
 
-    public UsersOrderDTO convertToUserOrdersDTO(Order order) {
+
+    public static UsersOrderDTO convertToUserOrdersDTO(Order order) {
         UsersOrderDTO usersOrderDTO = new UsersOrderDTO();
+        usersOrderDTO.setOrderId(order.getId());
         usersOrderDTO.setCreateDate(order.getCreateDate());
         usersOrderDTO.setCost(order.getCost());
         return usersOrderDTO;
     }
 
-    public Order convertToOrder(OrderDTO orderDTO) {
+    public static Order convertToOrder(OrderDTO orderDTO) {
         Order order = new Order();
         User user = new User();
         user.setId(orderDTO.getUserId());
         order.setUser(user);
-        if (!orderDTO.getGiftCertificates().isEmpty()) {
-            orderDTO.getGiftCertificates()
-                    .forEach(giftCertificateDTO -> order.getGiftCertificate()
-                            .add(GiftCertificateDTOConverter.convertFromGiftCertificateDTO(giftCertificateDTO)));
-        }
+//        if (!orderDTO.getGiftCertificatesId().isEmpty()) {
+//            orderDTO.getGiftCertificatesId()
+//                    .forEach(giftCertificateDTO -> order.getGiftCertificate()
+//                            .add(GiftCertificateDTOConverter.convertFromGiftCertificateDTO(giftCertificateDTO)));
+//        }
         return order;
     }
 

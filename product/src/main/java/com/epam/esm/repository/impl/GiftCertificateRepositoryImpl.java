@@ -24,7 +24,7 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
             "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
 
     @Autowired
-    public GiftCertificateRepositoryImpl(@Qualifier("createEntityManager")EntityManager entityManager) {
+    public GiftCertificateRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
         super(entityManager);
     }
 
@@ -49,9 +49,11 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
         String query = SelectFilterCreator
                 .createFilterQuery(CommonParamsGiftCertificateQuery
                         .fetchParams(commonParamsGiftCertificateQuery), SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS);
-        List<GiftCertificate> resultList = getEntityManager().createNativeQuery(query, GiftCertificate.class).setFirstResult(commonParamsGiftCertificateQuery.getOffset())
-                .setMaxResults(commonParamsGiftCertificateQuery.getLimit()).getResultList();
-        return Optional.ofNullable(resultList);
+        return Optional.ofNullable(getEntityManager()
+                .createNativeQuery(query, GiftCertificate.class)
+                .setFirstResult(commonParamsGiftCertificateQuery.getOffset())
+                .setMaxResults(commonParamsGiftCertificateQuery.getLimit())
+                .getResultList());
     }
 
     @Override
@@ -63,20 +65,28 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
     @Override
     public void delete(GiftCertificate giftCertificate) {
         getEntityManager().remove(giftCertificate);
-      }
+    }
 
     @Override
-    public Optional<GiftCertificate> update (GiftCertificate giftCertificate) {
+    public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
         getEntityManager().merge(giftCertificate);
         return Optional.ofNullable(giftCertificate);
     }
 
     @Override
     public Optional<List<GiftCertificate>> findByName(String name) {
-            return Optional.ofNullable(getEntityManager()
-                    .createNamedQuery("GiftCertificate.findByName", GiftCertificate.class)
-                    .setParameter("name", name)
-                    .getResultList());
+        return Optional.ofNullable(getEntityManager()
+                .createNamedQuery("GiftCertificate.findByName", GiftCertificate.class)
+                .setParameter("name", name)
+                .getResultList());
+    }
+
+    @Override
+    public void deleteFromUsersOrdersGiftCertificateTable(Long id) {
+        getEntityManager()
+                .createNativeQuery("DELETE FROM users_order_gift_certificate WHERE gift_certificate_id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 }
 

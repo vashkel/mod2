@@ -49,7 +49,7 @@ public interface GiftCertificateService {
      * @return updated GiftCertificateDTO
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    GiftCertificateDTO update(GiftCertificateDTO giftCertificate, Long id);
+    GiftCertificateDTO update(GiftCertificateDTO giftCertificate);
 
     /**
      * This method is used to update the certificate
@@ -58,5 +58,5 @@ public interface GiftCertificateService {
      * @return updated GiftCertificateDTO
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    GiftCertificatePatchDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO, Long id);
+    GiftCertificateDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO);
 }

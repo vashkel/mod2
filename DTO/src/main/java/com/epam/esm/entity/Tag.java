@@ -1,28 +1,19 @@
 package com.epam.esm.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.envers.Audited;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Getter
-@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Audited
 @Entity
+@Audited
 @Table(name = "tag")
 @NamedQueries({
         @NamedQuery(name = "Tag.findByName", query = "FROM Tag WHERE name = :name"),
@@ -39,7 +30,10 @@ public class Tag implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private Set<GiftCertificate> giftCertificates = new HashSet<>();
 
     public Tag(Long id, String name) {

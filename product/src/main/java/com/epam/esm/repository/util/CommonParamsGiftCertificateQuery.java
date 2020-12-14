@@ -3,13 +3,16 @@ package com.epam.esm.repository.util;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Min;
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
+@Validated
 public class CommonParamsGiftCertificateQuery {
 
     private String name;
@@ -17,7 +20,9 @@ public class CommonParamsGiftCertificateQuery {
     private String tag_name;
     private String sortField;
     private String tags;
+    @Min(value = 1)
     private Integer limit;
+    @Min(value = 1)
     private Integer offset;
 
     public static Map<String, String> fetchParams(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery) {

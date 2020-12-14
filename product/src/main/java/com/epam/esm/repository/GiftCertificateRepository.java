@@ -50,4 +50,11 @@ public interface GiftCertificateRepository {
      * @return on Optional with the value of find Certificate
      */
     Optional<List<GiftCertificate>> findByName(String name);
+
+    /**
+     * This method is used to delete id of certificate from ManyToMany Table
+     *
+     * @param id of certificate to be deleted
+     */
+    void deleteFromUsersOrdersGiftCertificateTable(Long id);
 }

@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -67,7 +66,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<Tag> tags = new HashSet<>();
         certificatesFromDb = giftCertificateRepository.findByName(giftCertificateDTO.getName());
         if (!certificatesFromDb.isPresent()) {
-            throw new EntityExistsException(CERTIFICATE_EXIST);
+            throw new GiftCertificateNotFoundException(CERTIFICATE_EXIST);
         }
         giftCertificateDTO.setCreateDate(LocalDateTime.now());
         giftCertificateDTO.setLastUpdateTime(LocalDateTime.now());
@@ -95,45 +94,46 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (!createdCertificate.isPresent()) {
             throw new GiftCertificateNotFoundException(NOT_FOUND);
         }
+        giftCertificateRepository.deleteFromUsersOrdersGiftCertificateTable(createdCertificate.get().getId());
         giftCertificateRepository.delete(createdCertificate.get());
     }
 
     @Override
-    public GiftCertificateDTO update(GiftCertificateDTO certificateDTO, Long id) {
-        GiftCertificateDTO giftCertificateDTO = null;
+    public GiftCertificateDTO update(GiftCertificateDTO certificateDTO) {
+        GiftCertificateDTO updatedGiftCertificateDTO = null;
         GiftCertificate giftCertificate;
-        Optional<GiftCertificate> certificate = giftCertificateRepository.findById(id);
+        Optional<GiftCertificate> certificate = giftCertificateRepository.findById(certificateDTO.getId());
         if (!certificate.isPresent()) {
             throw new GiftCertificateNotFoundException(NOT_FOUND);
         }
-        certificateDTO.setId(id);
-        certificateDTO.setLastUpdateTime(LocalDateTime.now());
         giftCertificate = GiftCertificateDTOConverter.convertFromGiftCertificateDTO(certificateDTO);
-        Optional<GiftCertificate> giftCertificateOptional = giftCertificateRepository.update(giftCertificate);
-        if (giftCertificateOptional.isPresent()) {
-            giftCertificateDTO = GiftCertificateDTOConverter
-                    .convertToGiftCertificateDTO(giftCertificate);
+        giftCertificate.setCreateDate(certificate.get().getCreateDate());
+        giftCertificate.setLastUpdateTime(LocalDateTime.now());
+        giftCertificate.setTags(certificate.get().getTags());
+        Optional<GiftCertificate> updatedCertificate = giftCertificateRepository.update(giftCertificate);
+        if (updatedCertificate.isPresent()) {
+            updatedGiftCertificateDTO = GiftCertificateDTOConverter
+                    .convertToGiftCertificateDTO(updatedCertificate.get());
         }
-        return giftCertificateDTO;
+        return updatedGiftCertificateDTO;
     }
 
     @Override
-    public GiftCertificatePatchDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO, Long id) {
+    public GiftCertificateDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO) {
         GiftCertificate newGiftCertificate;
-        Optional<GiftCertificate> oldGiftCertificate = giftCertificateRepository.findById(id);
+        Optional<GiftCertificate> updatedCertificate = Optional.empty();
+        Optional<GiftCertificate> oldGiftCertificate = giftCertificateRepository.findById(giftCertificatePatchDTO.getId());
         if (!oldGiftCertificate.isPresent()) {
             throw new GiftCertificateNotFoundException(NOT_FOUND);
         }
-        giftCertificatePatchDTO.setId(oldGiftCertificate.get().getId());
-        giftCertificatePatchDTO.setLastUpdateTime(LocalDateTime.now());
         newGiftCertificate = GiftCertificatePatchDTOConverter.convertFromGiftCertificatePatchDTO(giftCertificatePatchDTO);
+        newGiftCertificate.setLastUpdateTime(LocalDateTime.now());
+        newGiftCertificate.setTags(oldGiftCertificate.get().getTags());
         if (hasUpdateValues(newGiftCertificate)) {
             setUpdateValues(oldGiftCertificate.get(), newGiftCertificate);
-            giftCertificateRepository.update(oldGiftCertificate.get());
+            updatedCertificate = giftCertificateRepository.update(oldGiftCertificate.get());
         }
-        giftCertificatePatchDTO = GiftCertificatePatchDTOConverter
-                .convertToGiftCertificateDTO(oldGiftCertificate.get());
-        return giftCertificatePatchDTO;
+        return GiftCertificateDTOConverter.convertToGiftCertificateDTO(updatedCertificate.get());
     }
 
     private boolean hasUpdateValues(GiftCertificate giftCertificate) {

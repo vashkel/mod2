@@ -15,7 +15,7 @@ public enum GiftCertificateParamName {
     private final static List<String> possibleOrderParamValue = Arrays.asList("asc", "desc");
     private final static List<String> possibleSortFieldParamValue = Arrays.asList("name", "create_date");
     private final static List<String> possibleCommonParamsQuery =
-            Arrays.asList("name", "tag_name", "order", "sortField", "limit", "offset");
+            Arrays.asList("name", "tag_name", "order", "sort_field", "limit", "offset");
 
     public static List<String> getPossibleSortFieldParamValue() {
         return possibleSortFieldParamValue;

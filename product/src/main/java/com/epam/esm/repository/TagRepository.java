@@ -54,5 +54,7 @@ public interface TagRepository {
       */
      Optional<List<Tag>>  findAllTagsByCertificateId(Long id);
 
+    void deleteFromGiftCertificateTagTable(Long tagId);
+
     Optional<Tag> findMostPopularTagOfUserWithHighestPriceOfOrders();
 }

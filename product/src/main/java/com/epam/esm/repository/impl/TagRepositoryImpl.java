@@ -87,4 +87,11 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
                 .getSingleResult();
         return Optional.ofNullable(tag);
     }
+
+    public void deleteFromGiftCertificateTagTable(Long tagId){
+        getEntityManager()
+                .createNativeQuery("DELETE FROM gift_certificate_tags WHERE tag_id = ?")
+                .setParameter(1, tagId)
+                .executeUpdate();
+    }
 }

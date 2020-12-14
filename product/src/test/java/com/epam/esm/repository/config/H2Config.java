@@ -7,13 +7,14 @@ import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 
-@PropertySource("classpath:test_db.properties")
+@TestPropertySource("classpath:test_db.properties")
 @SpringBootTest
-@Import(ProductSpringConfiguration.class)
+//@Import(ProductSpringConfiguration.class)
 public class H2Config implements WebMvcConfigurer {
 
     private static final String PACKAGE_TO_SCAN = "com.epam.esm";
@@ -26,11 +27,11 @@ public class H2Config implements WebMvcConfigurer {
     @Autowired
     private Environment environment;
 
-    @Bean
-    @Profile("test")
-    public DataSource dataSource(){
-        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
-    }
+//    @Bean
+//    @Profile("test")
+//    public DataSource dataSource(){
+//        return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+//    }
 
 //
 //    @Bean

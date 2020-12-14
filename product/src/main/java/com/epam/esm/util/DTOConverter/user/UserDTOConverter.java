@@ -9,16 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDTOConverter {
 
-    @Autowired
-    private OrderDTOConverter orderDTOConverter;
-
-    public UserDTO convertToUserDTO(User user) {
+    public static UserDTO convertToUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         if (!user.getOrders().isEmpty()) {
             user.getOrders().forEach(order ->
-                    userDTO.getOrders().add(orderDTOConverter.convertToOrderResponseDTO(order)));
+                    userDTO.getOrders().add(OrderDTOConverter.convertToOrderResponseDTO(order)));
         }
         return userDTO;
     }

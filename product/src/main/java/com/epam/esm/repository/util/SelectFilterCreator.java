@@ -23,6 +23,7 @@ public class SelectFilterCreator {
 
     public static String createFilterQuery(Map<String, String> availableParams, String query) {
         StringBuilder sb = new StringBuilder(query);
+        trimAllParams(availableParams);
         String searchQuery = searchingParams(availableParams);
         String sortQuery = sortingParams(availableParams);
         if (!searchQuery.trim().isEmpty()) {
@@ -31,6 +32,14 @@ public class SelectFilterCreator {
         }
         sb.append(sortQuery);
         return sb.toString();
+    }
+
+    private static void trimAllParams(Map<String, String> availableParams) {
+        for (Map.Entry<String, String> param : availableParams.entrySet()) {
+            String trimmedParam = param.getValue().trim();
+            param.setValue(trimmedParam);
+
+        }
     }
 
     private static String searchingParams(Map<String, String> availableParams) {

@@ -49,13 +49,13 @@ public class Order implements Serializable {
     @Column(name = "cost")
     private BigDecimal cost;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(name = "users_order_gift_certificate",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
     private List<GiftCertificate> giftCertificate = new ArrayList<>();
 
-    @ManyToOne(cascade = CascadeType.PERSIST, targetEntity = User.class)
+    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = User.class)
     @JoinColumn(name = "user_id")
     private User user;
 

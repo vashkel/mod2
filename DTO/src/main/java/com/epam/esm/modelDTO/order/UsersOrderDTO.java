@@ -14,6 +14,8 @@ import java.time.LocalDateTime;
 @Data
 public class UsersOrderDTO {
 
+    Long orderId;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime createDate;

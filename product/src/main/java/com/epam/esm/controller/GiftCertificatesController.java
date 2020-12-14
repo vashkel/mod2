@@ -35,8 +35,8 @@ public class GiftCertificatesController {
             @RequestParam(name = "sort_field", required = false) String sortField,
             @RequestParam(name = "tag_name", required = false) String tag_name,
             @RequestParam(name = "order", required = false) String order,
-            @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit
+            @RequestParam(name = "offset", required = false, defaultValue = "0") @Min(value = 0) int offset,
+            @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit
     ) {
         CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery =
                 initCommonParamsQuery(name, tag_name, sortField, order, offset, limit);
@@ -72,17 +72,16 @@ public class GiftCertificatesController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<GiftCertificateDTO> updateCertificate(@PathVariable Long id, @RequestBody
-    @Valid GiftCertificateDTO giftCertificateDTO) {
-        return ResponseEntity.ok(giftCertificateService.update(giftCertificateDTO, id));
+    @PutMapping
+    public ResponseEntity<GiftCertificateDTO> updateCertificate(@RequestBody
+                                                                @Valid GiftCertificateDTO giftCertificateDTO) {
+        return ResponseEntity.ok(giftCertificateService.update(giftCertificateDTO));
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<GiftCertificatePatchDTO> updateCertificate(
-            @PathVariable @Min(value = 1, message = "id must be 1 or grater then 1") Long id,
-            @RequestBody GiftCertificatePatchDTO giftCertificatePatchDTO) {
-        return ResponseEntity.ok(giftCertificateService.updatePatch(giftCertificatePatchDTO, id));
+    @PatchMapping
+    public ResponseEntity<GiftCertificateDTO> updateCertificate(
+            @RequestBody @Valid GiftCertificatePatchDTO giftCertificatePatchDTO) {
+        return ResponseEntity.ok(giftCertificateService.updatePatch(giftCertificatePatchDTO));
     }
 
     private void addLinks(GiftCertificateDTO giftCertificateDTO) {

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityExistsException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,8 +19,9 @@ import java.util.Optional;
 public class TagServiceImpl implements TagService {
 
     private static final String NOT_FOUND = "locale.message.TagNotFound";
+    private static final String ALREADY_CREATED = "locale.message.tagAlreadyCreated";
 
-    private TagRepository tagRepository;
+    private final TagRepository tagRepository;
 
     @Autowired
     public TagServiceImpl(TagRepository tagRepository) {
@@ -34,8 +34,8 @@ public class TagServiceImpl implements TagService {
         Tag tag;
         tag = TagDTOConverter.convertFromTagDTO(tagDTO);
         Optional<Tag> byName = tagRepository.findByName(tagDTO.getName());
-        if(byName.isPresent()){
-            throw new EntityExistsException("already created");
+        if (byName.isPresent()) {
+            throw new TagNotFoundException(ALREADY_CREATED);
         }
         Optional<Tag> createdTag = tagRepository.create(tag);
         if (createdTag.isPresent()) {
@@ -51,6 +51,7 @@ public class TagServiceImpl implements TagService {
         if (!createdTag.isPresent()) {
             throw new TagNotFoundException(NOT_FOUND);
         }
+        tagRepository.deleteFromGiftCertificateTagTable(createdTag.get().getId());
         tagRepository.delete(createdTag.get());
     }
 
@@ -82,7 +83,7 @@ public class TagServiceImpl implements TagService {
         TagDTO tagDTO = null;
         Optional<Tag> tag = tagRepository.findMostPopularTagOfUserWithHighestPriceOfOrders();
         if (tag.isPresent()) {
-            tagDTO = TagDTOConverter.converterToTagDTO(tag.get());
+            tagDTO = TagDTOConverter.converterToTagDTOWithoutGiftCertificate(tag.get());
         }
         return tagDTO;
     }

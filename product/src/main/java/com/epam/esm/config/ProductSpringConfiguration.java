@@ -56,6 +56,9 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
             "org.hibernate.envers.audit_strategy_validity_store_revend_timestamp";
     private static final String ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME =
             "org.hibernate.envers.audit_strategy_validity_revend_timestamp_field_name";
+    private static final String ENVERS_AUDIT_STORE_DATA_AT_DELETE =
+            "org.hibernate.envers.store_data_at_delete";
+
 
 
     @Autowired
@@ -102,8 +105,10 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
                 Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_AND_REV_NAME)));
         jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP,
                 Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP)));
-        jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME,
-                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME)));
+        jpaProperties.put(ENVERS_AUDIT_STORE_DATA_AT_DELETE,
+                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STORE_DATA_AT_DELETE)));
+        jpaProperties.put(ENVERS_AUDIT_STORE_DATA_AT_DELETE,
+                Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STORE_DATA_AT_DELETE)));
         entityManagerFactoryBean.setJpaProperties(jpaProperties);
 
         return entityManagerFactoryBean;

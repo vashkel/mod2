@@ -30,7 +30,7 @@ public class TagController {
     @GetMapping
     public ResponseEntity<List<TagDTO>> getTags(
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit) {
+            @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit) {
         List<TagDTO> tagsDTO = tagService.findAll(offset, limit);
         tagsDTO.forEach(this::addLinks);
         return ResponseEntity.ok().body(tagsDTO);

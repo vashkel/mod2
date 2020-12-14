@@ -29,7 +29,6 @@ public class OrderResponseDTO extends RepresentationModel<OrderResponseDTO> {
 
     private BigDecimal cost;
 
-    @EqualsAndHashCode.Exclude
     private Set<GiftCertificateDTO> giftCertificates = new HashSet<>();
 
     private UserDTO user;

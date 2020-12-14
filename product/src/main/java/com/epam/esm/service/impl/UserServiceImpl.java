@@ -18,11 +18,9 @@ public class UserServiceImpl implements UserService {
     private static final String NOT_FOUND = "locale.message.UserNotFound";
 
     private final UserRepository repository;
-    private final UserDTOConverter userDTOConverter;
 
-    public UserServiceImpl(UserRepository repository, UserDTOConverter userDTOConverter) {
+    public UserServiceImpl(UserRepository repository) {
         this.repository = repository;
-        this.userDTOConverter = userDTOConverter;
     }
 
     @Override
@@ -30,7 +28,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = repository.findById(id);
         UserDTO userDTO;
         if (user.isPresent()) {
-            userDTO = userDTOConverter.convertToUserDTO(user.get());
+            userDTO = UserDTOConverter.convertToUserDTOWithoutOrders(user.get());
         } else {
             throw new UserNotFoundException(NOT_FOUND);
         }
@@ -41,7 +39,7 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> findAll(int offset, int limit) {
         Optional<List<User>> users = repository.findAll(offset, limit);
         List<UserDTO> userDTOS = new ArrayList<>();
-        users.ifPresent(userList -> userList.forEach(user -> userDTOS.add(userDTOConverter.convertToUserDTO(user))));
+        users.ifPresent(userList -> userList.forEach(user -> userDTOS.add(UserDTOConverter.convertToUserDTOWithoutOrders(user))));
         return userDTOS;
     }
 }

@@ -116,7 +116,7 @@ class GiftCertificateServiceImplTest {
         Mockito.when(giftCertificateRepository.update(eq(expectedCertificateFromRepository.get())))
                 .thenReturn(expectedCertificateFromRepository);
         GiftCertificateDTO actualGiftCertificateFromService = giftCertificateService
-                .update(expectedCertificateFromRepositoryDTO, expectedCertificateFromRepositoryDTO.getId());
+                .update(expectedCertificateFromRepositoryDTO);
 
         Assertions.assertEquals(expectedCertificateFromRepositoryDTO, actualGiftCertificateFromService);
     }
@@ -131,18 +131,19 @@ class GiftCertificateServiceImplTest {
         Mockito.when(giftCertificateRepository.findById(expectedUpdateDCertificateFromRepository.get().getId()))
                 .thenReturn(expectedUpdateDCertificateFromRepository);
         expectedUpdateDCertificateFromRepository.ifPresent(actual -> {
-            giftCertificateService.updatePatch(giftCertificatePatchDTO, CERTIFICATE_ID1);
+            giftCertificateService.updatePatch(giftCertificatePatchDTO);
             Mockito.verify(giftCertificateRepository).update(actual);
         });
     }
 
     @Test
     void update_whenGiftCertificateNotExist_returnNotFoundException() {
+        certificate1.setId(WRONG_CERTIFICATE_ID);
         Mockito.when(giftCertificateRepository.update(certificate1)).thenThrow(GiftCertificateNotFoundException.class);
 
         Assertions.assertThrows(GiftCertificateNotFoundException.class, () ->
                 giftCertificateService.update(GiftCertificateDTOConverter
-                        .convertToGiftCertificateDTO(certificate1), WRONG_CERTIFICATE_ID));
+                        .convertToGiftCertificateDTO(certificate1)));
     }
 
 
@@ -152,9 +153,8 @@ class GiftCertificateServiceImplTest {
     }
 
     private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price, String description) {
-        Set<Tag> tags = new HashSet<>(Arrays.asList(new Tag(1L, "spa"), new Tag(2L, "travel")));
         return new GiftCertificate(id, name, description, price, LocalDateTime.now().minusDays(2),
-                LocalDateTime.now(), Duration.ofDays(30), tags);
+                LocalDateTime.now(), Duration.ofDays(30));
     }
 
     private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField,

@@ -11,8 +11,8 @@ import java.util.Set;
 
 public class GiftCertificatePatchDTOConverter {
 
-    public static GiftCertificatePatchDTO convertToGiftCertificateDTO(GiftCertificate giftCertificate) {
-        GiftCertificatePatchDTO giftCertificateDTO = giftCertificateDTOCreator(giftCertificate);
+    public static GiftCertificatePatchDTO convertToGiftCertificatePatchDTO(GiftCertificate giftCertificate) {
+        GiftCertificatePatchDTO giftCertificateDTO = giftCertificatePatchDTOCreator(giftCertificate);
         if (!giftCertificate.getTags().isEmpty()) {
             giftCertificate.getTags().forEach(tag -> giftCertificateDTO.getTags()
                     .add(TagDTOConverter.converterToTagDTO(tag)));
@@ -33,7 +33,7 @@ public class GiftCertificatePatchDTOConverter {
     }
 
     public static GiftCertificatePatchDTO convertToGiftCertificateDTOWithoutTag(GiftCertificate giftCertificate) {
-        return giftCertificateDTOCreator(giftCertificate);
+        return giftCertificatePatchDTOCreator(giftCertificate);
     }
 
     public static GiftCertificate convertFromGiftCertificateDTOWithoutTag(GiftCertificatePatchDTO giftCertificateDTO) {
@@ -47,21 +47,18 @@ public class GiftCertificatePatchDTOConverter {
         giftCertificate.setName(certificateDTO.getName());
         giftCertificate.setDescription(certificateDTO.getDescription());
         giftCertificate.setPrice(certificateDTO.getPrice());
-        giftCertificate.setCreateDate(certificateDTO.getCreateDate());
-        giftCertificate.setLastUpdateTime(certificateDTO.getLastUpdateTime());
         giftCertificate.setDuration(certificateDTO.getDuration());
         return giftCertificate;
     }
 
-    private static GiftCertificatePatchDTO giftCertificateDTOCreator(GiftCertificate giftCertificate) {
-        GiftCertificatePatchDTO giftCertificateDTO = new GiftCertificatePatchDTO();
-        giftCertificateDTO.setId(giftCertificate.getId());
-        giftCertificateDTO.setName(giftCertificate.getName());
-        giftCertificateDTO.setDescription(giftCertificate.getDescription());
-        giftCertificateDTO.setPrice(giftCertificate.getPrice());
-        giftCertificateDTO.setCreateDate(giftCertificate.getCreateDate());
-        giftCertificateDTO.setLastUpdateTime(giftCertificate.getLastUpdateTime());
-        giftCertificateDTO.setDuration(giftCertificate.getDuration());
-        return giftCertificateDTO;
+
+    private static GiftCertificatePatchDTO giftCertificatePatchDTOCreator(GiftCertificate giftCertificate) {
+        GiftCertificatePatchDTO giftCertificatePatchDTO = new GiftCertificatePatchDTO();
+        giftCertificatePatchDTO.setId(giftCertificate.getId());
+        giftCertificatePatchDTO.setName(giftCertificate.getName());
+        giftCertificatePatchDTO.setDescription(giftCertificate.getDescription());
+        giftCertificatePatchDTO.setPrice(giftCertificate.getPrice());
+        giftCertificatePatchDTO.setDuration(giftCertificate.getDuration());
+        return giftCertificatePatchDTO;
     }
 }

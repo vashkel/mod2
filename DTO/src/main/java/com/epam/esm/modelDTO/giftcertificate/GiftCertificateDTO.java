@@ -12,9 +12,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.Valid;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -26,19 +27,23 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Validated
 public class GiftCertificateDTO extends RepresentationModel<GiftCertificateDTO> implements Serializable {
     private static final long serialVersionUID = -7284150257366390793L;
 
+    @NotNull
+    @Min(value = 1)
     private Long id;
 
-    @NotNull(message = "Please provide name")
+    @NotBlank(message = "Please provide name")
     private String name;
 
-    @NotNull(message = "Please provide description")
+    @NotBlank(message = "Please provide description")
     private String Description;
 
     @NotNull(message = "Please provide price")
-    @PositiveOrZero
+    @DecimalMin(value = "0.0", inclusive = false)
+    @DecimalMax(value = "999.0")
     private BigDecimal price;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -53,6 +58,7 @@ public class GiftCertificateDTO extends RepresentationModel<GiftCertificateDTO> 
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
 
+    @Valid
     private Set<TagDTO> tags = new HashSet<>();
 
 

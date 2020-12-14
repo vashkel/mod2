@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -38,12 +39,12 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<List<OrderResponseDTO>> findAll(
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "8") int limit){
+            @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit){
         return ResponseEntity.ok(orderService.findAll(offset, limit));
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody OrderDTO orderDTO){
+    public ResponseEntity<OrderResponseDTO> createOrder(@RequestBody @Valid OrderDTO orderDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(orderService.createOrder(orderDTO));
     }
 

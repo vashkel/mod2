@@ -1,11 +1,9 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
-import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,32 +20,26 @@ import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceImplTest {
+
     private User user1;
     private User user2;
     private List<User> userList;
 
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private UserDTOConverter converter;
 
     @InjectMocks
-    private UserService userService = new UserServiceImpl(userRepository, converter);
+    private UserService userService = new UserServiceImpl(userRepository);
 
     @BeforeEach
-    void setUp(){
-        user1 = userCreator(1L, "userName1");
-        user2 = userCreator(2L, "userName2");
+    void setUp() {
+        user1 = new User(1L, "userName1");
+        user2 = new User(2L, "userName2");
         userList = Arrays.asList(user1, user2);
     }
 
-    private User userCreator(Long userId, String name){
-        User user = new User(userId, name);
-        return user;
-    }
-
     @Test
-     void testFindById(){
+    void testFindById() {
         Long userId = 1L;
 
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.ofNullable(user1));

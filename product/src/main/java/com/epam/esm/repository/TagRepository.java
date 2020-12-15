@@ -1,7 +1,6 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.RepositoryException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,15 +12,15 @@ public interface TagRepository {
      * @param tag the tag to be created
      * @return 1 if tag was created, 0 if it were not
      */
-    long create(Tag tag) throws RepositoryException;
+    Optional<Tag> create(Tag tag);
 
     /**
      * This method is used to delete the tag by id
      *
-     * @param tagId the id of tag to be deleted
+     * @param tag the tag to be deleted
      * @return true if tag was deleted, false if it were not
      */
-    boolean delete(Long tagId) throws RepositoryException;
+    void delete(Tag tag);
 
     /**
      * This method is used to return tag by id
@@ -29,7 +28,7 @@ public interface TagRepository {
      * @param id the id of tag to be returned
      * @return Optional Tag or Optional null if tag doesnt exist
      */
-    Optional<Tag> find(Long id) throws RepositoryException;
+    Optional<Tag> findById(Long id);
 
     /**
      * This method is used to return tag by name
@@ -37,7 +36,7 @@ public interface TagRepository {
      * @param tagName name of tag to be returned
      * @return Optional tag or Optional null if tag doesnt exist
      */
-    Optional<Tag> findByName(String tagName) throws RepositoryException;
+    Optional<Tag> findByName(String tagName);
 
     /**
      * This method is used to return the list of tags
@@ -45,7 +44,7 @@ public interface TagRepository {
      * @return List of all tags or empty List if
      * no certificates were found
      */
-    List<Tag> findAll() throws RepositoryException;
+    Optional<List<Tag>> findAll(int offset, int limit);
 
      /**
       * This method is used to return the list of tags by certificate id
@@ -53,5 +52,9 @@ public interface TagRepository {
       * @return List of all tags or empty List if
       * no certificates were found
       */
-     List<Tag> findAllTagsByCertificateId(Long id) throws RepositoryException;
+     Optional<List<Tag>>  findAllTagsByCertificateId(Long id);
+
+    void deleteFromGiftCertificateTagTable(Long tagId);
+
+    Optional<Tag> findMostPopularTagOfUserWithHighestPriceOfOrders();
 }

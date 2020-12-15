@@ -1,7 +1,7 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.RepositoryException;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,33 +11,29 @@ public interface GiftCertificateRepository {
      * This method is used to return certificate by id
      *
      * @param id the id of certificate to be returned
-     * @return Optional value of find Certificate
-     */
-    Optional<GiftCertificate> findById(Long id) throws RepositoryException;
-
-    /**
-     * This method is used to return the list of certificates
+     * @return Optional value of find Certificate /**
      *
-     * @return List of all certificates or empty List if
-     * no certificates were found
      */
-    List<GiftCertificate> findAll() throws RepositoryException;
+    Optional<GiftCertificate> findById(Long id);
+
+
+    Optional<List<GiftCertificate>> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery);
 
     /**
      * This method is used to create the certificate
      *
      * @param giftCertificate the certificate to be created
-     * @return the value of created certificate
+     * @return the value of created certificate or empty
      */
-    Optional<GiftCertificate> create(GiftCertificate giftCertificate) throws RepositoryException;
+    Optional<GiftCertificate> create(GiftCertificate giftCertificate);
 
     /**
      * This method is used to delete the certificate by id
      *
-     * @param id the id of certificate to be deleted
+     * @param giftCertificate the id of certificate to be deleted
      * @return value of deleted certificate
      */
-    boolean delete(Long id) throws RepositoryException;
+    void delete(GiftCertificate giftCertificate);
 
     /**
      * This method is used to update the certificate
@@ -45,36 +41,20 @@ public interface GiftCertificateRepository {
      * @param giftCertificate the certificate to be updated
      * @return value of updated certificate
      */
-    boolean update(GiftCertificate giftCertificate) throws RepositoryException;
+    Optional<GiftCertificate> update(GiftCertificate giftCertificate);
 
     /**
-     * This method is used to return the list of certificates by name
-     * of tag
+     * This method is used to return certificate by name
      *
-     * @return List of all certificates by tag name or empty List if
-     * no certificates were found
+     * @param name the name of certificate to be returned
+     * @return on Optional with the value of find Certificate
      */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException;
+    Optional<List<GiftCertificate>> findByName(String name);
 
     /**
-     * This method is used to return the list of certificates by part of name
-     * certificate
+     * This method is used to delete id of certificate from ManyToMany Table
      *
-     * @return List of all certificates by part of name or empty List if
-     * no certificates were found
+     * @param id of certificate to be deleted
      */
-    List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException;
-
-    /**
-     * This method is used to
-     * sort the certificates by name asc/desc, date asc/date and find the certificates
-     * with tag
-     *
-     * @param sortBy  name tag for searching in certificateList. (can be Null)
-     * @param orderBy the sorting type selection. Possible values: asc, desc ,null
-     * @return List of sorted certificates, or unsorted List if received orderBy
-     * does not exist(or null) or received certificates is null
-     */
-    List<GiftCertificate> getSortedGiftCertificates(String sortBy, String orderBy) throws RepositoryException;
-
+    void deleteFromUsersOrdersGiftCertificateTable(Long id);
 }

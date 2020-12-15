@@ -2,142 +2,91 @@ package com.epam.esm.repository.impl;
 
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.GiftCertificateRepository;
-import com.epam.esm.util.DurationConverter;
-import com.epam.esm.util.query.CertificateConstantQuery;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
+import com.epam.esm.repository.util.SelectFilterCreator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class GiftCertificateRepositoryImpl extends BaseRepository implements GiftCertificateRepository {
 
-    private SimpleJdbcInsert giftCertificateInserter;
+    private static String SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS = "SELECT DISTINCT c.id, c.name AS name," +
+            " c.description,\n" + "c.price, c.create_date AS create_date, c.last_update_date, c.duration, " +
+            "tag.name AS tag_name FROM gift_certificate AS c LEFT JOIN\n" +
+            "gift_certificate_tags AS gct ON c.id=gct.gift_certificate_id LEFT JOIN tag AS tag ON tag.id= gct.tag_id ";
 
     @Autowired
-    public GiftCertificateRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
-        this.giftCertificateInserter = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName(CertificateConstantQuery.TABLE_NAME)
-                .usingColumns(CertificateConstantQuery.NAME_COLUMN, CertificateConstantQuery.DESCRIPTION_COLUMN,
-                        CertificateConstantQuery.PRICE_COLUMN, CertificateConstantQuery.CREATE_DATE_COLUMN,
-                        CertificateConstantQuery.LAST_UPDATE_COLUMN, CertificateConstantQuery.DURATION_COLUMN)
-                .usingGeneratedKeyColumns(CertificateConstantQuery.KEY);
+    public GiftCertificateRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
+        super(entityManager);
     }
 
+
     @Override
-    public Optional<GiftCertificate> findById(Long id) throws RepositoryException {
+    public Optional<GiftCertificate> findById(Long id) {
+        GiftCertificate certificate;
         try {
-            return Optional.ofNullable(getJdbcTemplate().queryForObject(CertificateConstantQuery.SQL_FIND_GIFT_CERTIFICATE_BY_ID, new GiftCertificateMapper(), id));
-        } catch (EmptyResultDataAccessException e) {
+            certificate = (GiftCertificate) getEntityManager()
+                    .createNamedQuery("GiftCertificate.findById")
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
             return Optional.empty();
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while getting Girt Certificate by id");
         }
+        return Optional.ofNullable(certificate);
+    }
+
+
+    @Override
+    public Optional<List<GiftCertificate>> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery) {
+        String query = SelectFilterCreator
+                .createFilterQuery(CommonParamsGiftCertificateQuery
+                        .fetchParams(commonParamsGiftCertificateQuery), SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS);
+        return Optional.ofNullable(getEntityManager()
+                .createNativeQuery(query, GiftCertificate.class)
+                .setFirstResult(commonParamsGiftCertificateQuery.getOffset())
+                .setMaxResults(commonParamsGiftCertificateQuery.getLimit())
+                .getResultList());
     }
 
     @Override
-    public List<GiftCertificate> findAll() throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_ALL_GIFT_CERTIFICATES, new GiftCertificateMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while getting all Gift Certificate");
-        }
-    }
-
-    @Override
-    public Optional<GiftCertificate> create(GiftCertificate giftCertificate) throws RepositoryException {
-        try {
-            Long giftCertificateId = saveGiftCertificateInfo(giftCertificate);
-            giftCertificate.getTags().forEach(tag -> saveTagIdAndGiftCertificateId(tag.getId(), giftCertificateId));
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while create Gift Certificate");
-        }
+    public Optional<GiftCertificate> create(GiftCertificate giftCertificate) {
+        getEntityManager().persist(giftCertificate);
         return Optional.ofNullable(giftCertificate);
     }
 
-    private Long saveGiftCertificateInfo(GiftCertificate giftCertificate) {
-        DurationConverter converter = new DurationConverter();
-        Map<String, Object> values = new HashMap<>();
-        values.put(CertificateConstantQuery.NAME_COLUMN, giftCertificate.getName());
-        values.put(CertificateConstantQuery.DESCRIPTION_COLUMN, giftCertificate.getDescription());
-        values.put(CertificateConstantQuery.PRICE_COLUMN, giftCertificate.getPrice());
-        values.put(CertificateConstantQuery.CREATE_DATE_COLUMN, giftCertificate.getCreateDate());
-        values.put(CertificateConstantQuery.LAST_UPDATE_COLUMN, giftCertificate.getLastUpdateTime());
-        values.put(CertificateConstantQuery.DURATION_COLUMN, converter.convertToDatabaseColumn(giftCertificate.getDuration()));
-        return giftCertificateInserter.executeAndReturnKey(values).longValue();
-    }
-
-    private boolean saveTagIdAndGiftCertificateId(long tagId, long giftCertificateId) {
-        return getJdbcTemplate().update(CertificateConstantQuery.SQL_SAVE_TAG_ID_AND_GIFT_CERTIFICATE_ID, giftCertificateId, tagId) == 1;
+    @Override
+    public void delete(GiftCertificate giftCertificate) {
+        getEntityManager().remove(giftCertificate);
     }
 
     @Override
-    public boolean delete(Long id) throws RepositoryException {
-        try {
-            getJdbcTemplate().update(CertificateConstantQuery.SQL_DELETE_DEPENDED_TAG, id);
-            return getJdbcTemplate().update(CertificateConstantQuery.SQL_DELETE_GIFT_CERTIFICATE, id) == 1;
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while delete GiftCertificateId");
-        }
+    public Optional<GiftCertificate> update(GiftCertificate giftCertificate) {
+        getEntityManager().merge(giftCertificate);
+        return Optional.ofNullable(giftCertificate);
     }
 
     @Override
-    public boolean update(GiftCertificate giftCertificate) throws RepositoryException {
-        DurationConverter converter = new DurationConverter();
-        try {
-            return getJdbcTemplate().update(CertificateConstantQuery.SQL_UPDATE_GIFT_CERTIFICATE, giftCertificate.getName(), giftCertificate.getDescription(),
-                    giftCertificate.getPrice(), giftCertificate.getLastUpdateTime(), converter.convertToDatabaseColumn(giftCertificate.getDuration()), giftCertificate.getId()) == 1;
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while update GiftCertificateId");
-        }
+    public Optional<List<GiftCertificate>> findByName(String name) {
+        return Optional.ofNullable(getEntityManager()
+                .createNamedQuery("GiftCertificate.findByName", GiftCertificate.class)
+                .setParameter("name", name)
+                .getResultList());
     }
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesByTagName(String tag) throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_CERTIFICATES_BY_TAG, new GiftCertificateMapper(), tag);
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find gift certificate by name of tag");
-        }
+    public void deleteFromUsersOrdersGiftCertificateTable(Long id) {
+        getEntityManager()
+                .createNativeQuery("DELETE FROM users_order_gift_certificate WHERE gift_certificate_id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
-
-    @Override
-    public List<GiftCertificate> findGiftCertificateByPartName(String partName) throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(CertificateConstantQuery.SQL_FIND_CERTIFICATES_BY_PART_NAME, new GiftCertificateMapper(), partName + "%");
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find gift certificate by part of name ");
-        }
-    }
-
-    @Override
-    public List<GiftCertificate> getSortedGiftCertificates(String sortBy, String order) throws RepositoryException {
-        String query = CertificateConstantQuery.SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS;
-        if (sortBy != null) {
-            query += "ORDER BY c." + sortBy;
-        }
-        if (order != null) {
-            query += " " + order;
-        }
-        try {
-            return getJdbcTemplate().query(query, new GiftCertificateMapper());
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while getting are filtered gift certificates ");
-        }
-    }
-
 }
+

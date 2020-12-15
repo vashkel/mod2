@@ -1,8 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.exception.ServiceException;
 import com.epam.esm.exception.TagNotFoundException;
 import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.repository.TagRepository;
@@ -10,68 +8,83 @@ import com.epam.esm.service.TagService;
 import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Transactional
 @Service
 public class TagServiceImpl implements TagService {
 
-    private TagRepository tagRepository;
+    private static final String NOT_FOUND = "locale.message.TagNotFound";
+    private static final String ALREADY_CREATED = "locale.message.tagAlreadyCreated";
+
+    private final TagRepository tagRepository;
 
     @Autowired
     public TagServiceImpl(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
     }
 
+    @Transactional
     @Override
-    public Long create(Tag tag) throws ServiceException {
-        try {
-            return tagRepository.create(tag);
-        } catch (RepositoryException e) {
-            throw new ServiceException("An exception was thrown while create tag : ", e);
+    public TagDTO create(TagDTO tagDTO) {
+        Tag tag;
+        tag = TagDTOConverter.convertFromTagDTO(tagDTO);
+        Optional<Tag> byName = tagRepository.findByName(tagDTO.getName());
+        if (byName.isPresent()) {
+            throw new TagNotFoundException(ALREADY_CREATED);
         }
+        Optional<Tag> createdTag = tagRepository.create(tag);
+        if (createdTag.isPresent()) {
+            tagDTO = TagDTOConverter.converterToTagDTO(createdTag.get());
+        }
+        return tagDTO;
     }
 
+    @Transactional
     @Override
-    public boolean delete(Long id) throws ServiceException {
-        try {
-            Optional<Tag> createdTag = tagRepository.find(id);
-            if (!createdTag.isPresent()) {
-                throw new TagNotFoundException("tog not found");
-            }
-            return tagRepository.delete(id);
-        } catch (RepositoryException e) {
-            throw new ServiceException("An exception was thrown while delete tag : ", e);
+    public void delete(Long id) {
+        Optional<Tag> createdTag = tagRepository.findById(id);
+        if (!createdTag.isPresent()) {
+            throw new TagNotFoundException(NOT_FOUND);
         }
+        tagRepository.deleteFromGiftCertificateTagTable(createdTag.get().getId());
+        tagRepository.delete(createdTag.get());
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public TagDTO findById(Long id) throws ServiceException {
-        try {
-            Optional<Tag> tag = tagRepository.find(id);
-            if (!tag.isPresent()) {
-                throw new TagNotFoundException(id, "Tag not found");
-            }
-            return TagDTOConverter.converterToTagDTO(tag.get());
-        } catch (RepositoryException e) {
-            throw new ServiceException("An exception was thrown while find tag : ", e);
+    public TagDTO findById(Long id) {
+        Optional<Tag> tag = tagRepository.findById(id);
+        if (!tag.isPresent()) {
+            throw new TagNotFoundException(id, NOT_FOUND);
         }
+        return TagDTOConverter.converterToTagDTO(tag.get());
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<TagDTO> findAll() throws ServiceException {
+    public List<TagDTO> findAll(int offset, int limit) {
         List<TagDTO> tagDTOList = new ArrayList<>();
-        try {
-            List<Tag> tags = tagRepository.findAll();
-            if (tags.isEmpty()) {
-                throw new TagNotFoundException("Tag not found");
-            }
-            tags.forEach(tag -> tagDTOList.add(TagDTOConverter.converterToTagDTO(tag)));
-        } catch (RepositoryException e) {
-            throw new ServiceException("An exception was thrown while create tag : ", e);
+        Optional<List<Tag>> tags = tagRepository.findAll(offset, limit);
+        if (!tags.isPresent()) {
+            throw new TagNotFoundException(NOT_FOUND);
         }
+        tags.get().forEach(tag -> tagDTOList.add(TagDTOConverter.converterToTagDTO(tag)));
         return tagDTOList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TagDTO findMostPopularTagWithHighestPriceOfOrders() {
+        TagDTO tagDTO = null;
+        Optional<Tag> tag = tagRepository.findMostPopularTagOfUserWithHighestPriceOfOrders();
+        if (tag.isPresent()) {
+            tagDTO = TagDTOConverter.converterToTagDTOWithoutGiftCertificate(tag.get());
+        }
+        return tagDTO;
     }
 }

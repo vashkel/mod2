@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     private static final long serialVersionUID = 1L;
 
-    private final String LOCALDATETIMEPATTERT = "yyyy-MM-dd HH:mm:ss";
+    private final String LOCAL_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     protected LocalDateTimeDeserializer() {
         super(LocalDateTime.class);
@@ -19,6 +19,6 @@ public class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
 
     @Override
     public LocalDateTime deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-        return LocalDateTime.parse(jp.readValueAs(String.class), DateTimeFormatter.ofPattern(LOCALDATETIMEPATTERT));
+        return LocalDateTime.parse(jp.readValueAs(String.class), DateTimeFormatter.ofPattern(LOCAL_DATE_TIME_PATTERN));
     }
 }

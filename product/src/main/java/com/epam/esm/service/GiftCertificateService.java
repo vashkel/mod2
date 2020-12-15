@@ -1,11 +1,9 @@
 package com.epam.esm.service;
 
 
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.exception.NotValidParamsRequest;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
-import com.epam.esm.exception.ServiceException;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 
 import java.util.List;
 
@@ -17,7 +15,7 @@ public interface GiftCertificateService {
      * @return value of find Certificate
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate was not found
      */
-    GiftCertificateDTO find(Long id) throws ServiceException;
+    GiftCertificateDTO find(Long id);
 
     /**
      * This method is used to return the list of certificates
@@ -25,15 +23,15 @@ public interface GiftCertificateService {
      * @return List of all certificates or empty List if
      * no certificates were found
      */
-    List<GiftCertificateDTO> findAll() throws ServiceException;
+    List<GiftCertificateDTO> findAll(CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery);
 
     /**
      * This method is used to create the certificate
      *
-     * @param giftCertificate the certificate to be created
+     * @param giftCertificateDTO the certificate to be created
      * @return true if certificate was created, false if it were not
      */
-    GiftCertificateDTO create(GiftCertificate giftCertificate) throws ServiceException;
+    GiftCertificateDTO create(GiftCertificateDTO giftCertificateDTO);
 
     /**
      * This method is used to delete the certificate by id
@@ -42,7 +40,7 @@ public interface GiftCertificateService {
      * @return true if certificate was deleted, false if it were not
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    boolean deleteById(Long id) throws ServiceException;
+    void deleteById(Long id);
 
     /**
      * This method is used to update the certificate
@@ -51,35 +49,14 @@ public interface GiftCertificateService {
      * @return updated GiftCertificateDTO
      * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    GiftCertificateDTO update(GiftCertificate giftCertificate, Long id) throws ServiceException;
+    GiftCertificateDTO update(GiftCertificateDTO giftCertificate);
 
     /**
-     * This method is used to return the list of certificates by name
-     * of tag
+     * This method is used to update the certificate
      *
-     * @return List of all certificates by tag name or empty List if
-     * no certificates were found
+     * @param giftCertificatePatchDTO the certificate to be updated
+     * @return updated GiftCertificateDTO
+     * @throws com.epam.esm.exception.GiftCertificateNotFoundException if certificate does not exist
      */
-    List<GiftCertificateWithTagsDTO> findCertificatesByTagName(String tagName) throws ServiceException;
-
-    /**
-     * This method is used to return the list of certificates by part of name
-     * certificate
-     *
-     * @return List of all certificates by part of name or empty List if
-     * no certificates were found
-     */
-    List<GiftCertificateWithTagsDTO> findGiftCertificateByPartName(String partName) throws ServiceException;
-
-    /**
-     * This method is used to
-     * sort the certificates by name asc/desc, date asc/date and find the certificates
-     * with tag
-     *
-     * @param sortBy  name tag for searching in certificateList. (can be Null)
-     * @param orderBy the sorting type selection. Possible values: asc, desc ,null
-     * @return List of sorted certificates, or unsorted List if received orderBy
-     * does not exist(or null) or received certificates is null
-     */
-    List<GiftCertificateWithTagsDTO> getFilteredGiftCertificates(String sortBy, String orderBy) throws ServiceException;
+    GiftCertificateDTO updatePatch(GiftCertificatePatchDTO giftCertificatePatchDTO);
 }

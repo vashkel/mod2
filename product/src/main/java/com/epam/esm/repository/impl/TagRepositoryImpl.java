@@ -1,101 +1,97 @@
 package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.repository.BaseRepository;
 import com.epam.esm.repository.TagRepository;
-import com.epam.esm.util.query.TagConstantQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Repository
 public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
-    private SimpleJdbcInsert tagInserter;
+    private static final String THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER =
+            "SELECT tag.id , COUNT(tag.id) AS 'numberOfTag', tag.name, user_id FROM tag\n" +
+            "           LEFT JOIN gift_certificate_tags gct on tag.id = gct.tag_id\n" +
+            "           LEFT JOIN gift_certificate gc on gct.gift_certificate_id = gc.id\n" +
+            "           LEFT JOIN users_order_gift_certificate uogc on gc.id = uogc.gift_certificate_id\n" +
+            "           LEFT JOIN users_order uo on uogc.order_id = uo.id\n" +
+            "         WHERE user_id = (SELECT user_id FROM users_order GROUP BY users_order.user_id " +
+                    "ORDER BY SUM(users_order.cost) DESC LIMIT 1)\n" +
+            "         GROUP BY tag.id ORDER BY numberOfTag DESC LIMIT 1;";
 
     @Autowired
-    public TagRepositoryImpl(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
-        this.tagInserter = new SimpleJdbcInsert(jdbcTemplate)
-                .withTableName(TagConstantQuery.TABLE_NAME).usingColumns(TagConstantQuery.NAME_COLUMN).usingGeneratedKeyColumns(TagConstantQuery.KEY);
+    public TagRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
+        super(entityManager);
     }
 
     @Override
-    public long create(Tag tag) throws RepositoryException {
-        try {
-            Optional<Tag> isCreated = findByName(tag.getName());
-            if (isCreated.isPresent()) {
-                return isCreated.get().getId();
-            }
-            Map<String, Object> values = new HashMap<>();
-            values.put(TagConstantQuery.NAME_COLUMN, tag.getName());
-            return tagInserter.executeAndReturnKey(values).longValue();
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while create tag");
-        }
+    public Optional<Tag> create(Tag tag) {
+        getEntityManager().persist(tag);
+        return Optional.ofNullable(tag);
     }
 
     @Override
-    public boolean delete(Long tagId) throws RepositoryException {
-        try {
-            return getJdbcTemplate().update(TagConstantQuery.SQL_DELETE_TAG, tagId) == 1;
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while delete tag");
-        }
+    public void delete(Tag tag) {
+        getEntityManager().remove(tag);
     }
 
     @Override
-    public Optional<Tag> find(Long id) throws RepositoryException {
+    public Optional<Tag> findById(Long id) {
         try {
-            return Optional.ofNullable(getJdbcTemplate().queryForObject(TagConstantQuery.SQL_FIND_TAG, new TagMapper(), id));
-        } catch (EmptyResultDataAccessException e) {
+            return Optional.ofNullable(getEntityManager().createNamedQuery("Tag.findById", Tag.class)
+                    .setParameter("id", id).getSingleResult());
+        } catch (NoResultException e) {
             return Optional.empty();
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find tag by id");
         }
     }
 
     @Override
-    public Optional<Tag> findByName(String tagName) throws RepositoryException {
+    public Optional<Tag> findByName(String tagName) {
         try {
-            return Optional.ofNullable(getJdbcTemplate().
-                    queryForObject(TagConstantQuery.SQL_FIND_TAG_BY_NAME, new TagMapper(), tagName));
-        } catch (EmptyResultDataAccessException e) {
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("Tag.findByName", Tag.class)
+                    .setParameter("name", tagName)
+                    .getSingleResult());
+        } catch (NoResultException e) {
             return Optional.empty();
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find tag by name");
         }
     }
 
     @Override
-    public List<Tag> findAll() throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(TagConstantQuery.SQL_FIND_ALL_TAGS, new TagMapper());
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find all tags");
-        }
+    public Optional<List<Tag>> findAll(int offset, int limit) {
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("Tag.findAll", Tag.class)
+                    .setFirstResult(offset)
+                    .setMaxResults(limit)
+                    .getResultList());
     }
 
     @Override
-    public List<Tag> findAllTagsByCertificateId(Long id) throws RepositoryException {
-        try {
-            return getJdbcTemplate().query(TagConstantQuery.SQL_FIND_ALL_TAGS_BY_CERTIFICATE_ID, new TagMapper(), id);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        } catch (DataAccessException e) {
-            throw new RepositoryException("Exception while find all tags");
-        }
+    public Optional<List<Tag>> findAllTagsByCertificateId(Long id) {
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("Tag.findAllTagsByCertificateId", Tag.class)
+                    .setParameter("id", id)
+                    .getResultList());
+    }
+
+    @Override
+    public Optional<Tag> findMostPopularTagOfUserWithHighestPriceOfOrders() {
+        Tag tag = (Tag) getEntityManager()
+                .createNativeQuery(THE_MOST_POPULAR_TAG_USER_WITH_HIGHEST_PRICE_OF_ORDER, Tag.class)
+                .getSingleResult();
+        return Optional.ofNullable(tag);
+    }
+
+    public void deleteFromGiftCertificateTagTable(Long tagId){
+        getEntityManager()
+                .createNativeQuery("DELETE FROM gift_certificate_tags WHERE tag_id = ?")
+                .setParameter(1, tagId)
+                .executeUpdate();
     }
 }

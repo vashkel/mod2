@@ -1,22 +1,23 @@
 package com.epam.esm.repository;
 
-import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Component
 
 public abstract class BaseRepository {
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
-    public BaseRepository(JdbcTemplate jdbcTemplate){
-        this.jdbcTemplate = getJdbcTemplate();
+    public BaseRepository(@Qualifier("createEntityManager") EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
-    protected JdbcTemplate getJdbcTemplate() {
-        return jdbcTemplate;
+    protected EntityManager getEntityManager() {
+        return entityManager;
     }
-
 }

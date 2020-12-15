@@ -1,49 +1,75 @@
 package com.epam.esm.entity;
 
-import com.epam.esm.util.DurationDeserializer;
-import com.epam.esm.util.DurationSerializer;
-import com.epam.esm.util.LocalDateTimeDeserializer;
-import com.epam.esm.util.LocalDateTimeSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GiftCertificate implements Serializable{
+@Entity
+@Audited
+@Table(name = "gift_certificate")
+@NamedQueries({
+        @NamedQuery(name = "GiftCertificate.findAll",
+                query = "SELECT DISTINCT g FROM GiftCertificate g LEFT JOIN fetch g.tags t "),
+        @NamedQuery(name =  "GiftCertificate.findById",
+                query = "SELECT g FROM GiftCertificate g LEFT JOIN FETCH g.tags t WHERE g.id = :id"),
+        @NamedQuery(name = "GiftCertificate.DeleteById",
+                query = "DELETE GiftCertificate WHERE id = :id"),
+        @NamedQuery(name = "GiftCertificate.findByName",
+                query = "FROM GiftCertificate WHERE name = :name")
+})
+public class GiftCertificate implements Serializable {
     private static final long serialVersionUID = -1734150257366390793L;
 
-    @NotNull(message = "Id can not be null")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull(message = "Please provide name")
-    private String name;
-    @NotNull(message = "Please provide description")
-    private String description;
-    @NotNull(message = "Please provide price")
-    private Double price;
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime createDate;
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    private LocalDateTime lastUpdateTime;
-    @JsonDeserialize(using = DurationDeserializer.class)
-    @JsonSerialize(using = DurationSerializer.class)
-    private Duration duration;
-    private List<Tag> tags = new ArrayList<>();
 
-    public GiftCertificate(Long id, String name, String description, Double price, LocalDateTime toLocalDateTime, LocalDateTime toLocalDateTime1, Duration duration) {
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "price", nullable = false)
+    private BigDecimal price;
+
+    @Column(name = "create_date", nullable = false)
+    private LocalDateTime createDate;
+
+    @Column(name = "last_update_date", nullable = false)
+    private LocalDateTime lastUpdateTime;
+
+    @Column(name = "duration", nullable = false)
+    private Duration duration;
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @NotAudited
+    @JoinTable(name = "gift_certificate_tags",
+            joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    private Set<Tag> tags = new HashSet<>();
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @NotAudited
+    @ManyToMany(mappedBy = "giftCertificate", fetch = FetchType.LAZY)
+    private List<Order> orders;
+
+    public GiftCertificate(Long id, String name, String description, BigDecimal price, LocalDateTime toLocalDateTime,
+                           LocalDateTime toLocalDateTime1, Duration duration) {
     }
 
 }

@@ -1,19 +1,15 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
-import com.epam.esm.modelDTO.giftcertificate.GiftCertificateWithTagsDTO;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
-import com.epam.esm.exception.NotValidParamsRequest;
-import com.epam.esm.exception.RepositoryException;
-import com.epam.esm.exception.ServiceException;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.util.DTOConverter.certificate.GiftCertificateDTOConverter;
-import com.epam.esm.util.DTOConverter.certificate.GiftCertificateWithTagsDTOConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,51 +20,55 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static org.mockito.ArgumentMatchers.eq;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@ContextConfiguration(classes = {ProductSpringConfiguration.class})
-@WebAppConfiguration
 class GiftCertificateServiceImplTest {
+    private final Long CERTIFICATE_ID1 = 1L;
+    private final Long CERTIFICATE_ID2 = 2L;
+    private final Long WRONG_CERTIFICATE_ID = 0L;
+
     private List<GiftCertificate> certificateList;
     private GiftCertificate certificate1;
+    private GiftCertificate isNotCreatedCertificate;
     private GiftCertificate certificate2;
+    private CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery;
 
     @Mock
     private GiftCertificateRepository giftCertificateRepository;
     @Mock
     private TagRepository tagRepository;
-    @Mock
-    private PlatformTransactionManager txManager;
 
-    @Autowired
     @InjectMocks
     private GiftCertificateService giftCertificateService =
-            new GiftCertificateServiceImpl(giftCertificateRepository, tagRepository, txManager);
+            new GiftCertificateServiceImpl(giftCertificateRepository, tagRepository);
+
 
     @BeforeEach
     void setUp() {
-        certificate1 = giftCertificateCreator(1L, "carting", 40.0, "speed");
-        certificate2 =  giftCertificateCreator(2L, "dance training", 30.0, "speed");
+        certificate1 =
+                giftCertificateCreator(1L, "carting", new BigDecimal(40.0), "speed");
+        isNotCreatedCertificate =
+                giftCertificateCreator(0L, "carting", new BigDecimal(40.0), "speed");
+        certificate2 =
+                giftCertificateCreator(2L, "dance training", new BigDecimal(30.0), "speed");
         certificateList = Arrays.asList(certificate1, certificate2);
+        commonParamsGiftCertificateQuery =
+                initCommonParamsQuery(null, null, null, null, 1, 2);
     }
 
     @Test
-    void find_whenGiftCertificatesExisted_thenReturnCertificate() throws RepositoryException, ServiceException {
-        Mockito.when(giftCertificateRepository.findById(1L)).thenReturn(Optional.ofNullable(certificate1));
+    void find_whenGiftCertificatesExisted_thenReturnCertificate() {
+        Mockito.when(giftCertificateRepository.findById(CERTIFICATE_ID1)).thenReturn(Optional.ofNullable(certificate1));
         GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
-        GiftCertificateDTO actual = giftCertificateService.find(1L);
+        GiftCertificateDTO actual = giftCertificateService.find(CERTIFICATE_ID1);
 
         Assertions.assertNotNull(actual, "GiftCertificate should not found");
 
@@ -76,81 +76,96 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
-    void find_whenGiftCertificateNotFound_thenCertificateNotFoundException() throws RepositoryException {
-        Mockito.when(giftCertificateRepository.findById(0L)).thenThrow(GiftCertificateNotFoundException.class);
+    void find_whenGiftCertificateNotFound_thenCertificateNotFoundException() {
 
-        Assertions.assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.find(0L));
+        Mockito.when(giftCertificateRepository.findById(WRONG_CERTIFICATE_ID))
+                .thenThrow(GiftCertificateNotFoundException.class);
+
+        Assertions.assertThrows(GiftCertificateNotFoundException.class, ()
+                -> giftCertificateService.find(WRONG_CERTIFICATE_ID));
     }
 
     @Test
-    void findAll() throws RepositoryException, ServiceException {
+    void findAll() {
         List<GiftCertificateDTO> expected = new ArrayList<>();
-        Mockito.when(giftCertificateRepository.findAll()).thenReturn(certificateList);
+        Mockito.when(giftCertificateRepository.findAll(commonParamsGiftCertificateQuery))
+                .thenReturn(Optional.ofNullable(certificateList));
         certificateList.forEach(giftCertificate -> expected
                 .add(GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate)));
-        List<GiftCertificateDTO> actual = giftCertificateService.findAll();
+        List<GiftCertificateDTO> actual = giftCertificateService.findAll(commonParamsGiftCertificateQuery);
 
         Assertions.assertIterableEquals(expected, actual);
     }
 
     @Test
-    void deleteById_whenGiftCertificateIsNotExist_thenNotFoundException() throws RepositoryException {
-        Mockito.when(giftCertificateRepository.delete(-1L)).thenThrow(GiftCertificateNotFoundException.class);
+    void deleteById_whenGiftCertificateIsNotExist_thenNotFoundException() {
 
-        Assertions.assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.deleteById(-1L));
+        Assertions.assertThrows(GiftCertificateNotFoundException.class, () ->
+                giftCertificateService.deleteById(WRONG_CERTIFICATE_ID));
     }
 
     @Test
-    void createGiftCertificate_whenCertificateIsCreated_returnGiftCertificate() throws ServiceException, RepositoryException {
-        Mockito.when(giftCertificateRepository.create(certificate1)).thenReturn(Optional.ofNullable(certificate1));
-        GiftCertificateDTO expected = GiftCertificateDTOConverter.convertToGiftCertificateDTO(certificate1);
-        GiftCertificateDTO actual = giftCertificateService.create(certificate1);
+    void update_whenGiftCertificateUpdated_returnUpdatedGiftCertificate() {
+        Optional<GiftCertificate> expectedCertificateFromRepository =
+                Optional.ofNullable(changeNameCertificate(certificate1));
+        GiftCertificateDTO expectedCertificateFromRepositoryDTO = GiftCertificateDTOConverter
+                .convertToGiftCertificateDTO(expectedCertificateFromRepository.get());
+        Mockito.when(giftCertificateRepository.findById(eq(expectedCertificateFromRepository.get().getId())))
+                .thenReturn(expectedCertificateFromRepository);
 
-        Assertions.assertEquals(expected.getId(), actual.getId());
+        Mockito.when(giftCertificateRepository.update(eq(expectedCertificateFromRepository.get())))
+                .thenReturn(expectedCertificateFromRepository);
+        GiftCertificateDTO actualGiftCertificateFromService = giftCertificateService
+                .update(expectedCertificateFromRepositoryDTO);
+
+        Assertions.assertEquals(expectedCertificateFromRepositoryDTO, actualGiftCertificateFromService);
     }
 
     @Test
-    void getFilteredGiftCertificates_whenGiftCertificatesNotNullAndSortByNameDesc_thenReturnList()
-            throws RepositoryException, ServiceException {
-        List<GiftCertificate> returnedCertificates = Arrays.asList(certificate2, certificate1);
-        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("name", "desc"))
-                .thenReturn(returnedCertificates);
-        List<GiftCertificateWithTagsDTO> expectedCertificates = new ArrayList<>();
-        for (GiftCertificate giftCertificate : returnedCertificates) {
-            expectedCertificates.add(GiftCertificateWithTagsDTOConverter.
-                    convertToGiftCertificateWithTagsDTO(giftCertificate));
-        }
-        List<GiftCertificateWithTagsDTO> actualCertificates = giftCertificateService.
-                getFilteredGiftCertificates("name", "desc");
-
-        Assertions.assertIterableEquals(expectedCertificates, actualCertificates);
+    void updatePatch_whenGiftCertificateUpdated_returnUpdatedGiftCertificate() {
+        Optional<GiftCertificate> expectedUpdateDCertificateFromRepository =
+                Optional.ofNullable(changeNameCertificate(certificate1));
+        GiftCertificatePatchDTO giftCertificatePatchDTO = new GiftCertificatePatchDTO();
+        giftCertificatePatchDTO.setId(CERTIFICATE_ID1);
+        giftCertificatePatchDTO.setPrice(new BigDecimal(86));
+        Mockito.when(giftCertificateRepository.findById(expectedUpdateDCertificateFromRepository.get().getId()))
+                .thenReturn(expectedUpdateDCertificateFromRepository);
+        expectedUpdateDCertificateFromRepository.ifPresent(actual -> {
+            giftCertificateService.updatePatch(giftCertificatePatchDTO);
+            Mockito.verify(giftCertificateRepository).update(actual);
+        });
     }
 
     @Test
-    void getFilteredGiftCertificates_whenNotHaveParameters_thenReturnNotFoundException() throws RepositoryException {
-        Mockito.when(giftCertificateRepository.getSortedGiftCertificates("", ""))
-                .thenThrow(NotValidParamsRequest.class);
+    void update_whenGiftCertificateNotExist_returnNotFoundException() {
+        certificate1.setId(WRONG_CERTIFICATE_ID);
+        Mockito.when(giftCertificateRepository.update(certificate1)).thenThrow(GiftCertificateNotFoundException.class);
 
-        Assertions.assertThrows(NotValidParamsRequest.class, () -> giftCertificateService
-                .getFilteredGiftCertificates("", ""));
+        Assertions.assertThrows(GiftCertificateNotFoundException.class, () ->
+                giftCertificateService.update(GiftCertificateDTOConverter
+                        .convertToGiftCertificateDTO(certificate1)));
     }
 
-    @Test
-    void findGiftCertificateByPartName_whenThereAreCertificatesWithPartName_thenReturnList()
-            throws RepositoryException, ServiceException {
-        List<GiftCertificate> certificates = Arrays.asList(certificate1);
-        Mockito.when(giftCertificateRepository.findGiftCertificateByPartName("ca")).thenReturn(certificates);
-        List<GiftCertificateWithTagsDTO> expectedCertificates = new ArrayList<>();
-        certificates.forEach(giftCertificate -> expectedCertificates
-                .add(GiftCertificateWithTagsDTOConverter.convertToGiftCertificateWithTagsDTO(giftCertificate)));
-        List<GiftCertificateWithTagsDTO> actualCertificates = giftCertificateService.findGiftCertificateByPartName("ca");
 
-        Assertions.assertIterableEquals(expectedCertificates, actualCertificates);
+    private GiftCertificate changeNameCertificate(GiftCertificate certificate1) {
+        certificate1.setName("newName");
+        return certificate1;
     }
 
-    private GiftCertificate giftCertificateCreator(Long id, String name, Double price, String description){
+    private GiftCertificate giftCertificateCreator(Long id, String name, BigDecimal price, String description) {
         return new GiftCertificate(id, name, description, price, LocalDateTime.now().minusDays(2),
-                LocalDateTime.now(), Duration.ofDays(30),
-                Arrays.asList(new Tag(1L, "spa"), new Tag(2L, "travel")));
+                LocalDateTime.now(), Duration.ofDays(30));
+    }
+
+    private CommonParamsGiftCertificateQuery initCommonParamsQuery(String name, String tag_name, String sortField,
+                                                                   String order, int offset, int limit) {
+        CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery = new CommonParamsGiftCertificateQuery();
+        commonParamsGiftCertificateQuery.setName(name);
+        commonParamsGiftCertificateQuery.setTag_name(tag_name);
+        commonParamsGiftCertificateQuery.setOrder(order);
+        commonParamsGiftCertificateQuery.setSortField(sortField);
+        commonParamsGiftCertificateQuery.setOffset(offset);
+        commonParamsGiftCertificateQuery.setLimit(limit);
+        return commonParamsGiftCertificateQuery;
     }
 }

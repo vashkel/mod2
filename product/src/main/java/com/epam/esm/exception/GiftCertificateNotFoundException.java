@@ -11,7 +11,7 @@ public class GiftCertificateNotFoundException extends RuntimeException {
     }
 
     public GiftCertificateNotFoundException(String message) {
-        this.message = message;
+       super(message);
     }
 
     public long getId() {

@@ -1,5 +1,6 @@
 package com.epam.esm.repository.impl;
 
+import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
@@ -9,21 +10,37 @@ import com.epam.esm.util.DurationConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
+import javax.annotation.Resource;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.Duration;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
-@ActiveProfiles("test")
-@Sql({"classpath:drop_schema.sql", "classpath:create_schema.sql"})
-@SpringBootTest(classes = H2Config.class)
-@Transactional
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = {ProductSpringConfiguration.class},
+loader = AnnotationConfigContextLoader.class)
+@Sql(executionPhase= Sql.ExecutionPhase.BEFORE_TEST_METHOD,scripts="classpath:schema.sql")
+@Sql({"classpath:schema.sql"})
+//@Transactional
+//@EnableAutoConfiguration
+//@DataJpaTest
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class GiftCertificateRepositoryImplTest {
 
     private List<GiftCertificate> certificateList;
@@ -32,9 +49,9 @@ class GiftCertificateRepositoryImplTest {
     private GiftCertificate certificate1WithTags;
     private CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery;
 
-    @Autowired
+    @Resource
     private GiftCertificateRepository giftCertificateRepository;
-    @Autowired
+    @Resource
     private DurationConverter durationConverter;
 
 
@@ -56,6 +73,7 @@ class GiftCertificateRepositoryImplTest {
 
     @Test
     void findById_whenCertificateExist_thenReturnCertificate() {
+        certificate1.setTags(new HashSet<>(Arrays.asList(new Tag(2L, "family"))));
         Long certificateId = certificate1.getId();
         Optional<GiftCertificate> byId = giftCertificateRepository.findById(certificateId);
         Assertions.assertEquals(Optional.of(certificate1), byId);
@@ -64,7 +82,6 @@ class GiftCertificateRepositoryImplTest {
     @Test
     void updateCertificate_whenCertificateUpdated_thenReturnTrue() {
         certificate2.setPrice(new BigDecimal(40.0));
-
         Assertions.assertEquals(certificate2.getPrice(), giftCertificateRepository.update(certificate2).get().getPrice());
     }
 

@@ -21,5 +21,11 @@ public interface UserRepository {
      */
     Optional<List<User>> findAll(int offset, int limit);
 
+    /** This method is used to return user by email
+     * @param email the email of user to be returned
+     * @return the value of user or empty
+     */
+    Optional<User> findByEmail(String email);
+
 
 }

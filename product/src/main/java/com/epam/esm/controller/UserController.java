@@ -34,4 +34,5 @@ public class UserController {
             @RequestParam(name = "limit", required = false, defaultValue = "8") int limit) {
         return ResponseEntity.ok(userService.findAll(offset, limit));
     }
+
 }

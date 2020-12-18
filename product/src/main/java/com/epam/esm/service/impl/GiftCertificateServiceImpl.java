@@ -3,6 +3,7 @@ package com.epam.esm.service.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.GiftCertificateNotFoundException;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateCreateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
@@ -60,18 +61,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public GiftCertificateDTO create(GiftCertificateDTO giftCertificateDTO) {
+    public GiftCertificateDTO create(GiftCertificateCreateDTO giftCertificateCreateDTO) {
         Optional<List<GiftCertificate>> certificatesFromDb;
-        GiftCertificate giftCertificate;
         Set<Tag> tags = new HashSet<>();
-        certificatesFromDb = giftCertificateRepository.findByName(giftCertificateDTO.getName());
+        certificatesFromDb = giftCertificateRepository.findByName(giftCertificateCreateDTO.getName());
         if (!certificatesFromDb.isPresent()) {
             throw new GiftCertificateNotFoundException(CERTIFICATE_EXIST);
         }
-        giftCertificateDTO.setCreateDate(LocalDateTime.now());
-        giftCertificateDTO.setLastUpdateTime(LocalDateTime.now());
-        giftCertificateDTO.setDuration(Duration.ofDays(30));
-        giftCertificate = GiftCertificateDTOConverter.convertFromGiftCertificateDTO(giftCertificateDTO);
+        giftCertificateCreateDTO.setCreateDate(LocalDateTime.now());
+        giftCertificateCreateDTO.setLastUpdateTime(LocalDateTime.now());
+        giftCertificateCreateDTO.setDuration(Duration.ofDays(30));
+        GiftCertificate giftCertificate = GiftCertificateDTOConverter
+                .convertFromGiftCertificateCreateDTO(giftCertificateCreateDTO);
 
         for (Tag insertedTag : giftCertificate.getTags()) {
             Optional<Tag> tagFromDb = tagRepository.findByName(insertedTag.getName());
@@ -83,9 +84,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         giftCertificate.setTags(tags);
         Optional<GiftCertificate> createdGiftCertificate = giftCertificateRepository.create(giftCertificate);
+        GiftCertificateDTO createdGiftCertificateDTO = null;
         if (createdGiftCertificate.isPresent())
-            giftCertificateDTO = GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate);
-        return giftCertificateDTO;
+           createdGiftCertificateDTO = GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate);
+        return createdGiftCertificateDTO;
     }
 
     @Override

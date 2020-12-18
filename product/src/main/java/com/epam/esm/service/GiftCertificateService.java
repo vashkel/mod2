@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateCreateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
@@ -31,7 +32,7 @@ public interface GiftCertificateService {
      * @param giftCertificateDTO the certificate to be created
      * @return true if certificate was created, false if it were not
      */
-    GiftCertificateDTO create(GiftCertificateDTO giftCertificateDTO);
+    GiftCertificateDTO create(GiftCertificateCreateDTO giftCertificateDTO);
 
     /**
      * This method is used to delete the certificate by id

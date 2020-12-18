@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateCreateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificatePatchDTO;
 import com.epam.esm.repository.util.CommonParamsGiftCertificateQuery;
@@ -7,6 +8,7 @@ import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +32,7 @@ public class GiftCertificatesController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "sort_field", required = false) String sortField,
@@ -56,8 +59,9 @@ public class GiftCertificatesController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GiftCertificateDTO> createGiftCertificate(
-            @Valid @RequestBody GiftCertificateDTO certificateDTO) {
+            @Valid @RequestBody GiftCertificateCreateDTO certificateDTO) {
         GiftCertificateDTO giftCertificateWithTagsDTO = giftCertificateService.create(certificateDTO);
         if (giftCertificateWithTagsDTO == null) {
             ResponseEntity.notFound();

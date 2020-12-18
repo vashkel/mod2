@@ -22,7 +22,7 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
     public Optional<User> findById(Long id) {
         try {
             return Optional.ofNullable(getEntityManager()
-                    .createQuery("FROM User WHERE id = :id", User.class)
+                    .createNamedQuery("User.findById", User.class)
                     .setParameter("id", id)
                     .getSingleResult());
         } catch (NoResultException e) {
@@ -37,5 +37,13 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
                 .setFirstResult(offset)
                 .setMaxResults(limit)
                 .getResultList());
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return Optional.ofNullable(getEntityManager()
+                .createNamedQuery("User.findByEmail", User.class)
+                .setParameter("email", email)
+                .getSingleResult());
     }
 }

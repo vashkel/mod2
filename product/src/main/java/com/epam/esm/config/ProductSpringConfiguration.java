@@ -106,7 +106,7 @@ public class ProductSpringConfiguration implements WebMvcConfigurer {
                 Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_AND_REV_NAME)));
         jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP,
                 Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STRATEGY_VALID_AND_STORE_TIMESTAMP)));
-        jpaProperties.put(ENVERS_AUDIT_STORE_DATA_AT_DELETE,
+        jpaProperties.put(ENVERS_AUDIT_STRATEGY_VALID_REVENT_TIMESTAMP_FIELD_NAME,
                 Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STORE_DATA_AT_DELETE)));
         jpaProperties.put(ENVERS_AUDIT_STORE_DATA_AT_DELETE,
                 Objects.requireNonNull(environment.getProperty(ENVERS_AUDIT_STORE_DATA_AT_DELETE)));

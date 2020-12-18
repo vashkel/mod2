@@ -1,8 +1,10 @@
 package com.epam.esm.service;
 
+import com.epam.esm.entity.User;
 import com.epam.esm.modelDTO.user.UserDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
 
@@ -19,4 +21,5 @@ public interface UserService {
      *      *      *      no Users were found
      */
     List<UserDTO> findAll(int offset, int limit);
+
 }

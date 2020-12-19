@@ -1,9 +1,7 @@
-package com.epam.esm.controller.exception;
+package com.epam.esm.exception;
 
-import com.epam.esm.exception.*;
 import com.epam.esm.exception.error.Error;
 import com.epam.esm.exception.model.ApiErrorResponse;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -62,6 +60,33 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(LoginException.class)
+    public ResponseEntity<ApiErrorResponse> handleUserNamePasswordNotValid(RuntimeException e, WebRequest request,
+                                                                           Locale locale) {
+        ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
+                .withMessage(messageSource.getMessage(e.getLocalizedMessage(), null, locale))
+                .withDetail(messageSource.getMessage(Error.ERROR05.getDescription(), null, locale))
+                .withError_code(Error.ERROR05.name())
+                .withStatus(HttpStatus.FORBIDDEN)
+                .atTime(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
+        return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    public ResponseEntity<ApiErrorResponse> handleTokenValid(RuntimeException e, WebRequest request,
+                                                             Locale locale) {
+        ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
+                .withMessage(messageSource.getMessage(e.getLocalizedMessage(), null, locale))
+                .withDetail(messageSource.getMessage(Error.ERROR05.getDescription(), null, locale))
+                .withError_code(Error.ERROR05.name())
+                .withStatus(HttpStatus.UNAUTHORIZED)
+                .atTime(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
+        return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
+    }
+
 
     @ExceptionHandler({EntityExistsException.class})
     public ResponseEntity<ApiErrorResponse> entityExistsException(EntityExistsException ex, WebRequest request,

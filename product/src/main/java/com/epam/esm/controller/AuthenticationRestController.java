@@ -1,10 +1,11 @@
-package com.epam.esm.security;
+package com.epam.esm.controller;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.repository.UserRepository;
+import com.epam.esm.exception.LoginException;
 import com.epam.esm.security.model.AuthenticationRequestDTO;
-import com.epam.esm.security.model.JwtTokenProvider;
-import org.springframework.http.HttpStatus;
+import com.epam.esm.security.model.AuthenticationResponseDTO;
+import com.epam.esm.security.service.JwtTokenProvider;
+import com.epam.esm.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,35 +19,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthenticationRestController {
 
     private final AuthenticationManager authenticationManager;
-    private UserRepository userRepository;
+    private UserService userService;
     private JwtTokenProvider jwtTokenProvider;
+    private static final String INVALID_EMAIL_PASSWORD= "locale.message.InvalidEmailPassword";
 
-    public AuthenticationRestController(AuthenticationManager authenticationManager, UserRepository userRepository, JwtTokenProvider jwtTokenProvider) {
+    public AuthenticationRestController(AuthenticationManager authenticationManager, UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestBody AuthenticationRequestDTO requestDTO) {
+    public ResponseEntity<AuthenticationResponseDTO> authenticate(@RequestBody AuthenticationRequestDTO requestDTO) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDTO.getEmail(), requestDTO.getPassword()));
-            User user = userRepository.findByEmail(requestDTO.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
+            User user = userService.findByEmail(requestDTO.getEmail()).orElseThrow(() -> new UsernameNotFoundException("User doesn't exists"));
             String token = jwtTokenProvider.createToken(requestDTO.getEmail(), user.getRole().name());
-            Map<Object, Object> response = new HashMap<>();
-            response.put("email", requestDTO.getEmail());
-            response.put("token", token);
-            return ResponseEntity.ok(response);
+
+//            Map<Object, Object> response = new HashMap<>();
+//            response.put("email", requestDTO.getEmail());
+//            response.put("token", token);
+            return ResponseEntity.ok(new AuthenticationResponseDTO(requestDTO.getEmail(), token));
         } catch (AuthenticationException e) {
-            return new ResponseEntity<>("Invalid email/password combination", HttpStatus.FORBIDDEN);
+            throw new LoginException(INVALID_EMAIL_PASSWORD);
         }
     }
 

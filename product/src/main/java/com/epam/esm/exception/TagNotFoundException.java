@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "There is no such tag")
 public class TagNotFoundException extends RuntimeException {
+    private static final long serialVersionUID = 4874783546198328441L;
 
     private Long id;
     private String name;
@@ -15,9 +16,10 @@ public class TagNotFoundException extends RuntimeException {
         this.message = message;
     }
 
-    public TagNotFoundException(String message){
+    public TagNotFoundException(String message) {
         this.message = message;
     }
+
     public long getId() {
         return id;
     }
@@ -30,8 +32,6 @@ public class TagNotFoundException extends RuntimeException {
     public String getMessage() {
         return message;
     }
-
-
 
 
 }

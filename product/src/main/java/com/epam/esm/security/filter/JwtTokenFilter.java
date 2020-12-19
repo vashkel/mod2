@@ -1,9 +1,12 @@
 package com.epam.esm.security.filter;
 
 
-import com.epam.esm.security.exception.JwtAuthenticationException;
-import com.epam.esm.security.model.JwtTokenProvider;
+import com.epam.esm.exception.JwtAuthenticationException;
+import com.epam.esm.security.RestAuthenticationEntryPoint;
+import com.epam.esm.security.service.JwtTokenProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -19,10 +22,13 @@ import java.io.IOException;
 @Component
 public class JwtTokenFilter extends GenericFilterBean {
     private final JwtTokenProvider jwtTokenProvider;
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider, RestAuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtTokenProvider = jwtTokenProvider;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
@@ -35,8 +41,8 @@ public class JwtTokenFilter extends GenericFilterBean {
             }
         } catch (JwtAuthenticationException e) {
             SecurityContextHolder.clearContext();
-            ((HttpServletResponse) servletResponse).sendError(e.getHttpStatus().value());
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+            authenticationEntryPoint
+                    .commence((HttpServletRequest)servletRequest, (HttpServletResponse)servletResponse, e);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

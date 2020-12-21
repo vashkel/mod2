@@ -1,6 +1,5 @@
 package com.epam.esm.config;
 
-import com.epam.esm.security.RestAuthenticationEntryPoint;
 import com.epam.esm.security.service.JwtConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -36,13 +35,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/auth/login").permitAll()
-//                .antMatchers(HttpMethod.GET, "/certificates").hasRole(Role.USER.name())
-//                .antMatchers(HttpMethod.POST, "/certificates/**").hasRole(Role.ADMIN.name())
+                .antMatchers("/auth/registration").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
-                .apply(jwtConfigurer)
-        ;
+                .apply(jwtConfigurer);
     }
 
     @Bean
@@ -52,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    protected PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 

@@ -4,9 +4,7 @@ package com.epam.esm.security.filter;
 import com.epam.esm.exception.JwtAuthenticationException;
 import com.epam.esm.security.RestAuthenticationEntryPoint;
 import com.epam.esm.security.service.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -30,7 +28,8 @@ public class JwtTokenFilter extends GenericFilterBean {
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+            throws IOException, ServletException {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) servletRequest);
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
@@ -42,7 +41,7 @@ public class JwtTokenFilter extends GenericFilterBean {
         } catch (JwtAuthenticationException e) {
             SecurityContextHolder.clearContext();
             authenticationEntryPoint
-                    .commence((HttpServletRequest)servletRequest, (HttpServletResponse)servletResponse, e);
+                    .commence((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, e);
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

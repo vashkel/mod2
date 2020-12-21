@@ -11,5 +11,5 @@ public interface OrderService {
     OrderResponseDTO findById(Long id);
     List<OrderResponseDTO> findAll(int offset, int limit);
     OrderResponseDTO createOrder(OrderDTO orderDTO);
-    List<UsersOrderDTO> findUserOrders(Long userId);
+    List<OrderResponseDTO> findUserOrders(Long userId);
 }

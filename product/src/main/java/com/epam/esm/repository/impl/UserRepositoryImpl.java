@@ -46,4 +46,10 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
                 .setParameter("email", email)
                 .getSingleResult());
     }
+
+    @Override
+    public Optional<User> register(User user) {
+        getEntityManager().persist(user);
+        return Optional.ofNullable(user);
+    }
 }

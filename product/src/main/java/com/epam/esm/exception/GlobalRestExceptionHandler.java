@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -74,27 +75,39 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessDeny(RuntimeException e, WebRequest request,
+                                                             Locale locale) {
+        ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
+                .withMessage(e.getLocalizedMessage())
+                .withDetail(messageSource.getMessage(Error.ERROR05.getDescription(), null, locale))
+                .withError_code(Error.ERROR05.name())
+                .withStatus(HttpStatus.FORBIDDEN)
+                .atTime(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
+        return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
+    }
+
     @ExceptionHandler(JwtAuthenticationException.class)
     public ResponseEntity<ApiErrorResponse> handleTokenValid(RuntimeException e, WebRequest request,
                                                              Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withMessage(messageSource.getMessage(e.getLocalizedMessage(), null, locale))
-                .withDetail(messageSource.getMessage(Error.ERROR05.getDescription(), null, locale))
-                .withError_code(Error.ERROR05.name())
+                .withDetail(messageSource.getMessage(Error.ERROR06.getDescription(), null, locale))
+                .withError_code(Error.ERROR06.name())
                 .withStatus(HttpStatus.UNAUTHORIZED)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
     }
 
-
     @ExceptionHandler({EntityExistsException.class})
     public ResponseEntity<ApiErrorResponse> entityExistsException(EntityExistsException ex, WebRequest request,
                                                                   Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
-                .withDetail(messageSource.getMessage(Error.ERROR01.getDescription(), null, locale))
-                .withError_code(Error.ERROR01.name())
+                .withDetail(messageSource.getMessage(Error.ERROR07.getDescription(), null, locale))
+                .withError_code(Error.ERROR07.name())
                 .withStatus(HttpStatus.CONFLICT)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
@@ -120,7 +133,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
                 .withStatus(HttpStatus.BAD_GATEWAY)
                 .withDetail("Something went wrong")
                 .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
-                .withError_code("50202")
+                .withError_code("500")
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<>(response, response.getStatus());

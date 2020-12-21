@@ -1,6 +1,9 @@
 package com.epam.esm.service;
 
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.UserAlreadyExistException;
+import com.epam.esm.modelDTO.security.RegistrationRequestDTO;
+import com.epam.esm.modelDTO.security.RegistrationResponseDTO;
 import com.epam.esm.modelDTO.user.UserDTO;
 
 import java.util.List;
@@ -28,5 +31,10 @@ public interface UserService {
      */
     Optional<User> findByEmail(String email);
 
-
+    /**
+     * This method is used to register user.
+     * @param registrationRequestDTO is data for new user
+     * @return created user
+     */
+    RegistrationResponseDTO register(RegistrationRequestDTO registrationRequestDTO);
 }

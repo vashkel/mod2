@@ -98,14 +98,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<UsersOrderDTO> findUserOrders(Long userId) {
-        List<UsersOrderDTO> userOrders = new ArrayList<>();
+    public List<OrderResponseDTO> findUserOrders(Long userId) {
+        List<OrderResponseDTO> userOrders = new ArrayList<>();
         if (isRegisteredUser(userId)) {
             Optional<List<Order>> orders = orderRepository.findUserOrders(userId);
             orders.ifPresent(orderList -> orderList.forEach(order ->
                     order.setCost(scaleCost(order.getCost()))));
             orders.ifPresent(orderList -> orderList.forEach(order ->
-                    userOrders.add(OrderDTOConverter.convertToUserOrdersDTO(order))));
+                    userOrders.add(OrderDTOConverter.convertToOrderResponseDTO(order))));
         }
         return userOrders;
     }

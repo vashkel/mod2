@@ -1,8 +1,7 @@
-package com.epam.esm.security.model;
+package com.epam.esm.modelDTO.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @AllArgsConstructor
 @Data

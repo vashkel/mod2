@@ -32,7 +32,7 @@ public class GiftCertificatesController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','GUEST')")
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "sort_field", required = false) String sortField,
@@ -52,6 +52,7 @@ public class GiftCertificatesController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','GUEST')")
     public ResponseEntity<GiftCertificateDTO> giftCertificate(@PathVariable("id") @Min(value = 1) long id) {
         GiftCertificateDTO giftCertificateDTO = giftCertificateService.find(id);
         addLinks(giftCertificateDTO);
@@ -59,7 +60,7 @@ public class GiftCertificatesController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<GiftCertificateDTO> createGiftCertificate(
             @Valid @RequestBody GiftCertificateCreateDTO certificateDTO) {
         GiftCertificateDTO giftCertificateWithTagsDTO = giftCertificateService.create(certificateDTO);
@@ -70,6 +71,7 @@ public class GiftCertificatesController {
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<GiftCertificateDTO> deleteCertificate(
             @PathVariable("id") @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         giftCertificateService.deleteById(id);
@@ -77,12 +79,14 @@ public class GiftCertificatesController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<GiftCertificateDTO> updateCertificate(@RequestBody
                                                                 @Valid GiftCertificateDTO giftCertificateDTO) {
         return ResponseEntity.ok(giftCertificateService.update(giftCertificateDTO));
     }
 
     @PatchMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<GiftCertificateDTO> updateCertificate(
             @RequestBody @Valid GiftCertificatePatchDTO giftCertificatePatchDTO) {
         return ResponseEntity.ok(giftCertificateService.updatePatch(giftCertificatePatchDTO));

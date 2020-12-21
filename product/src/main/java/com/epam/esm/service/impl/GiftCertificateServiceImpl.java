@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private static final String NOT_FOUND = "locale.message.GiftCertificateNotFound";
-    private static final String CERTIFICATE_EXIST = "locale.message.CertificateExist";
+    private static final String CERTIFICATE_EXIST = "locale.message.GiftCertificateExist";
 
     private GiftCertificateRepository giftCertificateRepository;
     private TagRepository tagRepository;

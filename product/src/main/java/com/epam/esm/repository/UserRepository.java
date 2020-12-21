@@ -27,5 +27,11 @@ public interface UserRepository {
      */
     Optional<User> findByEmail(String email);
 
+    /**
+     * This method is used to register user.
+     * @param user is data for new user
+     * @return created user or empty
+     */
+    Optional<User> register(User user);
 
 }

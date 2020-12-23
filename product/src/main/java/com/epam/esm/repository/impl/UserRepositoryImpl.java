@@ -48,7 +48,7 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
     }
 
     @Override
-    public Optional<User> register(User user) {
+    public Optional<User> save(User user) {
         getEntityManager().persist(user);
         return Optional.ofNullable(user);
     }

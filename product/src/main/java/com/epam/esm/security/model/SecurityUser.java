@@ -1,8 +1,5 @@
 package com.epam.esm.security.model;
 
-import com.epam.esm.entity.Role;
-import com.epam.esm.entity.Status;
-import com.epam.esm.entity.User;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -58,18 +55,6 @@ public class SecurityUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return isActive;
-    }
-
-    public static UserDetails fromUser(User user) {
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getStatus().equals(Status.ACTIVE),
-                Role.getAuthorities(user.getRole())
-        );
     }
 
 }

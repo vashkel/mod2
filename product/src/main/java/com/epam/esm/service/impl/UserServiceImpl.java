@@ -1,14 +1,18 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
+import com.epam.esm.exception.UserIsNotRegistered;
 import com.epam.esm.exception.UserNotFoundException;
 import com.epam.esm.modelDTO.security.RegistrationRequestDTO;
 import com.epam.esm.modelDTO.security.RegistrationResponseDTO;
 import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.repository.UserRepository;
+import com.epam.esm.security.service.UserDetailsServiceImpl;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.DTOConverter.registration.RegistrationDTOConverter;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,8 +69,24 @@ public class UserServiceImpl implements UserService {
             throw new EntityExistsException(USER_ALREADY_EXIST);
         }
         User user = RegistrationDTOConverter.convertToUser(registrationRequestDTO);
-        Optional<User> registeredUser = repository.register(user);
-        return RegistrationDTOConverter.convertToRegistrationResponseDTO(registeredUser.get());
+        Optional<User> registeredUser = repository.save(user);
+        if (registeredUser.isPresent()) {
+            return RegistrationDTOConverter.convertToRegistrationResponseDTO(registeredUser.get());
+        } else {
+            throw new UserIsNotRegistered(USER_NOT_FOUND);
+        }
+    }
+
+    public static UserDetails fromUser(User user) {
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                user.getStatus().equals(Status.ACTIVE),
+                user.getStatus().equals(Status.ACTIVE),
+                user.getStatus().equals(Status.ACTIVE),
+                user.getStatus().equals(Status.ACTIVE),
+                UserDetailsServiceImpl.getAuthorities(user.getRole())
+        );
     }
 
 }

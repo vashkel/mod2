@@ -55,13 +55,13 @@ public class AuthenticationRestController {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestDTO.getEmail(), requestDTO.getPassword()));
-            User user = userService.findByEmail(requestDTO.getEmail()).orElseThrow(() ->
-                    new UsernameNotFoundException(USER_NOT_FOUND));
-            String token = jwtTokenProvider.createToken(requestDTO.getEmail(), user.getRole().name(), user.getId());
-            return ResponseEntity.ok(new AuthenticationResponseDTO(requestDTO.getEmail(), token));
         } catch (AuthenticationException e) {
             throw new LoginException(INVALID_EMAIL_PASSWORD);
         }
+        User user = userService.findByEmail(requestDTO.getEmail()).orElseThrow(() ->
+                new UsernameNotFoundException(USER_NOT_FOUND));
+        String token = jwtTokenProvider.createToken(requestDTO.getEmail(), user.getRole().name(), user.getId());
+        return ResponseEntity.ok(new AuthenticationResponseDTO(requestDTO.getEmail(), token));
     }
 
     @PostMapping("/logout")

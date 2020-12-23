@@ -2,7 +2,6 @@ package com.epam.esm.controller;
 
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.LoginException;
-import com.epam.esm.exception.UserAlreadyExistException;
 import com.epam.esm.modelDTO.security.AuthenticationRequestDTO;
 import com.epam.esm.modelDTO.security.AuthenticationResponseDTO;
 import com.epam.esm.modelDTO.security.RegistrationRequestDTO;

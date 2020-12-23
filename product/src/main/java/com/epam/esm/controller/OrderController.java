@@ -2,14 +2,19 @@ package com.epam.esm.controller;
 
 import com.epam.esm.modelDTO.order.OrderDTO;
 import com.epam.esm.modelDTO.order.OrderResponseDTO;
-import com.epam.esm.modelDTO.order.UsersOrderDTO;
 import com.epam.esm.security.service.JwtTokenProvider;
 import com.epam.esm.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -50,10 +55,10 @@ public class OrderController {
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit,
             HttpServletRequest httpRequest) {
-        String token = httpRequest.getHeader("Authorization");
-        if (jwtTokenProvider.getRole(token).equals("USER")) {
+        String token = jwtTokenProvider.resolveToken(httpRequest);
+        if (orderService.isUser(token)) {
             Long userId = jwtTokenProvider.getUserId(token);
-           return ResponseEntity.ok(orderService.findUserOrders(userId));
+            return ResponseEntity.ok(orderService.findUserOrders(userId));
         }
         return ResponseEntity.ok(orderService.findAll(offset, limit));
     }

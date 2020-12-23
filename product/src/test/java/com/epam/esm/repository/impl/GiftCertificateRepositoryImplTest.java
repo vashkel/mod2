@@ -1,6 +1,5 @@
 package com.epam.esm.repository.impl;
 
-import com.epam.esm.config.ProductSpringConfiguration;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
@@ -12,17 +11,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -32,16 +24,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {ProductSpringConfiguration.class},
-loader = AnnotationConfigContextLoader.class)
-@Sql(executionPhase= Sql.ExecutionPhase.BEFORE_TEST_METHOD,scripts="classpath:schema.sql")
-@Sql({"classpath:schema.sql"})
-//@Transactional
-//@EnableAutoConfiguration
-//@DataJpaTest
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class GiftCertificateRepositoryImplTest {
+@ActiveProfiles("test")
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = H2Config.class)
+
+@Transactional
+
+public class GiftCertificateRepositoryImplTest {
 
     private List<GiftCertificate> certificateList;
     private GiftCertificate certificate1;
@@ -49,11 +38,13 @@ class GiftCertificateRepositoryImplTest {
     private GiftCertificate certificate1WithTags;
     private CommonParamsGiftCertificateQuery commonParamsGiftCertificateQuery;
 
-    @Resource
+    @Autowired
     private GiftCertificateRepository giftCertificateRepository;
-    @Resource
+    @Autowired
     private DurationConverter durationConverter;
 
+    public GiftCertificateRepositoryImplTest() {
+    }
 
     @BeforeEach
     void setUp() {
@@ -87,8 +78,7 @@ class GiftCertificateRepositoryImplTest {
 
     @Test
     void findAllGiftCertificates_whenCertificatesExist_thenReturnListOfCertificates() {
-        Optional<List<GiftCertificate>> certificateList = Optional.ofNullable(this.certificateList);
-        Assertions.assertIterableEquals(certificateList.get(), giftCertificateRepository
+        Assertions.assertIterableEquals(certificateList, giftCertificateRepository
                 .findAll(commonParamsGiftCertificateQuery).get());
     }
 

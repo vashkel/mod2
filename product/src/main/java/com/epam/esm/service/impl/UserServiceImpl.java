@@ -2,7 +2,6 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.UserNotFoundException;
-import com.epam.esm.exception.UserAlreadyExistException;
 import com.epam.esm.modelDTO.security.RegistrationRequestDTO;
 import com.epam.esm.modelDTO.security.RegistrationResponseDTO;
 import com.epam.esm.modelDTO.user.UserDTO;
@@ -40,7 +39,7 @@ public class UserServiceImpl implements UserService {
         if (user.isPresent()) {
             userDTO = UserDTOConverter.convertToUserDTOWithoutOrders(user.get());
         } else {
-            throw new UserNotFoundException(USER_ALREADY_EXIST);
+            throw new UserNotFoundException(USER_NOT_FOUND);
         }
         return userDTO;
     }
@@ -61,8 +60,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public RegistrationResponseDTO register(RegistrationRequestDTO registrationRequestDTO){
-        if (repository.findByEmail(registrationRequestDTO.getEmail()).isPresent()){
+    public RegistrationResponseDTO register(RegistrationRequestDTO registrationRequestDTO) {
+        if (repository.findByEmail(registrationRequestDTO.getEmail()).isPresent()) {
             throw new EntityExistsException(USER_ALREADY_EXIST);
         }
         User user = RegistrationDTOConverter.convertToUser(registrationRequestDTO);

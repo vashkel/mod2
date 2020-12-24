@@ -19,7 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 @Service
@@ -86,7 +91,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> createdGiftCertificate = giftCertificateRepository.create(giftCertificate);
         GiftCertificateDTO createdGiftCertificateDTO = null;
         if (createdGiftCertificate.isPresent())
-           createdGiftCertificateDTO = GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate);
+            createdGiftCertificateDTO = GiftCertificateDTOConverter.convertToGiftCertificateDTO(giftCertificate);
         return createdGiftCertificateDTO;
     }
 

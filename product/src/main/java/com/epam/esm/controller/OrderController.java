@@ -4,6 +4,7 @@ import com.epam.esm.modelDTO.order.OrderDTO;
 import com.epam.esm.modelDTO.order.OrderResponseDTO;
 import com.epam.esm.security.service.JwtTokenProvider;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,10 +29,12 @@ public class OrderController {
 
     private final OrderService orderService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserService userService;
 
-    public OrderController(OrderService orderService, JwtTokenProvider jwtTokenProvider) {
+    public OrderController(OrderService orderService, JwtTokenProvider jwtTokenProvider, UserService userService) {
         this.orderService = orderService;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.userService = userService;
     }
 
     @GetMapping("{id}")
@@ -56,7 +59,7 @@ public class OrderController {
             @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit,
             HttpServletRequest httpRequest) {
         String token = jwtTokenProvider.resolveToken(httpRequest);
-        if (orderService.isUser(token)) {
+        if (userService.isUser(token)) {
             Long userId = jwtTokenProvider.getUserId(token);
             return ResponseEntity.ok(orderService.findUserOrders(userId));
         }

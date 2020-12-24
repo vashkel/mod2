@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.entity.Status;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.UserIsNotRegistered;
 import com.epam.esm.exception.UserNotFoundException;
@@ -8,11 +7,10 @@ import com.epam.esm.modelDTO.security.RegistrationRequestDTO;
 import com.epam.esm.modelDTO.security.RegistrationResponseDTO;
 import com.epam.esm.modelDTO.user.UserDTO;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.security.service.UserDetailsServiceImpl;
+import com.epam.esm.security.service.JwtTokenProvider;
 import com.epam.esm.service.UserService;
 import com.epam.esm.util.DTOConverter.registration.RegistrationDTOConverter;
 import com.epam.esm.util.DTOConverter.user.UserDTOConverter;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +28,11 @@ public class UserServiceImpl implements UserService {
 
 
     private final UserRepository repository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public UserServiceImpl(UserRepository repository) {
+    public UserServiceImpl(UserRepository repository, JwtTokenProvider jwtTokenProvider) {
         this.repository = repository;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Transactional(readOnly = true)
@@ -77,16 +77,8 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public static UserDetails fromUser(User user) {
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getStatus().equals(Status.ACTIVE),
-                user.getStatus().equals(Status.ACTIVE),
-                UserDetailsServiceImpl.getAuthorities(user.getRole())
-        );
+    public boolean isUser(String token) {
+        return jwtTokenProvider.getRole(token).equals("USER");
     }
 
 }

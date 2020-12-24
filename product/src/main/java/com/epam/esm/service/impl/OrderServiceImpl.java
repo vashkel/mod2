@@ -11,7 +11,6 @@ import com.epam.esm.modelDTO.order.OrderResponseDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.security.service.JwtTokenProvider;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.util.DTOConverter.order.OrderDTOConverter;
 import org.springframework.stereotype.Service;
@@ -35,15 +34,13 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final GiftCertificateRepository giftCertificateRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
     public OrderServiceImpl(
             OrderRepository orderRepository, UserRepository userRepository,
-            GiftCertificateRepository giftCertificateRepository, JwtTokenProvider jwtTokenProvider) {
+            GiftCertificateRepository giftCertificateRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.giftCertificateRepository = giftCertificateRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Transactional(readOnly = true)
@@ -120,9 +117,5 @@ public class OrderServiceImpl implements OrderService {
     private boolean isRegisteredUser(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.isPresent();
-    }
-
-    public boolean isUser(String token) {
-        return jwtTokenProvider.getRole(token).equals("USER");
     }
 }

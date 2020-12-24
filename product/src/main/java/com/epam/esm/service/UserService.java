@@ -37,4 +37,11 @@ public interface UserService {
      * @return created user
      */
     RegistrationResponseDTO register(RegistrationRequestDTO registrationRequestDTO);
+
+
+    /** This is method is used to check isUser or not
+     * @param token  is token of client
+     * @return true if user, false if not
+     */
+    boolean isUser(String token);
 }

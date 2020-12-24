@@ -24,6 +24,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
             "         WHERE user_id = (SELECT user_id FROM users_order GROUP BY users_order.user_id " +
                     "ORDER BY SUM(users_order.cost) DESC LIMIT 1)\n" +
             "         GROUP BY tag.id ORDER BY numberOfTag DESC LIMIT 1;";
+    private static final String DELETE_FROM_GIFT_CERTIFICATE_TAGS = "DELETE FROM gift_certificate_tags WHERE tag_id = ?";
 
     @Autowired
     public TagRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
@@ -90,7 +91,7 @@ public class TagRepositoryImpl extends BaseRepository implements TagRepository {
 
     public void deleteFromGiftCertificateTagTable(Long tagId){
         getEntityManager()
-                .createNativeQuery("DELETE FROM gift_certificate_tags WHERE tag_id = ?")
+                .createNativeQuery(DELETE_FROM_GIFT_CERTIFICATE_TAGS)
                 .setParameter(1, tagId)
                 .executeUpdate();
     }

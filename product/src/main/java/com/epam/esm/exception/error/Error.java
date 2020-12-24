@@ -8,8 +8,8 @@ public enum Error {
       ERROR04("locale.message.error.ArgumentNotValid"),
       ERROR05("locale.message.error.CheckLoginData"),
       ERROR06("locale.message.error.TokenNotValid"),
-      ERROR07("locale.message.error.EntityAlreadyExist");
-
+      ERROR07("locale.message.error.EntityAlreadyExist"),
+      ERROR08("locale.message.error.SomethingWentWrong");
   private final String description;
 
     Error(String description) {

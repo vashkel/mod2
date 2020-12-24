@@ -3,7 +3,7 @@ package com.epam.esm.security.service;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.UserRepository;
-import com.epam.esm.service.impl.UserServiceImpl;
+import com.epam.esm.util.DTOConverter.userdetails.UserDetailsConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new UsernameNotFoundException("User does not exist"));
-        return UserServiceImpl.fromUser(user);
+        return UserDetailsConverter.fromUser(user);
     }
 
     public static Set<SimpleGrantedAuthority> getAuthorities(Role role) {

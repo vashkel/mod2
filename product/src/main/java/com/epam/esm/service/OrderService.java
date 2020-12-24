@@ -15,5 +15,4 @@ public interface OrderService {
 
     List<OrderResponseDTO> findUserOrders(Long userId);
 
-    boolean isUser(String token);
 }

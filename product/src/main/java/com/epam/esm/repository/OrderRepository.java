@@ -1,27 +1,26 @@
 package com.epam.esm.repository;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.User;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository {
 
-    /** This method is used to return certificate by id
-     * @param id the id of User to be returned
-     * @return Optional value of find User
+    /**
+     * This method is used to return Order by id
+     *
+     * @param id the id of Order to be returned
+     * @return Optional value of find Order
      */
     Optional<Order> findById(Long id);
 
     /**
-     * This method is used to return the list of certificates
-     *      * @param offset is start of orders
-     *      * @param limit is numbers of orders
-     *      * @return List of all Users or empty List if
-     *      *      no Users were found
+     * This method is used to return the list of Orders
+     * * @param offset is start of orders
+     * * @param limit is numbers of orders
+     * * @return List of all Orders or empty List if
+     * *      no Orders were found
      */
     Optional<List<Order>> findAll(int offset, int limit);
 
@@ -32,8 +31,11 @@ public interface OrderRepository {
     Optional<Order> createOrder(Order order);
 
     /**
-     * @param userId is user by which will be find orders
-     * @return list of users orders or empty
+     * Method is used to return order of user by userId
+     *
+     * @param userId is user id
+     * @return List of all orders or empty list if
+     * no orders were found
      */
     Optional<List<Order>> findUserOrders(Long userId);
 }

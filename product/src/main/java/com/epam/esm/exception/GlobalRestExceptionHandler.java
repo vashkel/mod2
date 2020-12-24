@@ -22,7 +22,11 @@ import javax.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -131,9 +135,9 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
             Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, Locale locale) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withStatus(HttpStatus.BAD_GATEWAY)
-                .withDetail("Something went wrong")
+                .withDetail(messageSource.getMessage(Error.ERROR08.getDescription(), null, locale))
                 .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
-                .withError_code("500")
+                .withError_code(Error.ERROR08.name())
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<>(response, response.getStatus());

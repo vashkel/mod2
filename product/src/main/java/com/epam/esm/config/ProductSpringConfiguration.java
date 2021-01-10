@@ -36,7 +36,6 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(basePackages = "com.epam.esm.repository")
 @ComponentScan(basePackages = "com.epam.esm")
 @EnableWebMvc
 @PropertySource("classpath:application.properties")

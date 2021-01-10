@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class RegistrationDTOConverter {
 
     public static RegistrationResponseDTO convertToRegistrationResponseDTO(User user) {
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
         RegistrationResponseDTO registrationResponseDTO = new RegistrationResponseDTO();
         registrationResponseDTO.setId(user.getId());
         registrationResponseDTO.setName(user.getName());

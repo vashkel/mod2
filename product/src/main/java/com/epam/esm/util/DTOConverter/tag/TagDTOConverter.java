@@ -45,7 +45,6 @@ public class TagDTOConverter {
     }
 
     public static TagDTO converterToTagDTOWithoutGiftCertificate(Tag tag) {
-        Set<GiftCertificateDTO> giftCertificatesDTO = new HashSet<>();
         TagDTO tagDTO = new TagDTO();
         tagDTO.setId(tag.getId());
         tagDTO.setName(tag.getName());

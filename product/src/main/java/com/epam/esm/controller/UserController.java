@@ -25,16 +25,15 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @GetMapping("{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<UserDTO> findById(
             @PathVariable @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<List<UserDTO>> findAll(
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "8") int limit) {

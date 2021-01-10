@@ -1,7 +1,7 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.exception.LoginException;
+import com.epam.esm.exception.LoginExceptionException;
 import com.epam.esm.modelDTO.security.AuthenticationRequestDTO;
 import com.epam.esm.modelDTO.security.AuthenticationResponseDTO;
 import com.epam.esm.modelDTO.security.RegistrationRequestDTO;
@@ -14,15 +14,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RestController
@@ -56,7 +53,7 @@ public class AuthenticationRestController {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestDTO.getEmail(), requestDTO.getPassword()));
         } catch (AuthenticationException e) {
-            throw new LoginException(INVALID_EMAIL_PASSWORD);
+            throw new LoginExceptionException(INVALID_EMAIL_PASSWORD);
         }
         User user = userService.findByEmail(requestDTO.getEmail()).orElseThrow(() ->
                 new UsernameNotFoundException(USER_NOT_FOUND));
@@ -64,9 +61,4 @@ public class AuthenticationRestController {
         return ResponseEntity.ok(new AuthenticationResponseDTO(requestDTO.getEmail(), token));
     }
 
-    @PostMapping("/logout")
-    public void logout(HttpServletRequest request, HttpServletResponse response) {
-        SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
-        securityContextLogoutHandler.logout(request, response, null);
-    }
 }

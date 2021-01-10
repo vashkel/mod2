@@ -4,9 +4,9 @@ import lombok.Getter;
 import org.springframework.security.core.AuthenticationException;
 
 @Getter
-public class LoginException extends AuthenticationException {
+public class LoginExceptionException extends AuthenticationException {
 
-    public LoginException(String msg) {
+    public LoginExceptionException(String msg) {
         super(msg);
     }
 

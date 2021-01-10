@@ -1,5 +1,14 @@
-package com.epam.esm.exception;
+package com.epam.esm.exception.advice;
 
+import com.epam.esm.exception.GiftCertificateNotFoundException;
+import com.epam.esm.exception.JwtAuthenticationException;
+import com.epam.esm.exception.LoginExceptionException;
+import com.epam.esm.exception.NotValidParamsRequestException;
+import com.epam.esm.exception.OrderNotFoundException;
+import com.epam.esm.exception.PaginationException;
+import com.epam.esm.exception.PasswordNotMatchException;
+import com.epam.esm.exception.TagNotFoundException;
+import com.epam.esm.exception.UserNotFoundException;
 import com.epam.esm.exception.error.Error;
 import com.epam.esm.exception.model.ApiErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +42,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private final String INTERNAL_ERROR = "locale.message.InternalError";
     @Autowired
     private MessageSource messageSource;
 
@@ -66,14 +77,27 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(LoginException.class)
+    @ExceptionHandler(LoginExceptionException.class)
     public ResponseEntity<ApiErrorResponse> handleUserNamePasswordNotValid(RuntimeException e, WebRequest request,
                                                                            Locale locale) {
         ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withMessage(messageSource.getMessage(e.getLocalizedMessage(), null, locale))
                 .withDetail(messageSource.getMessage(Error.ERROR05.getDescription(), null, locale))
                 .withError_code(Error.ERROR05.name())
-                .withStatus(HttpStatus.FORBIDDEN)
+                .withStatus(HttpStatus.NOT_FOUND)
+                .atTime(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
+        return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
+    }
+
+    @ExceptionHandler(PasswordNotMatchException.class)
+    public ResponseEntity<ApiErrorResponse> handlePasswordNotMatchValid(RuntimeException e, WebRequest request,
+                                                                        Locale locale) {
+        ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
+                .withMessage(messageSource.getMessage(e.getLocalizedMessage(), null, locale))
+                .withDetail(messageSource.getMessage(Error.ERROR09.getDescription(), null, locale))
+                .withError_code(Error.ERROR09.name())
+                .withStatus(HttpStatus.NOT_FOUND)
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();
         return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
@@ -105,6 +129,19 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
     }
 
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<Object> handleAuthenticationException(final AuthenticationException ex, Locale locale) {
+
+        ApiErrorResponse apiResponse = new ApiErrorResponse.ApiErrorResponseBuilder()
+                .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
+                .withDetail(messageSource.getMessage(Error.ERROR06.getDescription(), null, locale))
+                .withError_code(Error.ERROR06.name())
+                .withStatus(HttpStatus.UNAUTHORIZED)
+                .atTime(LocalDateTime.now(ZoneOffset.UTC))
+                .build();
+        return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
+    }
+
     @ExceptionHandler({EntityExistsException.class})
     public ResponseEntity<ApiErrorResponse> entityExistsException(EntityExistsException ex, WebRequest request,
                                                                   Locale locale) {
@@ -118,7 +155,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiResponse, apiResponse.getStatus());
     }
 
-    @ExceptionHandler({NotValidParamsRequest.class, PaginationException.class})
+    @ExceptionHandler({NotValidParamsRequestException.class, PaginationException.class})
     protected ResponseEntity<ApiErrorResponse> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex, WebRequest request, Locale locale) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
@@ -130,13 +167,12 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, response.getStatus());
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiErrorResponse> handleCustomAPIException(
-            Exception ex, HttpHeaders headers, HttpStatus status, WebRequest request, Locale locale) {
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleUnexpectedExceptions(Exception ex, Locale locale) {
         ApiErrorResponse response = new ApiErrorResponse.ApiErrorResponseBuilder()
                 .withStatus(HttpStatus.BAD_GATEWAY)
                 .withDetail(messageSource.getMessage(Error.ERROR08.getDescription(), null, locale))
-                .withMessage(messageSource.getMessage(ex.getLocalizedMessage(), null, locale))
+                .withMessage(messageSource.getMessage(INTERNAL_ERROR, null, locale))
                 .withError_code(Error.ERROR08.name())
                 .atTime(LocalDateTime.now(ZoneOffset.UTC))
                 .build();

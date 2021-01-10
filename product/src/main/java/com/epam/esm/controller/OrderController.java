@@ -52,17 +52,19 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findUserOrders(userId));
     }
 
+    @GetMapping("my-orders")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    public ResponseEntity<List<OrderResponseDTO>> findUserOrders(HttpServletRequest httpRequest){
+        String token = jwtTokenProvider.resolveToken(httpRequest);
+        Long userId = jwtTokenProvider.getUserId(token);
+        return ResponseEntity.ok(orderService.findUserOrders(userId));
+    }
+
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<List<OrderResponseDTO>> findAll(
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
-            @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit,
-            HttpServletRequest httpRequest) {
-        String token = jwtTokenProvider.resolveToken(httpRequest);
-        if (userService.isUser(token)) {
-            Long userId = jwtTokenProvider.getUserId(token);
-            return ResponseEntity.ok(orderService.findUserOrders(userId));
-        }
+            @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit) {
         return ResponseEntity.ok(orderService.findAll(offset, limit));
     }
 

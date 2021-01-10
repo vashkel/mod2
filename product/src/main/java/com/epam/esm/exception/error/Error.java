@@ -6,10 +6,11 @@ public enum Error {
       ERROR02("locale.message.error.MalformedJSONRequest"),
       ERROR03("locale.message.error.CheckTheUrlParams"),
       ERROR04("locale.message.error.ArgumentNotValid"),
-      ERROR05("locale.message.error.CheckLoginData"),
+      ERROR05("locale.message.error.HaveNotRights"),
       ERROR06("locale.message.error.TokenNotValid"),
       ERROR07("locale.message.error.EntityAlreadyExist"),
-      ERROR08("locale.message.error.SomethingWentWrong");
+      ERROR08("locale.message.error.SomethingWentWrong"),
+      ERROR09("locale.message.error.PasswordNotMatch");
   private final String description;
 
     Error(String description) {

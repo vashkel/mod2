@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl  extends BaseRepository implements UserRepository {
+public class UserRepositoryImpl extends BaseRepository implements UserRepository {
 
-    public UserRepositoryImpl(@Qualifier("createEntityManager")EntityManager entityManager) {
+    public UserRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
         super(entityManager);
     }
 
@@ -41,10 +41,14 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
 
     @Override
     public Optional<User> findByEmail(String email) {
-        return Optional.ofNullable(getEntityManager()
-                .createNamedQuery("User.findByEmail", User.class)
-                .setParameter("email", email)
-                .getSingleResult());
+        try {
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("User.findByEmail", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

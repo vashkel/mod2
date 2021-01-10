@@ -1,11 +1,9 @@
 plugins {
-    id 'war'
     id "io.freefair.lombok" version "5.2.1"
+    id 'application'
 }
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.8
 
 configurations {
     providedCompile

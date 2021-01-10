@@ -1,7 +1,8 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.exception.UserIsNotRegistered;
+import com.epam.esm.exception.PasswordNotMatchException;
+import com.epam.esm.exception.UserIsNotRegisteredException;
 import com.epam.esm.exception.UserNotFoundException;
 import com.epam.esm.modelDTO.security.RegistrationRequestDTO;
 import com.epam.esm.modelDTO.security.RegistrationResponseDTO;
@@ -20,12 +21,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional
 public class UserServiceImpl implements UserService {
 
     private static final String USER_NOT_FOUND = "locale.message.UserNotFound";
     private static final String USER_ALREADY_EXIST = "locale.message.UserAlreadyExist";
-
+    private static final String PASSWORD_NOT_MATCH = "locale.message.PasswordNotMatch";
 
     private final UserRepository repository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -53,18 +53,27 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> findAll(int offset, int limit) {
         Optional<List<User>> users = repository.findAll(offset, limit);
         List<UserDTO> userDTOS = new ArrayList<>();
-        users.ifPresent(userList -> userList.forEach(user -> userDTOS.add(UserDTOConverter.convertToUserDTOWithoutOrders(user))));
+        users.ifPresent(userList -> userList.forEach(user ->
+                userDTOS.add(UserDTOConverter.convertToUserDTOWithoutOrders(user))));
         return userDTOS;
     }
 
     @Transactional(readOnly = true)
     @Override
     public Optional<User> findByEmail(String email) {
-        return repository.findByEmail(email);
+        Optional<User> user = repository.findByEmail(email);
+        if (!user.isPresent()) {
+            throw new UserNotFoundException(USER_NOT_FOUND);
+        }
+        return user;
     }
 
     @Override
+    @Transactional
     public RegistrationResponseDTO register(RegistrationRequestDTO registrationRequestDTO) {
+        if (!registrationRequestDTO.getPassword().equals(registrationRequestDTO.getRepeatedPassword())) {
+            throw new PasswordNotMatchException(PASSWORD_NOT_MATCH);
+        }
         if (repository.findByEmail(registrationRequestDTO.getEmail()).isPresent()) {
             throw new EntityExistsException(USER_ALREADY_EXIST);
         }
@@ -73,7 +82,7 @@ public class UserServiceImpl implements UserService {
         if (registeredUser.isPresent()) {
             return RegistrationDTOConverter.convertToRegistrationResponseDTO(registeredUser.get());
         } else {
-            throw new UserIsNotRegistered(USER_NOT_FOUND);
+            throw new UserIsNotRegisteredException(USER_NOT_FOUND);
         }
     }
 

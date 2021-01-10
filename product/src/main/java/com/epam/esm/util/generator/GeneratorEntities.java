@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GeneratorEntities {
 
-    private String GIFT_CERTIFICATE_QUERY = "INSERT INTO gift_certificate " +
+    private static String GIFT_CERTIFICATE_QUERY = "INSERT INTO gift_certificate " +
             "(name, description, price, create_date, last_update_date, duration) " +
             "VALUES ('" + generatingRandomAlphabeticString() + "'," +
             " '" + generatingRandomAlphabeticString() + "'," +
@@ -21,18 +21,18 @@ public class GeneratorEntities {
             " '" + generateRandomLocalDateTime() + "'," +
             " '" + generateRandomDuration() + "');\n";
 
-    private String TAG_QUERY = "insert into tag (name) VALUES ('" + generatingRandomAlphabeticString() + "');\n";
+    private static String TAG_QUERY = "insert into tag (name) VALUES ('" + generatingRandomAlphabeticString() + "');\n";
 
-    private String GIFT_CERTIFICATE_TAGS_QUERY = "INSERT INTO gift_certificate_tags (gift_certificate_id, tag_id)" +
+    private static String GIFT_CERTIFICATE_TAGS_QUERY = "INSERT INTO gift_certificate_tags (gift_certificate_id, tag_id)" +
             " VALUES (" + generateRandomInteger() + ", " + generateRandomInteger() + ");\n";
 
-    private String USER_QUERY = "INSERT INTO user (name) VALUES ('" + generatingRandomAlphabeticString() + "');\n";
-    private String ORDER_QUERY = "INSERT INTO users_order (create_date, cost, user_id) " +
+    private static String USER_QUERY = "INSERT INTO user (name) VALUES ('" + generatingRandomAlphabeticString() + "');\n";
+    private static String ORDER_QUERY = "INSERT INTO users_order (create_date, cost, user_id) " +
             "VALUES ('" + generateRandomLocalDateTime() + "'," +
             " '" + generateRandomDouble() + "'," +
             " '" + generateRandomInteger() + "');\n";
 
-    private String ORDER_GIFT_CERTIFICATE_QUERY = "INSERT INTO users_order_gift_certificate (order_id, gift_certificate_Id) " +
+    private static String ORDER_GIFT_CERTIFICATE_QUERY = "INSERT INTO users_order_gift_certificate (order_id, gift_certificate_Id) " +
             "VALUES ('" + generateRandomInteger() + "'," +
             " '" + generateRandomInteger() + "');\n";
 
@@ -49,6 +49,18 @@ public class GeneratorEntities {
                 .toString();
     }
 
+    private String getSaltString() {
+        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        StringBuilder salt = new StringBuilder();
+        Random rnd = new Random();
+        while (salt.length() < 10) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
+            salt.append(SALTCHARS.charAt(index));
+        }
+        return salt.toString();
+
+    }
+
     private static Double generateRandomDouble() {
         double min = 10;
         double max = 100;
@@ -57,7 +69,7 @@ public class GeneratorEntities {
 
     public static Integer generateRandomInteger() {
         Integer min = 1;
-        Integer max = 1000;
+        Integer max = 1200;
         return new Random().nextInt(max - min) + min;
     }
 
@@ -79,14 +91,7 @@ public class GeneratorEntities {
     }
 
     private static String generateQuery() {
-        return "INSERT INTO gift_certificate " +
-                "(name, description, price, create_date, last_update_date, duration) " +
-                "VALUES ('" + generatingRandomAlphabeticString() + "'," +
-                " '" + generatingRandomAlphabeticString() + "'," +
-                " '" + generateRandomDouble() + "'," +
-                " '" + generateRandomLocalDateTime() + "'," +
-                " '" + generateRandomLocalDateTime() + "'," +
-                " '" + generateRandomDuration() + "');\n";
+        return ORDER_QUERY;
     }
 
     private static void writeQueryToFile(String fileName) throws IOException {
@@ -99,7 +104,7 @@ public class GeneratorEntities {
     }
 
     public static void main(String[] args) throws IOException {
-        writeQueryToFile("data/dataGiftCertificate.sql");
+        writeQueryToFile("data/orderGIftCertificate.sql");
     }
 }
 

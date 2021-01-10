@@ -41,7 +41,6 @@ public class GiftCertificatesController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','GUEST')")
     public ResponseEntity<List<GiftCertificateDTO>> giftCertificates(
             @RequestParam(name = "name", required = false) String name,
             @RequestParam(name = "sort_field", required = false) String sortField,
@@ -61,7 +60,6 @@ public class GiftCertificatesController {
     }
 
     @GetMapping("{id}")
-    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN','GUEST')")
     public ResponseEntity<GiftCertificateDTO> giftCertificate(@PathVariable("id") @Min(value = 1) long id) {
         GiftCertificateDTO giftCertificateDTO = giftCertificateService.find(id);
         addLinks(giftCertificateDTO);

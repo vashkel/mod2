@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,11 +51,16 @@ public class GiftCertificateRepositoryImpl extends BaseRepository implements Gif
         String query = SelectFilterCreator
                 .createFilterQuery(CommonParamsGiftCertificateQuery
                         .fetchParams(commonParamsGiftCertificateQuery), SQL_BASE_SELECT_QUERY_CERTIFICATE_WITH_TAGS);
-        return Optional.ofNullable(getEntityManager()
-                .createNativeQuery(query, GiftCertificate.class)
-                .setFirstResult(commonParamsGiftCertificateQuery.getOffset())
+        Query nativeQuery = getEntityManager().createNativeQuery(query, GiftCertificate.class);
+        List list = nativeQuery.setFirstResult(commonParamsGiftCertificateQuery.getOffset())
                 .setMaxResults(commonParamsGiftCertificateQuery.getLimit())
-                .getResultList());
+                .getResultList();
+        List<GiftCertificate> giftCertificates = new ArrayList<>();
+        for (Object giftCertificate : list){
+            giftCertificates.add((GiftCertificate) giftCertificate);
+        }
+        return Optional.of(giftCertificates);
+
     }
 
     @Override

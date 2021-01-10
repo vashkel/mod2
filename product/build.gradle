@@ -1,24 +1,26 @@
 plugins {
-    id 'war'
     id "io.freefair.lombok" version "5.2.1"
 }
 
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
 test {
     useJUnitPlatform()
     testLogging.showStandardStreams(true)
 }
 
+bootJar {
+    enabled = true
+}
+
 repositories {
     mavenCentral()
 }
+
 dependencies {
     implementation project(':DTO')
-}
-dependencies {
+
     compileOnly 'org.projectlombok:lombok:1.18.16'
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
@@ -27,5 +29,6 @@ dependencies {
     compile group: 'commons-dbcp', name: 'commons-dbcp', version: '1.4'
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
 }
+
 
 

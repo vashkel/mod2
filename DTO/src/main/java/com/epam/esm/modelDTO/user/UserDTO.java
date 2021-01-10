@@ -15,5 +15,4 @@ public class UserDTO {
 
     private Long id;
     private String name;
-    private Set<OrderResponseDTO> orders = new HashSet<>();
 }

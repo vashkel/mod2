@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl  extends BaseRepository implements UserRepository {
+public class UserRepositoryImpl extends BaseRepository implements UserRepository {
 
-    public UserRepositoryImpl(@Qualifier("createEntityManager")EntityManager entityManager) {
+    public UserRepositoryImpl(@Qualifier("createEntityManager") EntityManager entityManager) {
         super(entityManager);
     }
 
@@ -22,7 +22,7 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
     public Optional<User> findById(Long id) {
         try {
             return Optional.ofNullable(getEntityManager()
-                    .createQuery("FROM User WHERE id = :id", User.class)
+                    .createNamedQuery("User.findById", User.class)
                     .setParameter("id", id)
                     .getSingleResult());
         } catch (NoResultException e) {
@@ -37,5 +37,23 @@ public class UserRepositoryImpl  extends BaseRepository implements UserRepositor
                 .setFirstResult(offset)
                 .setMaxResults(limit)
                 .getResultList());
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        try {
+            return Optional.ofNullable(getEntityManager()
+                    .createNamedQuery("User.findByEmail", User.class)
+                    .setParameter("email", email)
+                    .getSingleResult());
+        } catch (NoResultException e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<User> save(User user) {
+        getEntityManager().persist(user);
+        return Optional.ofNullable(user);
     }
 }

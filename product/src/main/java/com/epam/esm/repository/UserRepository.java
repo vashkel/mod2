@@ -21,5 +21,17 @@ public interface UserRepository {
      */
     Optional<List<User>> findAll(int offset, int limit);
 
+    /** This method is used to return user by email
+     * @param email the email of user to be returned
+     * @return the value of user or empty
+     */
+    Optional<User> findByEmail(String email);
+
+    /**
+     * This method is used to save user.
+     * @param user is data for new user
+     * @return created user or empty
+     */
+    Optional<User> save(User user);
 
 }

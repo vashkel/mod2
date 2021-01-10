@@ -1,7 +1,7 @@
 package com.epam.esm.exception;
 
 public class GiftCertificateNotFoundException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1604672147363917448L;
 
     private long id;
     private String message;

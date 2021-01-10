@@ -33,12 +33,20 @@ create table if not exists gift_certificate_tags
         foreign key (tag_id) references tag (id)
 );
 
-create table if not exists user
+create table user
 (
     id bigint auto_increment
         primary key,
-    name varchar(45) not null
+    name varchar(45) not null,
+    email varchar(255) not null,
+    password varchar(255) not null,
+    role varchar(20) default 'GUEST' not null,
+    status varchar(20) default 'ACTIVE' not null,
+    constraint user_email_uindex
+        unique (email)
 );
+
+
 
 create table if not exists users_order
 (

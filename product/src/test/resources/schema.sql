@@ -33,47 +33,6 @@ create table gift_certificate_tags
         foreign key (tag_id) references tag (id)
 );
 
-
-create table if not exists user
-(
-    id bigint auto_increment
-        primary key,
-    name varchar(45) not null
-);
-
-create table if not exists users_order
-(
-    id bigint auto_increment
-        primary key,
-    create_date timestamp not null,
-    cost double not null,
-    user_id bigint null,
-    constraint order_user_id_fk
-        foreign key (user_id) references user (id)
-);
-
-create index users_order_cost_index
-    on users_order (cost);
-
-create index users_order_user_id_index
-    on users_order (user_id);
-
-create index users_order_user_id_index_2
-    on users_order (user_id);
-
-create table if not exists users_order_gift_certificate
-(
-    id bigint auto_increment
-        primary key,
-    order_id bigint null,
-    gift_certificate_id bigint null,
-    constraint users_order_gift_certificate_gift_certificate_id_fk
-        foreign key (gift_certificate_id) references gift_certificate (id),
-    constraint users_order_gift_certificate_users_order_id_fk
-        foreign key (order_id) references users_order (id)
-);
-
-
 insert into tag (name) values ('vip');
 insert into tag (name) values ('family');
 

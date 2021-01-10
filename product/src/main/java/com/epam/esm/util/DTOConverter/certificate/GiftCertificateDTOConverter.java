@@ -2,6 +2,7 @@ package com.epam.esm.util.DTOConverter.certificate;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.modelDTO.giftcertificate.GiftCertificateCreateDTO;
 import com.epam.esm.modelDTO.giftcertificate.GiftCertificateDTO;
 import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.util.DTOConverter.tag.TagDTOConverter;
@@ -20,7 +21,20 @@ public class GiftCertificateDTOConverter {
         return giftCertificateDTO;
     }
 
+
+
     public static GiftCertificate convertFromGiftCertificateDTO(GiftCertificateDTO giftCertificateDTO) {
+        Set<Tag> tags = new HashSet<>();
+        GiftCertificate gIftCertificate = giftCertificateCreator(giftCertificateDTO);
+        if (!giftCertificateDTO.getTags().isEmpty()) {
+            for (TagDTO tagDTO : giftCertificateDTO.getTags()) {
+                tags.add(TagDTOConverter.convertFromTagDTOWithoutGiftCertificate(tagDTO));
+            }
+            gIftCertificate.setTags(tags);
+        }
+        return gIftCertificate;
+    }
+    public static GiftCertificate convertFromGiftCertificateCreateDTO(GiftCertificateCreateDTO giftCertificateDTO) {
         Set<Tag> tags = new HashSet<>();
         GiftCertificate gIftCertificate = giftCertificateCreator(giftCertificateDTO);
         if (!giftCertificateDTO.getTags().isEmpty()) {
@@ -52,6 +66,18 @@ public class GiftCertificateDTOConverter {
         giftCertificate.setDuration(certificateDTO.getDuration());
         return giftCertificate;
     }
+
+    private static GiftCertificate giftCertificateCreator(GiftCertificateCreateDTO certificateDTO) {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName(certificateDTO.getName());
+        giftCertificate.setDescription(certificateDTO.getDescription());
+        giftCertificate.setPrice(certificateDTO.getPrice());
+        giftCertificate.setCreateDate(certificateDTO.getCreateDate());
+        giftCertificate.setLastUpdateTime(certificateDTO.getLastUpdateTime());
+        giftCertificate.setDuration(certificateDTO.getDuration());
+        return giftCertificate;
+    }
+
 
     private static GiftCertificateDTO giftCertificateDTOCreator(GiftCertificate giftCertificate) {
         GiftCertificateDTO giftCertificateDTO = new GiftCertificateDTO();

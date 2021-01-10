@@ -2,13 +2,19 @@ package com.epam.esm.controller;
 
 import com.epam.esm.modelDTO.tag.TagDTO;
 import com.epam.esm.service.TagService;
-import com.epam.esm.service.impl.TagServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -28,6 +34,7 @@ public class TagController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<List<TagDTO>> getTags(
             @RequestParam(name = "offset", required = false, defaultValue = "1") @Min(value = 1) int offset,
             @RequestParam(name = "limit", required = false, defaultValue = "8") @Min(value = 1) int limit) {
@@ -37,6 +44,7 @@ public class TagController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<TagDTO> getTag(
             @PathVariable("id") @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         TagDTO tagDTO = tagService.findById(id);
@@ -45,11 +53,13 @@ public class TagController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<TagDTO> createTag(@RequestBody @Valid TagDTO tag) {
         return ResponseEntity.status(HttpStatus.CREATED).body(tagService.create(tag));
     }
 
     @DeleteMapping("{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Object> deleteTag(
             @PathVariable("id") @Min(value = 1, message = "id must be 1 or grater then 1") Long id) {
         tagService.delete(id);
@@ -64,6 +74,7 @@ public class TagController {
     }
 
     @GetMapping("/popular-tag")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<TagDTO> findMostPopularTagWithHighestPriceOfOrders() {
         return ResponseEntity.ok(tagService.findMostPopularTagWithHighestPriceOfOrders());
     }

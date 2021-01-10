@@ -7,7 +7,6 @@ import java.util.Objects;
 
 public class SelectFilterCreator {
 
-
     private static final String WHERE = " where ";
     private static final String AND = " and ";
     private static final String END_OF_LIKE = "%' ";
@@ -19,7 +18,6 @@ public class SelectFilterCreator {
             GiftCertificateParamName.SORT_FIELD.getParamName(),
             GiftCertificateParamName.LIMIT.getParamName(),
             GiftCertificateParamName.OFFSET.getParamName());
-
 
     public static String createFilterQuery(Map<String, String> availableParams, String query) {
         StringBuilder sb = new StringBuilder(query);
@@ -38,7 +36,6 @@ public class SelectFilterCreator {
         for (Map.Entry<String, String> param : availableParams.entrySet()) {
             String trimmedParam = param.getValue().trim();
             param.setValue(trimmedParam);
-
         }
     }
 

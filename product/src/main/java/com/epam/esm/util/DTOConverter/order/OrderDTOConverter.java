@@ -43,11 +43,6 @@ public class OrderDTOConverter {
         User user = new User();
         user.setId(orderDTO.getUserId());
         order.setUser(user);
-//        if (!orderDTO.getGiftCertificatesId().isEmpty()) {
-//            orderDTO.getGiftCertificatesId()
-//                    .forEach(giftCertificateDTO -> order.getGiftCertificate()
-//                            .add(GiftCertificateDTOConverter.convertFromGiftCertificateDTO(giftCertificateDTO)));
-//        }
         return order;
     }
 

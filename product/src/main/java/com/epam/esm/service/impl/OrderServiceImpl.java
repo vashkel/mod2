@@ -8,7 +8,6 @@ import com.epam.esm.exception.OrderNotFoundException;
 import com.epam.esm.exception.UserNotFoundException;
 import com.epam.esm.modelDTO.order.OrderDTO;
 import com.epam.esm.modelDTO.order.OrderResponseDTO;
-import com.epam.esm.modelDTO.order.UsersOrderDTO;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.OrderRepository;
 import com.epam.esm.repository.UserRepository;
@@ -18,12 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 
 @Service
@@ -39,7 +36,8 @@ public class OrderServiceImpl implements OrderService {
     private final GiftCertificateRepository giftCertificateRepository;
 
     public OrderServiceImpl(
-            OrderRepository orderRepository, UserRepository userRepository, GiftCertificateRepository giftCertificateRepository) {
+            OrderRepository orderRepository, UserRepository userRepository,
+            GiftCertificateRepository giftCertificateRepository) {
         this.orderRepository = orderRepository;
         this.userRepository = userRepository;
         this.giftCertificateRepository = giftCertificateRepository;
@@ -98,14 +96,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<UsersOrderDTO> findUserOrders(Long userId) {
-        List<UsersOrderDTO> userOrders = new ArrayList<>();
+    public List<OrderResponseDTO> findUserOrders(Long userId) {
+        List<OrderResponseDTO> userOrders = new ArrayList<>();
         if (isRegisteredUser(userId)) {
             Optional<List<Order>> orders = orderRepository.findUserOrders(userId);
             orders.ifPresent(orderList -> orderList.forEach(order ->
                     order.setCost(scaleCost(order.getCost()))));
             orders.ifPresent(orderList -> orderList.forEach(order ->
-                    userOrders.add(OrderDTOConverter.convertToUserOrdersDTO(order))));
+                    userOrders.add(OrderDTOConverter.convertToOrderResponseDTO(order))));
         }
         return userOrders;
     }

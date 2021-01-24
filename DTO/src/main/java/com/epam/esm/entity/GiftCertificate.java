@@ -72,7 +72,7 @@ public class GiftCertificate implements Serializable {
     @Column(name = "duration", nullable = false)
     private Duration duration;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @NotAudited
     @JoinTable(name = "gift_certificate_tags",
             joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id"),

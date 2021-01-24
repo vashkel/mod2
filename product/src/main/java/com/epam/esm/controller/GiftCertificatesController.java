@@ -55,7 +55,6 @@ public class GiftCertificatesController {
         for (GiftCertificateDTO giftCertificateDTO : giftCertificatesDTOS) {
             addLinks(giftCertificateDTO);
         }
-        ;
         return ResponseEntity.ok().body(giftCertificatesDTOS);
     }
 

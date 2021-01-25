@@ -2,6 +2,7 @@ plugins {
     id "io.freefair.lombok" version "5.2.1"
     id 'war'
     id 'jacoco'
+    id 'org.sonarqube'
 }
 
 group 'com.epam.esm'

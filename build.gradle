@@ -19,17 +19,21 @@ sonarqube {
 }
 tasks['sonarqube'].dependsOn test
 
+test {
+    useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+    }
+}
+
+test.finalizedBy jacocoTestReport
+
 jacoco {
     toolVersion = "0.8.5"
     reportsDir = file("$buildDir/jacoco")
-}
-
-test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
-jacocoTestReport {
-    dependsOn test
 }
 allprojects {
     apply plugin: 'java'

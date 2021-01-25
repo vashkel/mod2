@@ -2,6 +2,7 @@ plugins {
     id  'java'
     id  'war'
     id 'jacoco'
+    id 'org.sonarqube' version '3.0'
 }
 
 group 'com.epam.esm'
@@ -11,10 +12,18 @@ repositories {
     mavenCentral()
 }
 
+sonarqube {
+    properties {
+        property 'sonar.host.url', 'http://localhost:9000'
+    }
+}
+tasks['sonarqube'].dependsOn test
+
 jacoco {
     toolVersion = "0.8.5"
     reportsDir = file("$buildDir/jacoco")
 }
+
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport

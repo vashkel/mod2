@@ -1,15 +1,26 @@
+plugins {
+    id  'java'
+    id  'war'
+    id 'jacoco'
+}
+
 group 'com.epam.esm'
 version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-apply plugin: 'war'
 
 repositories {
     mavenCentral()
 }
 
+jacoco {
+    toolVersion = "0.8.5"
+    reportsDir = file("$buildDir/jacoco")
+}
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
 }
 allprojects {
     apply plugin: 'java'

@@ -1,6 +1,7 @@
 plugins {
     id "io.freefair.lombok" version "5.2.1"
     id 'war'
+    id 'jacoco'
 }
 
 group 'com.epam.esm'
